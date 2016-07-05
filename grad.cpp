@@ -565,7 +565,7 @@ void Gradient::init(string infilename, int natoms0, int* anumbers0, string* anam
   if (seedType==3)
     printf("   assuming wfn already seeded in scratch \n");
   else if (seedType>0)
-    read_molpro_init(hf_lines);
+    nhf_lines=read_molpro_init(hf_lines);
   nstates = nstates0;
   mp1.init(nstates,nclosed,nocc,nelec,natoms,anames,coords0,ncpu,basis);
   mp1.runname("mp_"+runName0);
