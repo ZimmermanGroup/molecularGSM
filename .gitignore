@@ -2,3 +2,6 @@
 *.out
 *.exe
 *.log
+grad.py
+example.tgz
+gstring.cpp_1
