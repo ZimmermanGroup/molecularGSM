@@ -14,9 +14,135 @@ using namespace std;
 #define MEMORY 400
 #define DIRECT 1
 
+int molpro:run(int n)
+{
+
+  //printf(" beginning Molpro run! \n"); fflush(stdout);
+
+  if (n>nstates)
+  {
+    printf(" ERROR: n>nstates! (%i>%i) \n",n,nstates);
+    exit(-1);
+  }
+	if (n!=wstate)
+		{
+		 printf(" ERROR: n!=wstate\n",n,wstate); 
+		 exit(-1); 
+		}
+
+#if ONLY_RHF
+  printf(" WARNING: using RHF! \n");
+#endif
+
+  string filename = infile;
+
+  //here construct Molpro input
+  ofstream inpfile;
+  string inpfile_string = filename;
+  inpfile.open(inpfile_string.c_str());
+  inpfile.setf(ios::fixed);
+  inpfile.setf(ios::left);
+  inpfile << setprecision(6);
+
+  inpfile << "memory," << MEMORY << ",m" << endl;
+  inpfile << "file,2," << scratchname << endl;
+  inpfile << "symmetry,nosym" << endl;
+  inpfile << "orient,noorient" << endl;
+  inpfile << "geometry={" << endl;
+  for (int i=0;i<natoms;i++)
+    inpfile << " " << anames[i] << " " << xyz[3*i+0] << " " << xyz[3*i+1] << " " << xyz[3*i+2] << " " << endl;
+  inpfile << "}" << endl;
+
+  inpfile << endl << "basis=" << basis << endl << endl;
+
+  inpfile << "start,2100.2 !read orbitals" << endl;
+
+#if DIRECT
+  inpfile << " direct " << endl;
+#endif
+#if !READ_SCF || ONLY_RHF
+  //recalculate HF at each iteration
+  inpfile << "hf" << endl;
+#endif
+
+#if !ONLY_RHF
+  //first two settings from AIMS molpro example
+  //inpfile << "gthresh,twoint=1.0d-13" << endl;
+  //inpfile << "gthresh,energy=1.0d-7,gradient=1.0d-2" << endl;
+  //inpfile << "data,copy, 2100.2, 3000.2" << endl;
+  if (runGrad)
+  {
+    inpfile << "{casscf" << endl;
+    inpfile << "closed," << nclosed << " !core orbs" << endl;
+    inpfile << "occ," << nocc << "    !active orbs" << endl;
+    inpfile << "wf," << nelec << ",1,0 !nelectrons,symm,singlet" << endl;
+    inpfile << "state," << nstates << "   !nstates" << endl;
+#if DYNWEIGHT
+    inpfile << "dynw,-8.0   !dynamic weight" << endl;
+#endif
+    //if (nstates>=3)
+    //  inpfile << "weight,0.2,0.4,0.4   !state averaging" << endl;
+    //inpfile << "maxiter,40 " << endl;
+
+		// now n is the total number of states to calculate gradients for i.e. wstate
+		for (int i=1; i<wstate+1; i++)
+			{
+			
+			  string grad_num=StringTools::int2str(i,1,"0");
+				string grad_name== "510"+grad_num+.1;
+				inpfile << "CPMCSCF,GRAD," << grad_name << " << endl;
+			}	
+
+    inpfile << "ciguess,2501.2" << endl;
+    inpfile << "save,ci=2501.2" << endl;
+    inpfile << "orbital,2100.2 !write orbitals" << endl;
+    //inpfile << "{ iterations" << endl;
+    //inpfile << " do,diagci,1,to,20 }" << endl; 
+
+#if PSPACE
+    inpfile << "pspace,100.0" << endl;
+#endif
+    //inpfile << "dm,2105.2" << endl;
+    //inpfile << "diab,3000.2,save=3000.2" << endl;
+    inpfile << "}" << endl;
+    inpfile << endl;
+#endif
+		for (int i=1;i<wstate+1;i++)
+			{
+			  string grad_num=StringTools::int2str(i,1,"0");
+				string grad_name== "510"+grad_num+.1;
+				inpfile << "{FORCE,SAMC," << grad_name <<";varsav}" << endl;
+			}
+#if 0
+    inpfile << "show,gradx" << endl;
+    inpfile << "show,grady" << endl;
+    inpfile << "show,gradz" << endl;
+#endif
+    inpfile << endl;
+  }
+
+  inpfile.close();
+
+#if !SAFE_MODE
+  //printf(" executing molpro \n"); fflush(stdout);
+//  string cmd = "/export/zimmerman/paulzim/Molpro_serial/bin/molpro "+filename;
+  string cmd = "/export/applications/Molpro/2012.1.9/molprop_2012_1_Linux_x86_64_i8/bin/molpro";
+//  string cmd = "/export/applications/MolproCopy/2012.1.9/molprop_2012_1_Linux_x86_64_i8/bin/molpro";
+  string nstr = StringTools::int2str(NPROCS,1,"0");
+  cmd = cmd + " -W scratch";
+  cmd = cmd + " -n " + nstr + " " + filename;
+  system(cmd.c_str());
+#endif
+
+  int error = read_E();
+  //printf(" error after read_E: %i \n",error);
+  nrun++;
+
+  return 0;
+}
 
 //run molpro for gradient of n, derivative coupling between n,m
-int Molpro::run(int n, int m)
+int Molpro::run_old(int n, int m)
 {
   //printf(" beginning Molpro run! \n"); fflush(stdout);
   int runGrad = 1;

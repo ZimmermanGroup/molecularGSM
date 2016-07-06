@@ -49,7 +49,9 @@ class Molpro
     void reset(double* xyz);
     void runname(string name);
     int seed(); //run RHF to get initial orbitals
-    int run(int n, int m); // n is current state, m is target state for derivative coupling
+    
+		int run(int n); //CRA
+		int run_old(int n, int m); // n is current state, m is target state for derivative coupling
     double getE(int n);
     int getGrad(double* grads);
     int getDVec(double* D);
