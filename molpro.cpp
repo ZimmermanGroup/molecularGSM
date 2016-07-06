@@ -14,21 +14,11 @@ using namespace std;
 #define MEMORY 400
 #define DIRECT 1
 
-int molpro:run(int n)
+int molpro:run()
 {
 
   //printf(" beginning Molpro run! \n"); fflush(stdout);
 
-  if (n>nstates)
-  {
-    printf(" ERROR: n>nstates! (%i>%i) \n",n,nstates);
-    exit(-1);
-  }
-	if (n!=wstate)
-		{
-		 printf(" ERROR: n!=wstate\n",n,wstate); 
-		 exit(-1); 
-		}
 
 #if ONLY_RHF
   printf(" WARNING: using RHF! \n");
@@ -85,14 +75,25 @@ int molpro:run(int n)
     //inpfile << "maxiter,40 " << endl;
 
 		// now n is the total number of states to calculate gradients for i.e. wstate
-		for (int i=1; i<wstate+1; i++)
+	if (wstate3=0)
+		{	
+		for (int i=wstate; i<wstate2+1; i++)
 			{
-			
 			  string grad_num=StringTools::int2str(i,1,"0");
 				string grad_name== "510"+grad_num+.1;
 				inpfile << "CPMCSCF,GRAD," << grad_name << " << endl;
 			}	
-
+		}
+	else
+		{
+		for (int i=wstate; i<wstate3+1; i++)
+			{
+			  string grad_num=StringTools::int2str(i,1,"0");
+				string grad_name== "510"+grad_num+.1;
+				inpfile << "CPMCSCF,GRAD," << grad_name << " << endl;
+			}	
+		}
+	
     inpfile << "ciguess,2501.2" << endl;
     inpfile << "save,ci=2501.2" << endl;
     inpfile << "orbital,2100.2 !write orbitals" << endl;
@@ -107,12 +108,27 @@ int molpro:run(int n)
     inpfile << "}" << endl;
     inpfile << endl;
 #endif
-		for (int i=1;i<wstate+1;i++)
+		
+
+	if (wstate3=0)
+		{
+		for (int i=wstate;i<wstate2+1;i++)
 			{
 			  string grad_num=StringTools::int2str(i,1,"0");
 				string grad_name== "510"+grad_num+.1;
 				inpfile << "{FORCE,SAMC," << grad_name <<";varsav}" << endl;
 			}
+		}
+	else
+		{
+		for (int i=wstate;i<wstate3+1;i++)
+			{
+			  string grad_num=StringTools::int2str(i,1,"0");
+				string grad_name== "510"+grad_num+.1;
+				inpfile << "{FORCE,SAMC," << grad_name <<";varsav}" << endl;
+			}
+		}
+
 #if 0
     inpfile << "show,gradx" << endl;
     inpfile << "show,grady" << endl;

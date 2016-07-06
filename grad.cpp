@@ -232,7 +232,7 @@ int Gradient::external_grad(double* coords, double* grad)
     //system(cmd.c_str());
   }
 
-  int error = mp1.run(wstate,0); //grad and energy
+  int error = mp1.run(); //grad and energy
   energy = mp1.getE(wstate) * 627.5;
   error = mp1.getGrad(grada[0]);
   for (int i=0;i<N3;i++)
@@ -244,7 +244,7 @@ int Gradient::external_grad(double* coords, double* grad)
  //average energy and gradient
   if (wstate2>0)
   {
-    error = mp1.run(wstate2,0); //grad and energy
+    //error = mp1.run(wstate2,0); //grad and energy
     energy += mp1.getE(wstate2) * 627.5;
     energy /= 2.; //average energy
     error = mp1.getGrad(grada[1]);
@@ -256,7 +256,7 @@ int Gradient::external_grad(double* coords, double* grad)
   }
   if (wstate3>0)
   {
-    error = mp1.run(wstate3,0); //grad and energy
+    //error = mp1.run(wstate3,0); //grad and energy
     energy = 2*energy + mp1.getE(wstate3) * 627.5;
     energy /= 3.; //average energy
     error = mp1.getGrad(grada[2]);
