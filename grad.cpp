@@ -227,9 +227,9 @@ int Gradient::external_grad(double* coords, double* grad)
     printf(" copying wfn from mp_%s to mp_%s \n",runNameCopy.c_str(),runName0.c_str());
 
     string cmd = "cp scratch/mp_"+runNameCopy+" scratch/mp_"+runName0;
-		printf("temporarily disabling this feature\n");
+	//	printf("temporarily disabling this feature\n");
     //printf("  via: %s \n",cmd.c_str());
-    //system(cmd.c_str());
+    system(cmd.c_str());
   }
 
   int error = mp1.run(); //grad and energy
@@ -391,7 +391,8 @@ int Gradient::read_molpro_init(string* &hf_lines)
   printf("   in read_molpro_init \n");
   if (seedType<1) return 0;
   if (seedType!=1 && seedType!=2) 
-  {
+  {	
+		cout << seedType; 
     printf(" ERROR: seedType in read_molpro_init must be 0, 1 or 2 \n");
     exit(1);
   }
@@ -500,7 +501,6 @@ void Gradient::read_molpro_settings(int& nstates0, int& nclosed, int& nocc, int&
 
 void Gradient::init(string infilename, int natoms0, int* anumbers0, string* anames0, double* coords0, int run, int rune, int ncpu, int knnr_level)
 {
-
 #if QCHEM && QCHEMSF
   printf(" Cannot use both QCHEM and QCHEMSF \n");
   exit(-1);

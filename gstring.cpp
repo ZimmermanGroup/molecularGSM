@@ -277,7 +277,7 @@ void GString::String_Method_Optimization()
   intic.copy_ic(newic);
   int2ic.copy_ic(newic);
 #endif
-
+	
   printf("\n actual IC's \n");
   newic.print_ic();
 

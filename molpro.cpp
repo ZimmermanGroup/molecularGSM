@@ -82,7 +82,7 @@ int Molpro::run()
 			{
 			  string grad_num=StringTools::int2str(i,1,"0");
 				string grad_name= "510"+grad_num+".1";
-				inpfile << "CPMCSCF,GRAD,"<<"record=" << grad_name  << endl;
+				inpfile << "CPMCSCF,GRAD,"<< i<<".1," <<"record=" << grad_name  << endl;
 			}	
 		}
 	else
@@ -91,7 +91,7 @@ int Molpro::run()
 			{
 			  string grad_num=StringTools::int2str(i,1,"0");
 				string grad_name= "510"+grad_num+".1";
-				inpfile << "CPMCSCF,GRAD," << "record="<< grad_name << endl;
+				inpfile << "CPMCSCF,GRAD,"<< i<<".1," << "record="<< grad_name << endl;
 			}	
 		}
 	
@@ -117,7 +117,7 @@ int Molpro::run()
 			{
 			  string grad_num=StringTools::int2str(i,1,"0");
 				string grad_name= "510"+grad_num+".1";
-				inpfile << "{FORCE,SAMC," << grad_name <<";varsav}" << endl;
+				inpfile << "{FORCE;SAMC," << grad_name <<";varsav}" << endl;
 			}
 		}
 	else
@@ -126,7 +126,7 @@ int Molpro::run()
 			{
 			  string grad_num=StringTools::int2str(i,1,"0");
 				string grad_name= "510"+grad_num+".1";
-				inpfile << "{FORCE,SAMC," << grad_name <<";varsav}" << endl;
+				inpfile << "{FORCE;SAMC," << grad_name <<";varsav}" << endl;
 			}
 		}
 
