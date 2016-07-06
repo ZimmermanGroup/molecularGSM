@@ -14,9 +14,10 @@ using namespace std;
 #define MEMORY 400
 #define DIRECT 1
 
-int molpro:run()
+int Molpro::run()
 {
 
+  int runGrad = 1;
   //printf(" beginning Molpro run! \n"); fflush(stdout);
 
 
@@ -75,13 +76,13 @@ int molpro:run()
     //inpfile << "maxiter,40 " << endl;
 
 		// now n is the total number of states to calculate gradients for i.e. wstate
-	if (wstate3=0)
+	if (wstate3==0)
 		{	
 		for (int i=wstate; i<wstate2+1; i++)
 			{
 			  string grad_num=StringTools::int2str(i,1,"0");
-				string grad_name== "510"+grad_num+.1;
-				inpfile << "CPMCSCF,GRAD," << grad_name << " << endl;
+				string grad_name= "510"+grad_num+".1";
+				inpfile << "CPMCSCF,GRAD,"<<"record=" << grad_name  << endl;
 			}	
 		}
 	else
@@ -89,8 +90,8 @@ int molpro:run()
 		for (int i=wstate; i<wstate3+1; i++)
 			{
 			  string grad_num=StringTools::int2str(i,1,"0");
-				string grad_name== "510"+grad_num+.1;
-				inpfile << "CPMCSCF,GRAD," << grad_name << " << endl;
+				string grad_name= "510"+grad_num+".1";
+				inpfile << "CPMCSCF,GRAD," << "record="<< grad_name << endl;
 			}	
 		}
 	
@@ -110,12 +111,12 @@ int molpro:run()
 #endif
 		
 
-	if (wstate3=0)
+	if (wstate3==0)
 		{
 		for (int i=wstate;i<wstate2+1;i++)
 			{
 			  string grad_num=StringTools::int2str(i,1,"0");
-				string grad_name== "510"+grad_num+.1;
+				string grad_name= "510"+grad_num+".1";
 				inpfile << "{FORCE,SAMC," << grad_name <<";varsav}" << endl;
 			}
 		}
@@ -124,7 +125,7 @@ int molpro:run()
 		for (int i=wstate;i<wstate3+1;i++)
 			{
 			  string grad_num=StringTools::int2str(i,1,"0");
-				string grad_name== "510"+grad_num+.1;
+				string grad_name= "510"+grad_num+".1";
 				inpfile << "{FORCE,SAMC," << grad_name <<";varsav}" << endl;
 			}
 		}

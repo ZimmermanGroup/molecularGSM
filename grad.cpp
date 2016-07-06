@@ -490,7 +490,10 @@ void Gradient::read_molpro_settings(int& nstates0, int& nclosed, int& nocc, int&
     printf("  wstate3: %i nstates: %i. exiting \n",wstate3,nstates0);
     exit(1);
   }
-
+ 	
+	mp1.wstate=wstate; 
+	mp1.wstate2=wstate2; 
+	mp1.wstate3=wstate3;
 
   return;
 }
