@@ -356,6 +356,12 @@ void Gradient::write_xyz_grad(double* coords, double* grad, string filename)
 
 int Gradient::read_nstates()
 {
+
+	wstate=1; //default
+	wstate2=0; 
+	wstate3=0; 
+  int nstates0 = 0;
+	
   string filename = "NSTATES";
 
   ifstream infile;
@@ -363,14 +369,28 @@ int Gradient::read_nstates()
   if (!infile)
   {
     printf(" couldn't find NSTATES file \n");
-    exit(1);
+    exit(-1);
   }
 
   string line;
-  int nstates0 = 0;
-  bool success = getline(infile, line);
-  nstates0 = atoi(line.c_str());
+  bool success = true;
+	int nf = 0; 
 
+  while (!infile.eof())
+  {
+    success=getline(infile, line);
+    vector<string> tok_line = StringTools::tokenize(line, " ");
+  	if (nf==0)
+			nstates0 = atoi(tok_line[1].c_str());
+    else if (nf==1)
+    {
+      wstate = atoi(tok_line[1].c_str());
+      if (tok_line.size()>2) wstate2 = atoi(tok_line[2].c_str());
+      if (tok_line.size()>3) wstate3 = atoi(tok_line[3].c_str());
+      printf("  wstate: %i %i %i \n",wstate,wstate2,wstate3);
+		}
+	  nf++; 
+	}  
   infile.close();
 
   if (nstates0>4)
