@@ -46,7 +46,7 @@ int Molpro::run()
 
   inpfile << endl << "basis=" << basis << endl << endl;
 
-  inpfile << "start,2100.2 !read orbitals" << endl;
+  //inpfile << "start,2100.2 !read orbitals" << endl;
 
 #if DIRECT
   inpfile << " direct " << endl;
@@ -97,7 +97,7 @@ int Molpro::run()
 	
     inpfile << "ciguess,2501.2" << endl;
     inpfile << "save,ci=2501.2" << endl;
-    inpfile << "orbital,2100.2 !write orbitals" << endl;
+//    inpfile << "orbital,2100.2 !write orbitals" << endl;
     //inpfile << "{ iterations" << endl;
     //inpfile << " do,diagci,1,to,20 }" << endl; 
 
@@ -143,8 +143,9 @@ int Molpro::run()
 #if !SAFE_MODE
   //printf(" executing molpro \n"); fflush(stdout);
 //  string cmd = "/export/zimmerman/paulzim/Molpro_serial/bin/molpro "+filename;
-  string cmd = "/export/applications/Molpro/2012.1.9/molprop_2012_1_Linux_x86_64_i8/bin/molpro";
+  //string cmd = "/export/applications/Molpro/2012.1.9/molprop_2012_1_Linux_x86_64_i8/bin/molpro";
 //  string cmd = "/export/applications/MolproCopy/2012.1.9/molprop_2012_1_Linux_x86_64_i8/bin/molpro";
+  string cmd = "/export/applications/molproLarge/molprop_2012_1_Linux_x86_64_i8/bin/molpro";
   string nstr = StringTools::int2str(NPROCS,1,"0");
   cmd = cmd + " -W scratch";
   cmd = cmd + " -n " + nstr + " " + filename;

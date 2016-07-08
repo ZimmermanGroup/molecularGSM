@@ -2,12 +2,12 @@
 #define QCHEM_H
 
 #define QCHEM 0
-#define QCHEMSF 0
-#define USE_MOLPRO 1
+#define QCHEMSF 1
+#define USE_MOLPRO 0
 #define USE_ASE 0
 #define USE_GAUSSIAN 0
 #define USE_ORCA 0
-#define THREADS_ON 0
+#define THREADS_ON 1
 #define WRITE_FILES 0
 #define USE_KNNR 0
 #define KNN_K 3

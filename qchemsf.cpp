@@ -3,7 +3,7 @@
 using namespace std;
 
 #define COPY_GRAD 0
-
+#define EOM 1
 //NOTE: .qcin file still in gfstringq.exe directory
 //either change qchem/parallel.csh or cd in
 
@@ -290,6 +290,7 @@ double QChemSF::get_energy()
   { 
     getline(output,line);
 //    cout << " RR " << line << endl;
+#if !EOM
     if (line.find("Total energy in the final basis set")!=string::npos)
     {
       //cout << "  DFT out: " << line << endl;
@@ -303,6 +304,16 @@ double QChemSF::get_energy()
       E[nf] = atof(tok_line[5].c_str());
       nf++;
     }
+#else 
+    if (line.find("Energy read as")!=string::npos)
+    {
+      tok_line = StringTools::tokenize(line, " \t");
+      energy=atof(tok_line[3].c_str());
+      E[nf]=atof(tok_line[3].c_str());
+      nf++;
+    }
+
+#endif
   }
  
   if (abs(energy)<0.00001 || (energy != energy))

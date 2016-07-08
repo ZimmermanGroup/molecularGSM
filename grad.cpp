@@ -227,9 +227,9 @@ int Gradient::external_grad(double* coords, double* grad)
     printf(" copying wfn from mp_%s to mp_%s \n",runNameCopy.c_str(),runName0.c_str());
 
     string cmd = "cp scratch/mp_"+runNameCopy+" scratch/mp_"+runName0;
-	//	printf("temporarily disabling this feature\n");
+		printf("temporarily disabling this feature\n");
     //printf("  via: %s \n",cmd.c_str());
-    system(cmd.c_str());
+   // system(cmd.c_str());
   }
 
   int error = mp1.run(); //grad and energy
