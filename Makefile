@@ -16,7 +16,8 @@ CMD = gfstringq.exe
 # FC = g++ -I$(MKLROOT)/include
 # FC = g++ -g -I$(MKLROOT)/include
 # FC = g++ -fopenmp -g -I$(MKLROOT)/include
-DFLAGS = #-Define the cpp flags to be used
+GIT_VERSION := $(shell git describe --abbrev=4 --dirty --always --tags)
+DFLAGS = DFLAGS = -DVERSION=\"$(GIT_VERSION)\" #-Define the cpp flags to be used
 OFLAGS =  # optimization
 F95ROOT = $(MKLROOT)
 
