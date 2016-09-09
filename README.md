@@ -1,5 +1,7 @@
 ## Overview
-The growing string method is a reaction path and transition state finding method developed in c++. For more information, check out the wiki page:
+The growing string method is a reaction path and transition state finding method developed in c++.
+
+For more information, check out the wiki page:
 https://github.com/ZimmermanGroup/molecularGSM/wiki
 
 Sample tutorial files can be found under the tutorial folder:
@@ -33,15 +35,16 @@ To run gfstringq.exe:
 
 Analysis:
 
-1. stringfile.xyzXXXX contains the reaction path and TS
+1. stringfile.xyz#### contains the reaction path and TS
  --variants on this file w/"g" at the end are growth phase strings
  --"fr" at the end is a partial Hessian analysis, showing the first 3 vibrational modes
  --comment lines are energies relative to first structure in kcal/mol
-2. paragsmXXXX contains the optimization output
+2. paragsm#### contains the optimization output
 3. ./status shows the current state of the various runs
 
 
 Examples in example/ directory:
 
 0007: This is a Diels-Alder reaction. initial0007.xyz contains input for SE-GSM (SSM) or DE-GSM (GSM)
+
 0076: H2 addition to SiH2. initial0076.xyz contains SSM and GSM input.
