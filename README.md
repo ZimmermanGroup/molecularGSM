@@ -7,7 +7,7 @@ https://github.com/ZimmermanGroup/molecularGSM/wiki
 Sample tutorial files can be found under the tutorial folder:
 https://github.com/ZimmermanGroup/molecularGSM/tree/master/tutorial
 
-## Instalation
+## Installation
 To compile:
 
 1. Set FC and LINKERFLAGS in Makefile
