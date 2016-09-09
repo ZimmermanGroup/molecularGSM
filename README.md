@@ -1,6 +1,7 @@
 ## Overview
 The growing string method is a reaction path and transition state finding method developed in c++. For more information, check out the wiki page:
 https://github.com/ZimmermanGroup/molecularGSM/wiki
+
 Sample tutorial files can be found under the tutorial folder:
 https://github.com/ZimmermanGroup/molecularGSM/tree/master/tutorial
 
