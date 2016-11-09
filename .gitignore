@@ -4,3 +4,8 @@
 *.log
 *.txt
 tags
+grad.py
+example.tgz
+gstring.cpp_1
+BUILD/
+TriBITS/
