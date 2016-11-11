@@ -2,7 +2,6 @@
 *.out
 *.exe
 *.log
-*.txt
 tags
 grad.py
 example.tgz
