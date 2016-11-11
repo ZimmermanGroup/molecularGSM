@@ -3,7 +3,7 @@
 #
 IF("${REPOSITORY_NAME}" STREQUAL "")
     # Need to set the repository name
-    SET(REPOSITORY_NAME mjafari_HW2)
+    SET(REPOSITORY_NAME molecularGSM)
 ENDIF()
 
 # Version info
