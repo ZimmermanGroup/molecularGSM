@@ -1,3 +1,3 @@
 TRIBITS_REPOSITORY_DEFINE_PACKAGES(
-    GSM_src  gsm  PT
+      gsm  GSM_src PT
   )

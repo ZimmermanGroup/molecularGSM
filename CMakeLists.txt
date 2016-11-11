@@ -22,15 +22,13 @@ SET(${PROJECT_NAME}_USES_PYTHON TRUE)
 
 #CMake still requires the PROJECT be defined in the top level CMakeLists.txt file
 PROJECT(${PROJECT_NAME} NONE)
-enable_language(CXX C)
-#find_package(MKL)
-
+SET(${PROJECT_NAME}_ENABLE_gsm ON CACHE BOOL "")
 
 #
 #Pull in TriBITS for the project
 #
 SET(${PROJECT_NAME}_TRIBITS_DIR
-"${CMAKE_CURRENT_SOURCE_DIR}/cmake/TriBITS/tribits"
+"${CMAKE_CURRENT_SOURCE_DIR}/cmake/tribits"
   CACHE PATH "" )
 #MESSAGE(STATUS "${PROJECT_NAME}_TRIBITS_DIR - '${${PROJECT_NAME}_TRIBITS_DIR}'")
 INCLUDE (${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake)
