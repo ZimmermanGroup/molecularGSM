@@ -7,8 +7,10 @@ CMAKE_MINIMUM_REQUIRED(VERSION ${GSM_TRIBITS_CMAKE_MINIMUM_REQUIRED})
 INCLUDE(${CMAKE_SOURCE_DIR}/ProjectName.cmake)
 
 #Include the source directory
-include_directories("${PROJECT_SOURCE_DIR}")
+include_directories(${PROJECT_SOURCE_DIR})
+#include_directories("${PROJECT_SOURCE_DIR}/GSM_src")
 
+MESSAGE( STATUS "!!!!!!!!!!!CMAKE_SOURCE:         " ${PROJECT_SOURCE_DIR} )
 #Indicate to TriBITS that we might use Python
 SET(${PROJECT_NAME}_USES_PYTHON TRUE)
 
@@ -23,6 +25,7 @@ SET(${PROJECT_NAME}_USES_PYTHON TRUE)
 #CMake still requires the PROJECT be defined in the top level CMakeLists.txt file
 PROJECT(${PROJECT_NAME} NONE)
 SET(${PROJECT_NAME}_ENABLE_gsm ON CACHE BOOL "")
+SET(TPL_ENABLE_MPI ON )
 
 #
 #Pull in TriBITS for the project
@@ -32,6 +35,17 @@ SET(${PROJECT_NAME}_TRIBITS_DIR
   CACHE PATH "" )
 #MESSAGE(STATUS "${PROJECT_NAME}_TRIBITS_DIR - '${${PROJECT_NAME}_TRIBITS_DIR}'")
 INCLUDE (${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake)
+
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+find_package(MKL REQUIRED)
+include_directories(${MKL_INCLUDE_DIRS})
+link_directories(${MKL_LIBRARIES})
+target_link_libraries(<module>
+    mkl_intel_lp64
+    mkl_sequential
+    mkl_core
+)
+
 
 #
 #Process the TriBITS Project

@@ -1,3 +1,5 @@
+#include <fstream>
+#include <string>
 #if 0
   ofstream grad_file;
   string grad_file_string = "grad_file.txt";
@@ -35,8 +37,8 @@
   Vfile_kcal << setprecision(6);
 #endif
 
-  ofstream SVfile;
-  string newSVfile;
-  SVfile.setf(ios::fixed);
-  SVfile.setf(ios::left);
-  SVfile << setprecision(6);
+  std::ofstream SVfile;
+  std::string newSVfile;
+  //SVfile.setf(ios::fixed); TODO
+  //SVfile.setf(ios::left);
+  //SVfile << setprecision(6);

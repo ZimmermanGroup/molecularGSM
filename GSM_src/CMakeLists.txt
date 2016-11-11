@@ -1,11 +1,14 @@
 TRIBITS_PACKAGE(gsm)
-TRIBITS_ADD_EXECUTABLE(
-gfstringq
-SOURCES
-  *.cpp
-HEADERS
-  *.h
+
+file(GLOB GSM_SRC
+    "*.h"
+    "*.cpp"
+)
+
+#SET(GSM_SRC GLOB *.cpp *.h)
+ADD_EXECUTABLE(
+gfstringq ${GSM_SRC}
 )
 TRIBITS_PACKAGE_POSTPROCESS()
- 
+
 #SET(GSM_SOURCES GLOB *.cpp)
