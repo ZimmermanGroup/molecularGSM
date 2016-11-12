@@ -10,7 +10,6 @@ INCLUDE(${CMAKE_SOURCE_DIR}/ProjectName.cmake)
 include_directories(${PROJECT_SOURCE_DIR})
 #include_directories("${PROJECT_SOURCE_DIR}/GSM_src")
 
-MESSAGE( STATUS "!!!!!!!!!!!CMAKE_SOURCE:         " ${PROJECT_SOURCE_DIR} )
 #Indicate to TriBITS that we might use Python
 SET(${PROJECT_NAME}_USES_PYTHON TRUE)
 
@@ -33,19 +32,9 @@ SET(TPL_ENABLE_MPI ON )
 SET(${PROJECT_NAME}_TRIBITS_DIR
 "${CMAKE_CURRENT_SOURCE_DIR}/cmake/tribits"
   CACHE PATH "" )
-#MESSAGE(STATUS "${PROJECT_NAME}_TRIBITS_DIR - '${${PROJECT_NAME}_TRIBITS_DIR}'")
 INCLUDE (${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-
-#include_directories(${MKL_INCLUDE_DIRS})
-#link_directories(${MKL_LIBRARIES})
-#target_link_libraries(<module>
-#    mkl_intel_lp64
-#    mkl_sequential
-#    mkl_core
-#)
-
 
 #
 #Process the TriBITS Project
