@@ -37,14 +37,14 @@ SET(${PROJECT_NAME}_TRIBITS_DIR
 INCLUDE (${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-find_package(MKL REQUIRED)
-include_directories(${MKL_INCLUDE_DIRS})
-link_directories(${MKL_LIBRARIES})
-target_link_libraries(<module>
-    mkl_intel_lp64
-    mkl_sequential
-    mkl_core
-)
+
+#include_directories(${MKL_INCLUDE_DIRS})
+#link_directories(${MKL_LIBRARIES})
+#target_link_libraries(<module>
+#    mkl_intel_lp64
+#    mkl_sequential
+#    mkl_core
+#)
 
 
 #

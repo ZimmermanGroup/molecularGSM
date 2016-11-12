@@ -1,3 +1,3 @@
 TRIBITS_REPOSITORY_DEFINE_TPLS(
-	MKL cmake   PT
+	MKL cmake/TPLS   PT
   )
