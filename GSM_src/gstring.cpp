@@ -170,7 +170,7 @@ void GString::String_Method_Optimization()
   //printf(" get_eigen_finite uses Bmat prim \n");
   printf(" END NOTICES \n\n");
 
-  #include "savefile.cpp"
+  //#include "savefile.cpp"
 
   for (int i=0;i<nnmax;i++)
     active[i] = -1;
