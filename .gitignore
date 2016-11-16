@@ -4,3 +4,5 @@
 *.log
 *.txt
 tags
+TriBITS/
+BUILD/
