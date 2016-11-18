@@ -1,5 +1,4 @@
 *.o
-*.out
 *.exe
 *.log
 tags
@@ -10,10 +9,10 @@ BUILD/
 TriBITS/
 getOptEnergy
 makeXYZ
-*.e*
-*.o*
 *.qsh
 gfstringq.exe
+*.qsh.*
+gscreate
 qmaked
 qmakeg
 reset
