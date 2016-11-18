@@ -7,7 +7,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION ${GSM_TRIBITS_CMAKE_MINIMUM_REQUIRED})
 INCLUDE(${CMAKE_SOURCE_DIR}/ProjectName.cmake)
 
 #Include the source directory
-include_directories(${PROJECT_SOURCE_DIR})
+#include_directories(${PROJECT_SOURCE_DIR})
 #include_directories("${PROJECT_SOURCE_DIR}/GSM_src")
 
 #Indicate to TriBITS that we might use Python
@@ -40,4 +40,6 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 #Process the TriBITS Project
 #
 TRIBITS_PROJECT()
+
+ADD_SUBDIRECTORY(TEST)
 

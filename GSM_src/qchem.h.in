@@ -1,12 +1,12 @@
 #ifndef QCHEM_H
 #define QCHEM_H
 
-#define QCHEM 0
-#define QCHEMSF 0
-#define USE_MOLPRO 0
-#define USE_ASE 0
-#define USE_GAUSSIAN 0
-#define USE_ORCA 0
+#define QCHEM ${GSM_ENABLE_QCHEM}
+#define QCHEMSF ${GSM_ENABLE_QCHEM_SF}
+#define USE_MOLPRO ${GSM_ENABLE_QCHEM_MOLPRO}
+#define USE_ASE ${GSM_ENABLE_ASE}
+#define USE_GAUSSIAN ${GSM_ENABLE_GAUSSIAN}
+#define USE_ORCA ${GSM_ENABLE_ORCA}
 #define THREADS_ON 0
 #define WRITE_FILES 0
 #define USE_KNNR 0

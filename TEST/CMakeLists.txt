@@ -1,0 +1,27 @@
+FUNCTION(GFSTRINGQ_TEST DIRNAME)
+
+TRIBITS_ADD_ADVANCED_TEST(
+	OVERALL_WORKING_DIRECTORY
+		$DIRNAME
+	TIMEOUT 3600
+	OVERALL_NUM_TOTAL_CORES_USED 1
+	CATEGORIES BASIC
+	COMM mpi #need to change probably
+	TEST_0
+		CMND cp 
+		ARGS 	
+	TEST_1
+		CMND gfstring
+		ARGS 1 1
+		#PASS_REGULAR_EXPRESSION
+		#"1 1 gfstringq"
+	TEST_2
+		CMND echo
+		ARGS hello
+		PASS_REGULAR
+)
+ENDFUNCTION()
+
+MESSAGE(gfstringq_EXE ${gfstringq_EXE})
+#not defined
+GFSTRINGQ_TEST(ethyleneRotation/qchem/de-gsm)

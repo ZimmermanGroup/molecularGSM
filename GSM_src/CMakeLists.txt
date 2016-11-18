@@ -1,6 +1,21 @@
 TRIBITS_PACKAGE(gsm)
 
+if(NOT DEFINED GSM_ENABLE_QCHEM)
+	SET(GSM_ENABLE_QCHEM 0)
+endif()
+SET(GSM_ENABLE_QCHEM_SF 0)
+SET(GSM_ENABLE_QCHEM_MOLPRO 0)
+SET(GSM_ENABLE_ASE 0)
+SET(GSM_ENABLE_GAUSSIAN 0)
+SET(GSM_ENABLE_ORCA 0)
+
+CONFIGURE_FILE(
+	"${CMAKE_CURRENT_SOURCE_DIR}/qchem.h.in"
+	"${CMAKE_CURRENT_BINARY_DIR}/qchem.h"
+	)
+
 file(GLOB GSM_SRC
+		"qchem.h"
     "*.h"
     "*.cpp"
 )
@@ -9,6 +24,8 @@ file(GLOB GSM_SRC
 find_package(MKL REQUIRED)
 include_directories(${MKL_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${MKL_LIBRARIES})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 ADD_EXECUTABLE(gfstringq ${GSM_SRC})
 #ADD_EXECUTABLE(gfstringq)
