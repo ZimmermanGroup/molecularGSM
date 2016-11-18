@@ -9,19 +9,19 @@ TRIBITS_ADD_ADVANCED_TEST(
 	COMM mpi #need to change probably
 	TEST_0
 		CMND cp 
-		ARGS 	
-	TEST_1
-		CMND gfstring
-		ARGS 1 1
-		#PASS_REGULAR_EXPRESSION
-		#"1 1 gfstringq"
-	TEST_2
-		CMND echo
-		ARGS hello
-		PASS_REGULAR
+		ARGS 	${PROJECT_BINARY_DIR}/${PROJECT_NAME}/gfstringq $DIRNAME 
+#	TEST_1
+#		CMND gfstring
+#		ARGS 1 1
+#		#PASS_REGULAR_EXPRESSION
+#		#"1 1 gfstringq"
+#	TEST_2
+#		CMND echo
+#		ARGS hello
+#		PASS_REGULAR
 )
 ENDFUNCTION()
 
-MESSAGE(gfstringq_EXE ${gfstringq_EXE})
+MESSAGE(print ${PROCECT_BINARY_DIR}/${PROJECT_NAME})
 #not defined
 GFSTRINGQ_TEST(ethyleneRotation/qchem/de-gsm)

@@ -27,7 +27,7 @@ set(LIBS ${LIBS} ${MKL_LIBRARIES})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-ADD_EXECUTABLE(gfstringq ${GSM_SRC})
+ADD_EXECUTABLE(gfstringq ${GSM_SRC} )
 #ADD_EXECUTABLE(gfstringq)
 target_link_libraries(gfstringq ${LIBS})
 TRIBITS_PACKAGE_POSTPROCESS()
