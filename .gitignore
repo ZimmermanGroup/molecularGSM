@@ -14,10 +14,7 @@ makeXYZ
 *.o*
 *.qsh
 gfstringq.exe
-gscreate
-qend
 qmaked
 qmakeg
-qstart
 reset
 status

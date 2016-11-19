@@ -24,7 +24,8 @@ SET(${PROJECT_NAME}_USES_PYTHON TRUE)
 #CMake still requires the PROJECT be defined in the top level CMakeLists.txt file
 PROJECT(${PROJECT_NAME} NONE)
 SET(${PROJECT_NAME}_ENABLE_gsm ON CACHE BOOL "")
-SET(TPL_ENABLE_MPI ON )
+#SET(${PACKAGE_NAME}_ENABLE_TESTS ON)
+SET(TPL_ENABLE_MPI OFF )
 
 #
 #Pull in TriBITS for the project

@@ -1,27 +1,37 @@
-FUNCTION(GFSTRINGQ_TEST DIRNAME)
+MESSAGE(STATUS "exe = gfstringq${${PROJECT_NAME}_CMAKE_EXECUTABLE_SUFFIX}")
+MESSAGE(STATUS "location = ${PROJECT_BINARY_DIR}/${PROJECT_NAME}")
+MESSAGE(STATUS "test location = ${CMAKE_CURRENT_BINARY_DIR}")
 
-TRIBITS_ADD_ADVANCED_TEST(
-	OVERALL_WORKING_DIRECTORY
-		$DIRNAME
-	TIMEOUT 3600
-	OVERALL_NUM_TOTAL_CORES_USED 1
-	CATEGORIES BASIC
-	COMM mpi #need to change probably
+
+# DIRNAME is where input files are kept
+# ROOT Name is the specific folder for test
+FUNCTION(GFSTRINGQ_TEST DIRNAME ROOT_NAME)
+
+	#copy input files to the testing folder
+	file(COPY ${DIRNAME}${ROOT_NAME} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}${ROOT_NAME})
+
+	TRIBITS_ADD_ADVANCED_TEST(
+	gfstringq NOEXEPREFIX 
 	TEST_0
-		CMND cp 
-		ARGS 	${PROJECT_BINARY_DIR}/${PROJECT_NAME}/gfstringq $DIRNAME 
-#	TEST_1
-#		CMND gfstring
-#		ARGS 1 1
-#		#PASS_REGULAR_EXPRESSION
-#		#"1 1 gfstringq"
-#	TEST_2
-#		CMND echo
-#		ARGS hello
-#		PASS_REGULAR
-)
+		# the execution command
+		EXEC gfstringq NOEXEPREFIX 
+		# where the executable is
+		DIRECTORY ${PROJECT_BINARY_DIR}/${PROJECT_NAME}
+		# where it executes
+		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}${ROOT_NAME}
+		# don't clean it because we copied things there that it needs
+		SKIP_CLEAN_WORKING_DIRECTORY
+		# the args for gstringq
+		ARGS 1 1
+		# where the output should go
+		OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}${ROOT_NAME}scratch/paragsm000new
+		TIMEOUT 3600
+		NUM_TOTAL_CORES_USED 1
+		CATEGORIES BASIC
+		COMM serial
+	)
 ENDFUNCTION()
+#call the function
+GFSTRINGQ_TEST(${CMAKE_CURRENT_SOURCE_DIR} /ethyleneRotation/qchem/de-gsm/)
 
-MESSAGE(print ${PROCECT_BINARY_DIR}/${PROJECT_NAME})
-#not defined
-GFSTRINGQ_TEST(ethyleneRotation/qchem/de-gsm)
+
