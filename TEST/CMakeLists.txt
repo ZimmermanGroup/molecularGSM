@@ -22,16 +22,25 @@ FUNCTION(GFSTRINGQ_TEST DIRNAME ROOT_NAME)
 		# don't clean it because we copied things there that it needs
 		SKIP_CLEAN_WORKING_DIRECTORY
 		# the args for gstringq
-		ARGS 1 1
+		ARGS 1 4
 		# where the output should go
-		OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}${ROOT_NAME}scratch/paragsm000new
-		TIMEOUT 3600
-		NUM_TOTAL_CORES_USED 1
+		OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}${ROOT_NAME}scratch/paragsm000_321g
+		TIMEOUT 10000
+		NUM_TOTAL_CORES_USED 4
 		CATEGORIES BASIC
 		COMM serial
 	)
 ENDFUNCTION()
 #call the function
-GFSTRINGQ_TEST(${CMAKE_CURRENT_SOURCE_DIR} /ethyleneRotation/qchem/de-gsm/)
+#GFSTRINGQ_TEST(${CMAKE_CURRENT_SOURCE_DIR} /ethyleneRotation/qchem/de-gsm/)
 
+if(GSM_ENABLE_QCHEM)
+	GFSTRINGQ_TEST(${CMAKE_CURRENT_SOURCE_DIR} /dielsAlder/qchem/de-gsm/)
+elseif(GSM_ENABLE_GAUSSIAN)
+	GFSTRINGQ_TEST(${CMAKE_CURRENT_SOURCE_DIR} /dielsAlder/gaussian/de-gsm/)
+elseif(GSM_ENABLE_ORCA)
+	GFSTRINGQ_TEST(${CMAKE_CURRENT_SOURCE_DIR} /dielsAlder/orca/de-gsm/)
+else
+	GFSTRINGQ_TEST(${CMAKE_CURRENT_SOURCE_DIR} /dielsAlder/mopac/de-gsm/)
+endif()
 
