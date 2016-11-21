@@ -1,37 +1,37 @@
 # Use this Makefile with make
 
 # Executable name
-#CMD = test/gfstringq.exe
 CMD = gfstringq.exe
 
 # -------- description of DFLAGS ---------------
-
 
 # -------- Define environmental variable C_COMPILER -----------
 # Make sure it is defined
 #          ifeq ($(strip$(FORTRAN_COMPILER)),)
 # Otherwise you can define it here also by uncommenting next line
- FC = icpc -openmp -I$(MKLROOT)/include
-# FC = g++ -fopenmp -I$(MKLROOT)/include
-# FC = g++ -I$(MKLROOT)/include
-# FC = g++ -g -I$(MKLROOT)/include
-# FC = g++ -fopenmp -g -I$(MKLROOT)/include
+#FC = icpc -openmp -I$(MKLROOT)/include
+FC = g++ -fopenmp -I$(MKLROOT)/include
+
 GIT_VERSION := $(shell git describe --abbrev=4 --dirty --always --tags)
-DFLAGS = DFLAGS = -DVERSION=\"$(GIT_VERSION)\" #-Define the cpp flags to be used
+
+
+DFLAGS = -DVERSION=\"$(GIT_VERSION)\"
 OFLAGS =  # optimization
 F95ROOT = $(MKLROOT)
 
 #Intel Linkers
+
 #LINKERFLAGS =  -L$(MKLROOT)/lib/em64t $(F95ROOT)/lib/em64t/libmkl_lapack95_lp64.a -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm
+
 #Intel parallel openmp (only w/icpc compiler)
 #LINKERFLAGS =  -L$(MKLROOT)/lib/em64t -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -lpthread -lm
-LINKERFLAGS =  -L$(MKLROOT)/lib/intel64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -lpthread -lm
+
+# this one works for icpc
+#LINKERFLAGS =  -L$(MKLROOT)/lib/intel64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -lpthread -lm
 # MAC OS linkers
 #LINKERFLAGS = -lm -framework Accelerate
-
-
-OFLAGS =  # optimization
-
+# this one works with g++
+LINKERFLAGS =  -Wl,--no-as-needed -L${MKLROOT}/lib/intel64 -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lpthread -lm
 
 
 #
