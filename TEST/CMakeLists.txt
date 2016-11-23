@@ -5,10 +5,11 @@ MESSAGE(STATUS "test location = ${CMAKE_CURRENT_BINARY_DIR}")
 
 # DIRNAME is where input files are kept
 # ROOT Name is the specific folder for test
-FUNCTION(GFSTRINGQ_TEST DIRNAME ROOT_NAME)
+FUNCTION(GFSTRINGQ_TEST ROOT_NAME)
 
+	MESSAGE(STATUS "ROOTNAME =${ROOT_NAME}")
 	#copy input files to the testing folder
-	file(COPY ${DIRNAME}${ROOT_NAME} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}${ROOT_NAME})
+	file(COPY ${CMAKE_CURRENT_SOURCE_DIR}${ROOT_NAME} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}${ROOT_NAME})
 
 	TRIBITS_ADD_ADVANCED_TEST(
 	gfstringq NOEXEPREFIX 
@@ -35,12 +36,12 @@ ENDFUNCTION()
 #GFSTRINGQ_TEST(${CMAKE_CURRENT_SOURCE_DIR} /ethyleneRotation/qchem/de-gsm/)
 
 if(GSM_ENABLE_QCHEM)
-	GFSTRINGQ_TEST(${CMAKE_CURRENT_SOURCE_DIR} /dielsAlder/qchem/de-gsm/)
+	GFSTRINGQ_TEST(/dielsAlder/qchem/de-gsm/)
 elseif(GSM_ENABLE_GAUSSIAN)
-	GFSTRINGQ_TEST(${CMAKE_CURRENT_SOURCE_DIR} /dielsAlder/gaussian/de-gsm/)
+	GFSTRINGQ_TEST(/dielsAlder/gaussian/de-gsm/)
 elseif(GSM_ENABLE_ORCA)
-	GFSTRINGQ_TEST(${CMAKE_CURRENT_SOURCE_DIR} /dielsAlder/orca/de-gsm/)
-else
-	GFSTRINGQ_TEST(${CMAKE_CURRENT_SOURCE_DIR} /dielsAlder/mopac/de-gsm/)
+	GFSTRINGQ_TEST(/dielsAlder/orca/de-gsm/)
+else()
+	GFSTRINGQ_TEST(/dielsAlder/mopac/de-gsm/)
 endif()
 
