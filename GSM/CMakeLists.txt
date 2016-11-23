@@ -26,7 +26,7 @@ CONFIGURE_FILE(
 	)
 
 file(GLOB GSM_SRC
-		"qchem.h"
+	"qchem.h"
     "*.h"
     "*.cpp"
 )
