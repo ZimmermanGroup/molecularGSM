@@ -44,3 +44,9 @@ TRIBITS_ADD_EXECUTABLE(gfstringq NOEXEPREFIX SOURCES ${GSM_SRC} IMPORTEDLIBS ${L
 #ADD_EXECUTABLE(gfstringq)
 #target_link_libraries(gfstringq ${LIBS})
 TRIBITS_PACKAGE_POSTPROCESS()
+
+#add_custom_command(TARGET gfstringq POST_BUILD
+#    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_BINARY_DIR}/${PROJECT_NAME}/gfstringq.exe 
+#    ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_DIR}/
+#    COMMENT "************Cpoying ....."
+#    )
