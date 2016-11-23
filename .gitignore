@@ -13,7 +13,6 @@ makeXYZ
 *.qsh
 gfstringq.exe
 *.qsh.*
-gscreate
 qmaked
 qmakeg
 reset
