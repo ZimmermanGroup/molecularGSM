@@ -18,3 +18,5 @@ qmaked
 qmakeg
 reset
 status
+tmp/
+r

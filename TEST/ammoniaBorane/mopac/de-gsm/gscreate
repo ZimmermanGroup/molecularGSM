@@ -1,0 +1,16 @@
+#!/bin/bash
+
+file=molecule
+
+#nl $file > tmp.mole
+#nl link > tmp.link
+#join tmp.mole tmp.link > tmp.geom2
+#awk '{ print $2"\t"$3"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9"\t"$10 }' tmp.geom2 > tmp.geom
+
+#cat qstart tmp.geom qend > qcin
+#cat qstart molecule$1 qend > scratch/qcin$1
+cat qstart $QCSCRATCH/molecule$1 qend > $QCSCRATCH/qcin$1
+
+#rm tmp.geom tmp.geom2 tmp.link tmp.mole
+
+
