@@ -1,6 +1,6 @@
 TRIBITS_PACKAGE(gsm)
 
-# enable the QM method that GSM will use for energies and gradients
+# setting different energy calculators that GSM will use
 if(NOT DEFINED GSM_ENABLE_QCHEM)
 	SET(GSM_ENABLE_QCHEM 0)
 endif()
@@ -25,28 +25,20 @@ CONFIGURE_FILE(
 	"${CMAKE_CURRENT_BINARY_DIR}/qchem.h"
 	)
 
+# source files
 file(GLOB GSM_SRC
 	"qchem.h"
     "*.h"
     "*.cpp"
 )
 
-#set(MKL_USE_STATIC_LIBS ON)
+# set up libraries
 find_package(MKL REQUIRED)
 include_directories(${MKL_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${MKL_LIBRARIES})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-#ADD_EXECUTABLE(gfstringq ${GSM_SRC})
-#TRIBITS_ADD_EXECUTABLE(gfstringq  NOEXEPREFIX ADD_DIR_TO_NAME SOURCES ${GSM_SRC} IMPORTEDLIBS ${LIBS})
-TRIBITS_ADD_EXECUTABLE(gfstringq NOEXEPREFIX SOURCES ${GSM_SRC} IMPORTEDLIBS ${LIBS})
-#ADD_EXECUTABLE(gfstringq)
-#target_link_libraries(gfstringq ${LIBS})
+# set target name
+TRIBITS_ADD_EXECUTABLE(${TARGET_NAME} NOEXEPREFIX SOURCES ${GSM_SRC} IMPORTEDLIBS ${LIBS})
 TRIBITS_PACKAGE_POSTPROCESS()
-
-#add_custom_command(TARGET gfstringq POST_BUILD
-#    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_BINARY_DIR}/${PROJECT_NAME}/gfstringq.exe 
-#    ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_DIR}/
-#    COMMENT "************Cpoying ....."
-#    )
