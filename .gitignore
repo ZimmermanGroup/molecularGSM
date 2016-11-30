@@ -20,3 +20,6 @@ reset
 status
 tmp/
 r
+fort*
+mxyzfile*
+test_output
