@@ -26,16 +26,37 @@ FUNCTION(GFSTRINGQ_TEST TEST_DIR)
         ARGS 1 4
         # where it executes
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_DIR}
+        SKIP_CLEAN_WORKING_DIRECTORY
+        OUTPUT_FILE
+        ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_DIR}/scratch/test_output
+        NO_ECHO_OUTPUT
+        PASS_ANY
+
+    TEST_1
+        MESSAGE "-- Comparing output in
+        ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_DIR}"
+        # the execution command
+        CMND python
+        # the args for CMND
+        ARGS compare.py
+        # where it executes
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_DIR}
+        SKIP_CLEAN_WORKING_DIRECTORY
+        # where the output should go
+        #OUTPUT_FILE
+        #${CMAKE_CURRENT_SOURCE_DIR}/${TEST_DIR}/scratch/test_output
+        #NO_ECHO_OUTPUT
+
+        FAIL_FAST
         # don't clean it because we copied things there that it needs
         SKIP_CLEAN_WORKING_DIRECTORY
         # where the output should go
-        OUTPUT_FILE
-        ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_DIR}/scratch/test_output
-        TIMEOUT 600
+        TIMEOUT 10000
         FAIL_FAST
         NUM_TOTAL_CORES_USED 4
         CATEGORIES BASIC
         COMM mpi
+
 	)
 ENDFUNCTION()
 
@@ -43,7 +64,7 @@ ENDFUNCTION()
 if(GSM_ENABLE_QCHEM)
     MESSAGE(STATUS "QCHEM is enabled.")
 	GFSTRINGQ_TEST(alanineDipeptideIsomerization/qchem/de-gsm)
-	GFSTRINGQ_TEST(ammoniumBorane/qchem/de-gsm)
+	GFSTRINGQ_TEST(ammoniaBorane/qchem/de-gsm)
 	GFSTRINGQ_TEST(dielsAlder/qchem/de-gsm)
 	GFSTRINGQ_TEST(ethyleneRotation/qchem/de-gsm)
 	GFSTRINGQ_TEST(methanolFormaldehydeHydTransfer/qchem/de-gsm)
@@ -51,7 +72,7 @@ if(GSM_ENABLE_QCHEM)
 elseif(GSM_ENABLE_GAUSSIAN)
     MESSAGE(STATUS "GAUSSIAN is enabled.")
 	GFSTRINGQ_TEST(alanineDipeptideIsomerization/gaussian/de-gsm)
-	GFSTRINGQ_TEST(ammoniumBorane/gaussian/de-gsm)
+	GFSTRINGQ_TEST(ammoniaBorane/gaussian/de-gsm)
 	GFSTRINGQ_TEST(dielsAlder/gaussian/de-gsm)
 	GFSTRINGQ_TEST(ethyleneRotation/gaussian/de-gsm)
 	GFSTRINGQ_TEST(methanolFormaldehydeHydTransfer/gaussian/de-gsm)
@@ -59,7 +80,7 @@ elseif(GSM_ENABLE_GAUSSIAN)
 elseif(GSM_ENABLE_ORCA)
     MESSAGE(STATUS "ORCA is enabled.")
 	GFSTRINGQ_TEST(alanineDipeptideIsomerization/orca/de-gsm)
-	GFSTRINGQ_TEST(ammoniumBorane/orca/de-gsm)
+	GFSTRINGQ_TEST(ammoniaBorane/orca/de-gsm)
 	GFSTRINGQ_TEST(dielsAlder/orca/de-gsm)
 	GFSTRINGQ_TEST(ethyleneRotation/orca/de-gsm)
 	GFSTRINGQ_TEST(methanolFormaldehydeHydTransfer/orca/de-gsm)
@@ -67,7 +88,7 @@ elseif(GSM_ENABLE_ORCA)
 else()
     MESSAGE(STATUS "MOPAC is enabled.")
     GFSTRINGQ_TEST(alanineDipeptideIsomerization/mopac/de-gsm)
-    GFSTRINGQ_TEST(ammoniumBorane/mopac/de-gsm)
+    GFSTRINGQ_TEST(ammoniaBorane/mopac/de-gsm)
 	GFSTRINGQ_TEST(dielsAlder/mopac/de-gsm)
     GFSTRINGQ_TEST(ethyleneRotation/mopac/de-gsm)
     GFSTRINGQ_TEST(methanolFormaldehydeHydTransfer/mopac/de-gsm)
