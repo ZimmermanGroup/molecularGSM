@@ -43,8 +43,8 @@ FUNCTION(GFSTRINGQ_TEST TEST_DIR)
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_DIR}
         SKIP_CLEAN_WORKING_DIRECTORY
         # where the output should go
-        #OUTPUT_FILE
-        #${CMAKE_CURRENT_SOURCE_DIR}/${TEST_DIR}/scratch/test_output
+        OUTPUT_FILE
+        ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_DIR}/scratch/compare_output
         #NO_ECHO_OUTPUT
 
         FAIL_FAST

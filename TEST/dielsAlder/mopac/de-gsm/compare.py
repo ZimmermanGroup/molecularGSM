@@ -14,9 +14,12 @@ def subtractFloat(number1, number2):
         pass
 
 def main():
-    standard = csv.reader(open('stringfile.standard', 'r'), delimiter=' ')
-    currentOutput = csv.reader(open('stringfile.xyz0001', 'r'), delimiter=' ')
-
+    try:
+        standard = csv.reader(open('stringfile.standard', 'r'), delimiter=' ')
+        currentOutput = csv.reader(open('stringfile.xyz0001', 'r'), delimiter=' ')
+    except IOError:
+        print("Error: File cannot be found!")
+        return 1
     for rowStd, rowOut in zip(standard, currentOutput):
         rowStd = filter(None, rowStd)
         rowOut = filter(None, rowOut)
@@ -24,6 +27,7 @@ def main():
             if ((subtractFloat(valStd, valOut)) > 0.001):
                 print ((subtractFloat(valStd, valOut)))
                 return 2
+    return 0
 
 if __name__ == "__main__":
     main()
