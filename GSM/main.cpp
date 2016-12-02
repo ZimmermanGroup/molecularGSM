@@ -1,5 +1,4 @@
 /*!
- * @image html project_logo.png
  * \mainpage Growing String Method
  *
  * The Growing String Method (GSM) is a reaction path (RP) and transition state (TS) finding tool.
@@ -75,6 +74,28 @@ int main(int argc, char* argv[]){
 }
 
 
-//! \page handle MyPage
-  //! text in MyPage
+/*! \page page1 Double-Ended 
+ *   \tableofcontents
+ *       \section sec Description
+ *     		The DE GSM grows and optimizes a string of molecular geometries called nodes between a reactant and product pair. 
+ *     		This is done in two phases called the growth and optimization phase. 
+ *     		Once the string is sufficiently optimized and is behaving, the node with the highest energy is optimized to the exact
+ *     		transition state using climbing image and an exact eigenvector optimization. 
+ *     		The main driver for DE and SE, growth and optimization is the GString#String_Method_Optimization
+ *          \subsection subsection1 Growth Phase
+ *          		The growth phase begins in GString#starting_string which calls GString#get_tangents that forms 
+ *          		an internal coordinate tangent vector connecting the reactant and product.
+ *          		This tangent vector is a linear interpolation vector connecting the pair.
+ *          		In the growth phase the tangent vectors are referenced to left and right respectively. 
+ *              Then starting_string grows two nodes, one on the reactant side and one on the product side 
+ *              along the tangent vectors. 
+ *              
+ *           \subsection subsection2 Optimization Phase
+ *                More text.
+ *             */
+/*! \page page2 Single-Ended
+ *   Even more info.
+ *        For more info see page \ref page1.
+ *   */
+	
 

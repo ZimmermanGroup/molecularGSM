@@ -17,14 +17,19 @@ This code can be built using CMake. To do so:
 ```bash
     $ git clone git@github.com:ZimmermanGroup/molecularGSM.git
 ```
+4. Clone TriBITS repository
+```bash
+	 $ git clone https://github.com/TriBITSPub/TriBITS.git
+```
 
-4. Create a BUILD directory at the same level as GSM
+
+5. Create a BUILD directory at the same level as GSM
 ```bash
     $ cd molecularGSM
     $ mkdir BUILD
     $ cd BUILD
 ```
-5. Configure using CMake
+6. Configure using CMake
     $ cmake -D GSM_ENABLE_QCHEM=1 ../
     - other options:
         - GSM_ENABLE_QCHEM_SF=1
@@ -33,10 +38,10 @@ This code can be built using CMake. To do so:
         - GSM_ENABLE_MOLPRO=1
         - GSM_ENABLE_ASE=1
     - If no option is specified, the code will use MOPAC as its energy calculator. Check mopac.cpp to make sure charge/multiplicity is correct, since that is hardcoded.
-6. After successful configuration. To compile:
+7. After successful configuration. To compile:
     
     $make -j8
 
-7. An executable named "gfstringq.exe" will be created in BUILD/GSM directory.
+8. An executable named "gfstringq.exe" will be created in BUILD/GSM directory.
 
 To run gfstringq.exe, copy the executable to the working directory (where the input files are) or create a symbolic link to it in the working directory.

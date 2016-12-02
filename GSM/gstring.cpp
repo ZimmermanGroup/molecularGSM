@@ -989,7 +989,9 @@ int GString::isomer_init(string isofilename)
   return nfound;
 }
 
-
+/**
+ * initializes starting variables related to the string.xyz file, ISOMERS file, nprocs, etc.
+ */
 void GString::init(string infilename, int run, int nprocs){
   //  name_selector();
   cout <<"***** Starting Initialization *****" << endl;
@@ -1254,6 +1256,7 @@ void GString::parameter_init(string infilename)
 
   printf(" Done reading inpfileq \n\n");
 }
+
 
 void GString::structure_init(string xyzfile)
 {
