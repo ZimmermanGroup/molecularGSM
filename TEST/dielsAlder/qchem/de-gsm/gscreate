@@ -12,5 +12,3 @@ file=molecule
 cat qstart $QCSCRATCH/molecule$1 qend > $QCSCRATCH/qcin$1
 
 #rm tmp.geom tmp.geom2 tmp.link tmp.mole
-
-

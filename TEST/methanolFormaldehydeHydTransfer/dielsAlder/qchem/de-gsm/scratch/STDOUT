@@ -1,0 +1,8 @@
+ Number of QC processors: 1 
+***** Starting Initialization *****
+ runend 1
+  -structure filename from input: scratch/initial0001.xyz 
+Initializing Tolerances and Parameters... 
+  -Opening inpfileq 
+
+ Error opening inpfileq 

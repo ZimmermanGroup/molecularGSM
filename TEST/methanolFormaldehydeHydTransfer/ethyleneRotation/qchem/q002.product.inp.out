@@ -1,0 +1,548 @@
+Process 0 of 1 is on gollum420.lsa.umich.edu - thread support 0
+initial socket setup ...start
+initial socket setup ...done 
+now start server 0 ... 
+ Q-Chem 4.3.0 for Intel X86 EM64T Linux
+
+ Parts of Q-Chem use Armadillo 5.200.1 (Boston Tea Smuggler).
+ http://arma.sourceforge.net/
+
+ Q-Chem begins on Thu Nov 17 14:44:10 2016  
+
+Host: gollum420.lsa.umich.edu
+0
+
+     Scratch files written to /tmp/77279492.satyr/qchem29196//
+ Parallel job on  1  processors
+
+Checking the input file for inconsistencies... 	...done.
+
+--------------------------------------------------------------
+User input:
+--------------------------------------------------------------
+ $rem
+ JOBTYPE OPT
+ EXCHANGE B3LYP
+! CORRELATION PBE
+! UNRESTRICTED TRUE
+ SCF_ALGORITHM rca_diis
+ SCF_MAX_CYCLES 150
+! BASIS LANL2DZ
+! ECP LANL2DZ
+ BASIS 6-31G*
+ WAVEFUNCTION_ANALYSIS FALSE
+ GEOM_OPT_MAX_CYCLES 300
+
+scf_convergence 6
+
+ SYM_IGNORE TRUE
+ SYMMETRY   FALSE
+
+molden_format true
+ $end
+
+
+$molecule
+0 1
+  C 0.664985 0.008774 0.002231
+  C -0.665029 -0.009222 -0.002232
+  H -1.233934 -0.057311 -0.926987
+  H 1.242716 -0.040253 -0.916864
+  H 1.233719 0.069972 0.926154
+  H -1.242436 0.031922 0.917487
+$end
+--------------------------------------------------------------
+ ----------------------------------------------------------------
+             Standard Nuclear Orientation (Angstroms)
+    I     Atom           X                Y                Z
+ ----------------------------------------------------------------
+    1      C       0.6649850000     0.0087740000     0.0022310000
+    2      C      -0.6650290000    -0.0092220000    -0.0022320000
+    3      H      -1.2339340000    -0.0573110000    -0.9269870000
+    4      H       1.2427160000    -0.0402530000    -0.9168640000
+    5      H       1.2337190000     0.0699720000     0.9261540000
+    6      H      -1.2424360000     0.0319220000     0.9174870000
+ ----------------------------------------------------------------
+ Nuclear Repulsion Energy =    33.3554732015 hartrees
+ There are        8 alpha and        8 beta electrons
+ Requested basis set is 6-31G(d)
+ There are 16 shells and 38 basis functions
+
+ Total QAlloc Memory Limit   2000 MB
+ Mega-Array Size        61 MB
+ MEM_STATIC part        62 MB
+ in ParallelAOLoop for JobNumber:  2 JobType:  2 
+ A cutoff of  1.0D-10 yielded    136 shell pairs
+ There are       795 function pairs
+ in ParallelAOLoop for JobNumber: 11 JobType: 11 
+ DoParallel is ON (aoloop_n) 
+ 
+ -------------------------------------------------------
+ OpenMP Integral Computing Module                       
+ Release: version 1.0, May 2013, Q-Chem Inc. Pittsburgh 
+ -------------------------------------------------------
+ Integral Job Info:
+ Integral job number is                      11
+ Integral operator is                         1
+ short-range coefficients                     0
+ long-range coefficients              100000000
+ Omega coefficients                           0
+ if combine SR and LR in K                    0
+ Integral screening is                        0
+ Integral computing path is                   2
+ max size of driver memory is            800000
+ size of driver memory is                593474
+ size of scratch memory is              2260544
+ max col of scratch BK array               1296
+ max len of scratch array in speh3          155
+ max len of scratch index in speh4           18
+ max int batch size is                      520
+ min int batch size is                       52
+ fixed nKL is                                52
+ max L of basis functions is                  2
+ order of int derivative is                   0
+ number of shells is                         16
+ number of basis is                          38
+ number of cartesian basis is                38
+ number of contracted shell pairs           136
+ number of primitive shell pairs            643
+ maxK2 (contraction) of shell pair           36
+ max number of K2 of shell pair               1
+ max number of CS2 of shell pair             18
+ max number of PS2 of shell pair             84
+ mem total for path MDJ                   10660
+ -------------------------------------------------------
+ Smallest overlap matrix eigenvalue = 7.62E-03
+
+ Scale SEOQF with 1.000000e+00/1.000000e+00/1.000000e+00
+
+ Standard Electronic Orientation quadrupole field applied
+ Nucleus-field energy     =     0.0000000005 hartrees
+ length of FILE_MO_COEFS: 0 
+ Guess from superposition of atomic densities
+ Warning:  Energy on first SCF cycle will be non-variational
+ A restricted hybrid HF-DFT SCF calculation will be
+ performed using Relaxed Constraint Minimization + Pulay DIIS
+ Exchange:     0.2000 Hartree-Fock + 0.0800 Slater + 0.7200 B88
+ Correlation:  0.1900 VWN1RPA + 0.8100 LYP
+ Using SG-1 standard quadrature grid
+ SCF converges when DIIS error is below 1.0E-06
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+ ---------------------------------------
+  Cycle       Energy         DIIS Error
+ ---------------------------------------
+    1     -78.7412609285      1.18E-01
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+    2     -78.5323086339      1.65E-02
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+    3     -78.5591692966      1.35E-03
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+    4     -78.5874319806      1.83E-04 Done RCA. Switching to DIIS
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+    5     -78.5874345008      1.45E-04
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+    6     -78.5874385826      4.65E-06
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+    7     -78.5874385795      6.18E-06
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+    8     -78.5874385868      1.34E-07 Convergence criterion met
+ ---------------------------------------
+ SCF time:  CPU 2.98 s  wall 3.04 s
+ SCF   energy in the final basis set = -78.5874385868
+ Total energy in the final basis set = -78.5874385868
+ No wavefunction analysis requested
+ Calculating analytic gradient of the SCF energy
+ in ParallelAOLoop for JobNumber: 111 JobType: 11 
+ DoParallel is ON (aoloop_n) 
+ in ParallelAOLoop for JobNumber: 122 JobType: 22 
+ Gradient of SCF Energy
+            1           2           3           4           5           6
+    1  -0.0003296   0.0003492   0.0004128  -0.0003349  -0.0004562   0.0003586
+    2   0.0002982  -0.0005994   0.0006761  -0.0004465   0.0003319  -0.0002605
+    3  -0.0001782   0.0002493   0.0003169   0.0004737  -0.0004666  -0.0003951
+ Max gradient component =       6.761E-04
+ RMS gradient           =       4.031E-04
+ Gradient time:  CPU 0.96 s  wall 2.36 s
+ Geometry Optimization Parameters
+   NAtoms,    NIC,     NZ,  NCons,   NDum,   NFix, NCnnct, MaxDiis
+        6      27       0       0       0       0       0       0
+
+
+** GEOMETRY OPTIMIZATION IN DELOCALIZED INTERNAL COORDINATES **
+   Searching for a Minimum
+
+   Optimization Cycle:   1
+
+                       Coordinates (Angstroms)
+     ATOM                X               Y               Z
+      1  C         0.6649850000    0.0087740000    0.0022310000
+      2  C        -0.6650290000   -0.0092220000   -0.0022320000
+      3  H        -1.2339340000   -0.0573110000   -0.9269870000
+      4  H         1.2427160000   -0.0402530000   -0.9168640000
+      5  H         1.2337190000    0.0699720000    0.9261540000
+      6  H        -1.2424360000    0.0319220000    0.9174870000
+   Point Group: c1    Number of degrees of freedom:    12
+
+
+   Energy is    -78.587438587
+
+
+ Attempting to Generate Delocalized Internal Coordinates
+
+ 12 Hessian modes will be used to form the next step
+  Hessian Eigenvalues:
+     0.031648    0.031648    0.031650    0.160000    0.160000    0.160000
+     0.160000    0.351849    0.351937    0.351970    0.352011    0.594718
+
+ Minimum Search - Taking Simple RFO Step
+ Searching for Lamda that Minimizes Along All modes
+ Value Taken    Lamda =  -0.00002866
+ Step Taken.  Stepsize is  0.026853
+
+                             Maximum     Tolerance    Cnvgd?
+         Gradient           0.001268      0.000300      NO
+         Displacement       0.023902      0.001200      NO
+         Energy change     *********      0.000001      NO
+
+
+ New Cartesian Coordinates Obtained by Inverse Iteration
+
+ Displacement from previous Coordinates is:  0.022478
+ ----------------------------------------------------------------
+             Standard Nuclear Orientation (Angstroms)
+    I     Atom           X                Y                Z
+ ----------------------------------------------------------------
+    1      C       0.6655088469     0.0085967477     0.0024868038
+    2      C      -0.6655350303    -0.0064330722    -0.0026269947
+    3      H      -1.2354729350    -0.0639170116    -0.9271213146
+    4      H       1.2437637284    -0.0350059515    -0.9175449112
+    5      H       1.2354539551     0.0642699661     0.9271034885
+    6      H      -1.2436975650     0.0363713216     0.9174919281
+ ----------------------------------------------------------------
+ Nuclear Repulsion Energy =    33.3293479689 hartrees
+ There are        8 alpha and        8 beta electrons
+ Applying Cartesian multipole field
+    Component          Value
+    ---------          -----
+     (2,0,0)        1.00000E-10
+     (0,2,0)        2.00000E-10
+     (0,0,2)       -3.00000E-10
+ Nucleus-field energy     =     0.0000000005 hartrees
+ length of FILE_MO_COEFS: 2964 
+ Requested basis set is 6-31G(d)
+ There are 16 shells and 38 basis functions
+ in ParallelAOLoop for JobNumber:  2 JobType:  2 
+ A cutoff of  1.0D-10 yielded    136 shell pairs
+ There are       795 function pairs
+ in ParallelAOLoop for JobNumber: 11 JobType: 11 
+ DoParallel is ON (aoloop_n) 
+ Smallest overlap matrix eigenvalue = 7.65E-03
+ Guess MOs from SCF MO coefficient file
+ Reading MOs from coefficient file
+ Reading MOs from coefficient file
+ A restricted hybrid HF-DFT SCF calculation will be
+ performed using Relaxed Constraint Minimization + Pulay DIIS
+ Exchange:     0.2000 Hartree-Fock + 0.0800 Slater + 0.7200 B88
+ Correlation:  0.1900 VWN1RPA + 0.8100 LYP
+ Using SG-1 standard quadrature grid
+ SCF converges when DIIS error is below 1.0E-06
+ Geometry optimization detected.  Setting ReadMinima to 0
+ Setting SaveMinima to 0
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+ Inaccurate integrated density:
+   Number of electrons =    16
+   Numerical integral  =    15.997586176261
+   Relative error      =    -0.0150863984 %
+ Inaccurate integrated density:
+   Number of electrons =    16
+   Numerical integral  =    15.997586176261
+   Relative error      =    -0.0150863984 %
+ ---------------------------------------
+  Cycle       Energy         DIIS Error
+ ---------------------------------------
+    1     -78.5859795148      2.54E-04 Done RCA. Switching to DIIS
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+    2     -78.5874515989      2.73E-05
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+    3     -78.5874516985      2.57E-05
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+    4     -78.5874518260      2.14E-06
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+    5     -78.5874518265      1.54E-06
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+    6     -78.5874518269      6.55E-07 Convergence criterion met
+ ---------------------------------------
+ SCF time:  CPU 1.91 s  wall 2.00 s
+ SCF   energy in the final basis set = -78.5874518269
+ Total energy in the final basis set = -78.5874518269
+ No wavefunction analysis requested
+ Calculating analytic gradient of the SCF energy
+ in ParallelAOLoop for JobNumber: 111 JobType: 11 
+ DoParallel is ON (aoloop_n) 
+ in ParallelAOLoop for JobNumber: 122 JobType: 22 
+ Gradient of SCF Energy
+            1           2           3           4           5           6
+    1   0.0002147  -0.0002312  -0.0000022  -0.0000011   0.0000094   0.0000104
+    2   0.0000460   0.0001065  -0.0000485   0.0000018  -0.0000693  -0.0000366
+    3  -0.0000425   0.0000276  -0.0000373  -0.0000157   0.0000500   0.0000179
+ Max gradient component =       2.312E-04
+ RMS gradient           =       8.457E-05
+ Gradient time:  CPU 0.99 s  wall 1.02 s
+ Geometry Optimization Parameters
+   NAtoms,    NIC,     NZ,  NCons,   NDum,   NFix, NCnnct, MaxDiis
+        6      27       0       0       0       0       0       0
+
+ Cartesian Hessian Update
+ Hessian Updated using BFGS Update
+
+
+** GEOMETRY OPTIMIZATION IN DELOCALIZED INTERNAL COORDINATES **
+   Searching for a Minimum
+
+   Optimization Cycle:   2
+
+                       Coordinates (Angstroms)
+     ATOM                X               Y               Z
+      1  C         0.6655088469    0.0085967477    0.0024868038
+      2  C        -0.6655350303   -0.0064330722   -0.0026269947
+      3  H        -1.2354729350   -0.0639170116   -0.9271213146
+      4  H         1.2437637284   -0.0350059515   -0.9175449112
+      5  H         1.2354539551    0.0642699661    0.9271034885
+      6  H        -1.2436975650    0.0363713216    0.9174919281
+   Point Group: c1    Number of degrees of freedom:    12
+
+
+   Energy is    -78.587451827
+
+ Hessian Updated using BFGS Update
+
+ 10 Hessian modes will be used to form the next step
+  Hessian Eigenvalues:
+     0.030076    0.031649    0.035084    0.158923    0.160021    0.351159
+     0.351908    0.351956    0.353364    0.609799
+
+ Minimum Search - Taking Simple RFO Step
+ Searching for Lamda that Minimizes Along All modes
+ Value Taken    Lamda =   0.00000000
+ Step Taken.  Stepsize is  0.002936
+
+                             Maximum     Tolerance    Cnvgd?
+         Gradient           0.000152      0.000300     YES
+         Displacement       0.002727      0.001200      NO
+         Energy change     -0.000013      0.000001      NO
+
+
+ New Cartesian Coordinates Obtained by Inverse Iteration
+
+ Displacement from previous Coordinates is:  0.002131
+ ----------------------------------------------------------------
+             Standard Nuclear Orientation (Angstroms)
+    I     Atom           X                Y                Z
+ ----------------------------------------------------------------
+    1      C       0.6654342084     0.0080760662     0.0025408322
+    2      C      -0.6654318592    -0.0070987895    -0.0026015958
+    3      H      -1.2354245383    -0.0633971894    -0.9270841715
+    4      H       1.2437012395    -0.0349259447    -0.9174994516
+    5      H       1.2354187710     0.0647426981     0.9270095864
+    6      H      -1.2436768214     0.0364851594     0.9174238002
+ ----------------------------------------------------------------
+ Nuclear Repulsion Energy =    33.3320158018 hartrees
+ There are        8 alpha and        8 beta electrons
+ Applying Cartesian multipole field
+    Component          Value
+    ---------          -----
+     (2,0,0)        1.00000E-10
+     (0,2,0)        2.00000E-10
+     (0,0,2)       -3.00000E-10
+ Nucleus-field energy     =     0.0000000005 hartrees
+ length of FILE_MO_COEFS: 2964 
+ Requested basis set is 6-31G(d)
+ There are 16 shells and 38 basis functions
+ in ParallelAOLoop for JobNumber:  2 JobType:  2 
+ A cutoff of  1.0D-10 yielded    136 shell pairs
+ There are       795 function pairs
+ in ParallelAOLoop for JobNumber: 11 JobType: 11 
+ DoParallel is ON (aoloop_n) 
+ Smallest overlap matrix eigenvalue = 7.64E-03
+ Guess MOs from SCF MO coefficient file
+ Reading MOs from coefficient file
+ Reading MOs from coefficient file
+ A restricted hybrid HF-DFT SCF calculation will be
+ performed using Relaxed Constraint Minimization + Pulay DIIS
+ Exchange:     0.2000 Hartree-Fock + 0.0800 Slater + 0.7200 B88
+ Correlation:  0.1900 VWN1RPA + 0.8100 LYP
+ Using SG-1 standard quadrature grid
+ SCF converges when DIIS error is below 1.0E-06
+ Geometry optimization detected.  Setting ReadMinima to 0
+ Setting SaveMinima to 0
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+ ---------------------------------------
+  Cycle       Energy         DIIS Error
+ ---------------------------------------
+    1     -78.5875828819      3.32E-05 Done RCA. Switching to DIIS
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+    2     -78.5874519764      5.87E-06
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+    3     -78.5874519784      5.64E-06
+ in ParallelAOLoop for JobNumber: 22 JobType: 22 
+    4     -78.5874519845      4.42E-07 Convergence criterion met
+ ---------------------------------------
+ SCF time:  CPU 1.41 s  wall 1.57 s
+ SCF   energy in the final basis set = -78.5874519845
+ Total energy in the final basis set = -78.5874519845
+ No wavefunction analysis requested
+ Calculating analytic gradient of the SCF energy
+ in ParallelAOLoop for JobNumber: 111 JobType: 11 
+ DoParallel is ON (aoloop_n) 
+ in ParallelAOLoop for JobNumber: 122 JobType: 22 
+ Gradient of SCF Energy
+            1           2           3           4           5           6
+    1   0.0000251  -0.0000278   0.0000058  -0.0000066  -0.0000049   0.0000084
+    2  -0.0000346  -0.0000212   0.0000284   0.0000317  -0.0000092   0.0000050
+    3  -0.0000044   0.0000056  -0.0000093  -0.0000063   0.0000088   0.0000057
+ Max gradient component =       3.463E-05
+ RMS gradient           =       1.737E-05
+ Gradient time:  CPU 1.01 s  wall 1.04 s
+ Geometry Optimization Parameters
+   NAtoms,    NIC,     NZ,  NCons,   NDum,   NFix, NCnnct, MaxDiis
+        6      27       0       0       0       0       0       0
+
+ Cartesian Hessian Update
+ Hessian Updated using BFGS Update
+
+
+** GEOMETRY OPTIMIZATION IN DELOCALIZED INTERNAL COORDINATES **
+   Searching for a Minimum
+
+   Optimization Cycle:   3
+
+                       Coordinates (Angstroms)
+     ATOM                X               Y               Z
+      1  C         0.6654342084    0.0080760662    0.0025408322
+      2  C        -0.6654318592   -0.0070987895   -0.0026015958
+      3  H        -1.2354245383   -0.0633971894   -0.9270841715
+      4  H         1.2437012395   -0.0349259447   -0.9174994516
+      5  H         1.2354187710    0.0647426981    0.9270095864
+      6  H        -1.2436768214    0.0364851594    0.9174238002
+   Point Group: c1    Number of degrees of freedom:    12
+
+
+   Energy is    -78.587451984
+
+ Hessian Updated using BFGS Update
+
+ 11 Hessian modes will be used to form the next step
+  Hessian Eigenvalues:
+     0.030069    0.031643    0.045594    0.155456    0.159985    0.160046
+     0.350678    0.351213    0.351917    0.351957    0.577074
+
+ Minimum Search - Taking Simple RFO Step
+ Searching for Lamda that Minimizes Along All modes
+ Value Taken    Lamda =   0.00000000
+ Step Taken.  Stepsize is  0.000836
+
+                             Maximum     Tolerance    Cnvgd?
+         Gradient           0.000035      0.000300     YES
+         Displacement       0.000760      0.001200     YES
+         Energy change     -0.000000      0.000001     YES
+
+
+                       Distance Matrix (Angstroms)
+             C (  1)   C (  2)   H (  3)   H (  4)   H (  5)
+   C (  2)  1.330963
+   H (  3)  2.117209  1.087534
+   H (  4)  1.087527  2.117216  2.479308
+   H (  5)  1.087537  2.117208  3.091788  1.847218
+   H (  6)  2.117197  1.087526  1.847229  3.091778  2.479275
+ 
+ Final energy is   -78.5874519844581     
+
+
+ ******************************
+ **  OPTIMIZATION CONVERGED  **
+ ******************************
+
+                       Coordinates (Angstroms)
+     ATOM                X               Y               Z
+      1  C         0.6654342084    0.0080760662    0.0025408322
+      2  C        -0.6654318592   -0.0070987895   -0.0026015958
+      3  H        -1.2354245383   -0.0633971894   -0.9270841715
+      4  H         1.2437012395   -0.0349259447   -0.9174994516
+      5  H         1.2354187710    0.0647426981    0.9270095864
+      6  H        -1.2436768214    0.0364851594    0.9174238002
+
+Z-matrix Print:
+$molecule
+0 1
+C 
+H  1 1.087527
+H  1 1.087537 2 116.264890
+C  1 1.330963 2 121.868287 3 -179.966421 0
+H  4 1.087526 1 121.866548 2 179.963920 0
+H  4 1.087534 1 121.867163 2 -0.012596 0
+$end
+
+ No wavefunction analysis requested
+ Total job time:  11.62s(wall), 9.54s(cpu) 
+ Thu Nov 17 14:44:21 2016
+
+======= MOLDEN-FORMATTED INPUT FILE FOLLOWS =======
+[Molden Format]
+[Atoms] (Angs)
+  C      1    6      0.66543421      0.00807607      0.00254083
+  C      2    6     -0.66543186     -0.00709879     -0.00260160
+  H      3    1     -1.23542454     -0.06339719     -0.92708417
+  H      4    1      1.24370124     -0.03492594     -0.91749945
+  H      5    1      1.23541877      0.06474270      0.92700959
+  H      6    1     -1.24367682      0.03648516      0.91742380
+[GEOCONV]
+energy
+      -78.5874385868
+      -78.5874518269
+      -78.5874519845
+max-force
+        0.0012675884
+        0.0001517478
+        0.0000345171
+max-step
+        0.0239021716
+        0.0027266597
+        0.0007602092
+[GEOMETRIES] (XYZ)
+  6
+Step 1
+  C      0.66498500      0.00877400      0.00223100
+  C     -0.66502900     -0.00922200     -0.00223200
+  H     -1.23393400     -0.05731100     -0.92698700
+  H      1.24271600     -0.04025300     -0.91686400
+  H      1.23371900      0.06997200      0.92615400
+  H     -1.24243600      0.03192200      0.91748700
+  6
+Step 2
+  C      0.66550885      0.00859675      0.00248680
+  C     -0.66553503     -0.00643307     -0.00262699
+  H     -1.23547293     -0.06391701     -0.92712131
+  H      1.24376373     -0.03500595     -0.91754491
+  H      1.23545396      0.06426997      0.92710349
+  H     -1.24369757      0.03637132      0.91749193
+  6
+Step 3
+  C      0.66543421      0.00807607      0.00254083
+  C     -0.66543186     -0.00709879     -0.00260160
+  H     -1.23542454     -0.06339719     -0.92708417
+  H      1.24370124     -0.03492594     -0.91749945
+  H      1.23541877      0.06474270      0.92700959
+  H     -1.24367682      0.03648516      0.91742380
+
+======= END OF MOLDEN-FORMATTED INPUT FILE =======
+
+
+        *************************************************************
+        *                                                           *
+        *  Thank you very much for using Q-Chem.  Have a nice day.  *
+        *                                                           *
+        *************************************************************
+
+
+0 sent ACK to 0 
+now end server 0 ... 

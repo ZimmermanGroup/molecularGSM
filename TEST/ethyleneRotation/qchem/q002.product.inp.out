@@ -15,7 +15,7 @@ Host: gollum420.lsa.umich.edu
      Scratch files written to /tmp/77279492.satyr/qchem29196//
  Parallel job on  1  processors
 
-Checking the input file for inconsistencies... 	...done.
+Checking the input file for inconsistencies...  ...done.
 
 --------------------------------------------------------------
 User input:
@@ -545,4 +545,4 @@ Step 3
 
 
 0 sent ACK to 0 
-now end server 0 ... 
+now end server 0 ...
