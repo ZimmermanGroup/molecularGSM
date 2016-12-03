@@ -24,7 +24,7 @@
  * structure package and MKL. The TEST folders also provide a "template" for performing calculations.
  *
  *
- * \version 1.0
+ * @PROJECT_NUMBER
  * \date 2016-12-1
  * \copyright MIT Licence
  */
@@ -74,28 +74,52 @@ int main(int argc, char* argv[]){
 }
 
 
-/*! \page page1 Double-Ended 
+/*!
+ * \page page1 Delocalized Internal Coordinates 
+ *     	Among growing string methods ours is particularly 	efficient and robust because it takes advantage of delocalized internal coordinates. 
+ *          coordinates that define the  R/P are delocalized internal coordinates which are 
+ *          non-redundant. The Gstring#opt_constraint function Schmidt orthogonalizes the 
+ *          delocalized internal coordinates against ictan in order to form a new set of 
+ *          delocalized internal coordinates that contain ictan as its last vector. 
+ *          Therefore, by incrementing the component of the last vector in the new set the
+ *           molecular geometry is distorted in the direction of the ictan vector. 
+ *     		
+ *
+ * \page page2 Double-Ended 
  *   \tableofcontents
  *       \section sec Description
- *     		The DE GSM grows and optimizes a string of molecular geometries called nodes between a reactant and product pair. 
- *     		This is done in two phases called the growth and optimization phase. 
- *     		Once the string is sufficiently optimized and is behaving, the node with the highest energy is optimized to the exact
- *     		transition state using climbing image and an exact eigenvector optimization. 
- *     		The main driver for DE and SE, growth and optimization is the GString#String_Method_Optimization
- *          \subsection subsection1 Growth Phase
- *          		The growth phase begins in GString#starting_string which calls GString#get_tangents that forms 
- *          		an internal coordinate tangent vector connecting the reactant and product.
- *          		This tangent vector is a linear interpolation vector connecting the pair.
- *          		In the growth phase the tangent vectors are referenced to left and right respectively. 
- *              Then starting_string grows two nodes, one on the reactant side and one on the product side 
- *              along the tangent vectors. 
- *              
- *           \subsection subsection2 Optimization Phase
+ *     		DE GSM grows and optimizes a string of molecular geometries called nodes between a
+ *     		reactant and product pair. This is done in two phases called the growth and optimization 
+ *     		phase. Once the string is sufficiently optimized and is behaving, the node with  
+ *     		the highest energy is optimized to the exact transition state using climbing image and
+ *     		eigenvector optimization. The driver for DE and SE methods, growth and optimization is 
+ *     		GString#String_Method_Optimization. 
+ *        \subsection subsection1 Growth Phase
+ *          During the growth phase Gstring#starting_string grows two nodes, one on 
+ *          the reactant side and one on the product side along the tangent vector connecting
+ *          the reactant product pair. 
+ *          The new nodes can be optimized subject to the tangent vector (constraint), and a new 
+ *          tangent vector formed between them. Two more nodes can then be added and the process 
+ *          repeated until the number of nodes requested are formed.
+ *          A description of how nodes are added and optimized is give in \ref page1
+ *
+ *          The driver for node optimization and adding nodes during the growth phase is 
+ *          GString#growth_iters. 
+ *          Overall, it handles adding new nodes 
+ *          (GString#addNode), sending nodes to be optimized,
+ *          (GString#opt_steps), forming tangents vectors, and reparametrizing node spacing 
+ *          (GString#ic_reparam_g). 
+ *
+ *
+ *          GString#opt_steps optimizes each added node at least one time and at most three times.
+ *
+ *          
+ *        \subsection subsection2 Optimization Phase
  *                More text.
  *             */
-/*! \page page2 Single-Ended
+/*! \page page3 Single-Ended
  *   Even more info.
- *        For more info see page \ref page1.
+ *        For more info see page \ref page2.
  *   */
 	
 
