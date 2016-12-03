@@ -1,23 +1,41 @@
 TRIBITS_PACKAGE(gsm)
 
+set(CALCULATOR "mopac" CACHE STRING "Calculator")
 # setting different energy calculators that GSM will use
 if(NOT DEFINED GSM_ENABLE_QCHEM)
 	SET(GSM_ENABLE_QCHEM 0)
+else()
+    set(CALCULATOR "qchem" CACHE STRING "Calculator")
 endif()
+
 if(NOT DEFINED GSM_ENABLE_QCHEM_SF)
 	SET(GSM_ENABLE_QCHEM_SF 0)
+else()
+    set(CALCULATOR "qchem_sf" CACHE STRING "Calculator")
 endif()
+
 if(NOT DEFINED GSM_ENABLE_MOLPRO)
 	SET(GSM_ENABLE_MOLPRO 0)
+else()
+    set(CALCULATOR "molpro" CACHE STRING "Calculator")
 endif()
+
 if(NOT DEFINED GSM_ENABLE_ASE)
 	SET(GSM_ENABLE_ASE 0)
+else()
+    set(CALCULATOR "ase" CACHE STRING "Calculator")
 endif()
+
 if(NOT DEFINED GSM_ENABLE_GAUSSIAN)
 	SET(GSM_ENABLE_GAUSSIAN 0)
+else()
+    set(CALCULATOR "gaussian" CACHE STRING "Calculator")
 endif()
+
 if(NOT DEFINED GSM_ENABLE_ORCA)
 	SET(GSM_ENABLE_ORCA 0)
+else()
+    set(CALCULATOR "orca" CACHE STRING "Calculator")
 endif()
 
 CONFIGURE_FILE(
@@ -40,5 +58,5 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # set target name
-TRIBITS_ADD_EXECUTABLE(${TARGET_NAME} NOEXEPREFIX SOURCES ${GSM_SRC} IMPORTEDLIBS ${LIBS})
+TRIBITS_ADD_EXECUTABLE(${TARGET_NAME}.${CALCULATOR} NOEXEPREFIX SOURCES ${GSM_SRC} IMPORTEDLIBS ${LIBS})
 TRIBITS_PACKAGE_POSTPROCESS()
