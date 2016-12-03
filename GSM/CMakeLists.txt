@@ -42,6 +42,7 @@ CONFIGURE_FILE(
 	"${CMAKE_CURRENT_SOURCE_DIR}/qchem.h.in"
 	"${CMAKE_CURRENT_BINARY_DIR}/qchem.h"
 	)
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/GitSHA1.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/GitSHA1.cpp" @ONLY@)
 
 # source files
 file(GLOB GSM_SRC
@@ -49,6 +50,8 @@ file(GLOB GSM_SRC
     "*.h"
     "*.cpp"
 )
+
+list(APPEND GSM_SRC "${CMAKE_CURRENT_BINARY_DIR}/GitSHA1.cpp" GitSHA1.h)
 
 # set up libraries
 find_package(MKL REQUIRED)

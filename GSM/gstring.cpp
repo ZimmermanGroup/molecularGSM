@@ -1,5 +1,6 @@
 #include "gstring.h"
 #include "omp.h"
+#include "GitSHA1.h"
 using namespace std;
 
 //opt should quit right after gradient converges
@@ -171,6 +172,7 @@ void GString::String_Method_Optimization()
   printf(" END NOTICES \n\n");
 
   //#include "savefile.cpp"
+  printf("%c \n",g_GIT_SHA1);
 
   for (int i=0;i<nnmax;i++)
     active[i] = -1;

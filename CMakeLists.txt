@@ -21,6 +21,8 @@ SET(${PROJECT_NAME}_TRIBITS_DIR
 INCLUDE (${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+include(GetGitRevisionDescription)
+get_git_head_revision(GIT_REFSPEC GIT_SHA1)
 
 #Process the TriBITS Project
 TRIBITS_PROJECT()
