@@ -673,7 +673,7 @@ r
  Opt step:  2  t/ol: 10 (0.84) ss: 0.034 (0.100) predE: -0.14  Hint ev: 0.033 0.035 E(M): 5.19 gRMS: 0.0021 ratio: 0.957 
  Opt step:  3  t/ol: 10 (0.77) ss: 0.048 (0.100) predE: -0.15  Hint ev: 0.032 0.035 E(M): 5.06 gRMS: 0.0022
  
- Opt step:  1  t/ol: 1 (0.65) ss: 0.031 (DMAX: 0.100) predE: -0.47  E(M): 7.54 gRMS: 0.0039 ratio: 0.755 
+ Opt step:  1  t/ol: 1 (0.67) ss: 0.031 (DMAX: 0.100) predE: -0.47  E(M): 7.54 gRMS: 0.0039 ratio: 0.755 
  Opt step:  2  gqc: 0.002 ss: 0.024 (DMAX: 0.100) predE: -0.20  E(M): 7.18 gRMS: 0.0022 ratio: 0.754 
  Opt step:  3  gqc: 0.002 ss: 0.019 (DMAX: 0.100) predE: -0.10  E(M): 7.03 gRMS: 0.0019
  
@@ -852,75 +852,77 @@ x opt_iter:  7 totalgrad: 0.043 gradrms: 0.0010 tgrads: 102 ol(0): 0.95 max E: 7
 
  Davidson iteration 1 
  eg eg eg eg eg eg
- mag/DTHRESH: 0.953466 0.000050 lamb/lambp: 0.011 0.000 
- mag/DTHRESH: 892.948879 0.000050 lamb/lambp: 0.071 0.000 
- mag/DTHRESH: 47.441466 0.000050 lamb/lambp: 0.128 0.000 
+ mag/DTHRESH: 0.951320 0.000050 lamb/lambp: 0.011 0.000 
+ mag/DTHRESH: 883.373865 0.000050 lamb/lambp: 0.071 0.000 
+ mag/DTHRESH: 47.412090 0.000050 lamb/lambp: 0.128 0.000 
 
  Davidson iteration 2 
  eg eg eg eg eg eg
- mag/DTHRESH: 0.100734 0.000050 lamb/lambp: 0.010 0.011 
- mag/DTHRESH: 150.182259 0.000050 lamb/lambp: 0.045 0.071 
- mag/DTHRESH: 685.038327 0.000050 lamb/lambp: 0.098 0.128 
+ mag/DTHRESH: 0.100300 0.000050 lamb/lambp: 0.010 0.011 
+ mag/DTHRESH: 150.491353 0.000050 lamb/lambp: 0.045 0.071 
+ mag/DTHRESH: 683.990985 0.000050 lamb/lambp: 0.098 0.128 
 
  Davidson iteration 3 
  eg eg eg eg eg eg
- mag/DTHRESH: 0.194515 0.000050 lamb/lambp: 0.010 0.010 
+ mag/DTHRESH: 0.193664 0.000050 lamb/lambp: 0.010 0.010 
  vector 0 converged 
- mag/DTHRESH: 4.074871 0.000050 lamb/lambp: 0.025 0.045 
- mag/DTHRESH: 105.009747 0.000050 lamb/lambp: 0.077 0.098 
+ mag/DTHRESH: 3.986337 0.000050 lamb/lambp: 0.025 0.045 
+ mag/DTHRESH: 107.707542 0.000050 lamb/lambp: 0.077 0.098 
 
  Davidson iteration 4 
  eg eg eg eg
- mag/DTHRESH: 1.244762 0.000050 lamb/lambp: 0.005 0.010 
- mag/DTHRESH: 0.052015 0.000050 lamb/lambp: 0.010 0.025 
- mag/DTHRESH: 82112.630602 0.000050 lamb/lambp: 0.035 0.077 
+ mag/DTHRESH: 1.244779 0.000050 lamb/lambp: 0.005 0.010 
+ mag/DTHRESH: 0.050858 0.000050 lamb/lambp: 0.010 0.025 
+ mag/DTHRESH: 1658411.888841 0.000050 lamb/lambp: 0.035 0.077 
 
  Davidson iteration 5 
  eg eg eg eg eg eg
- mag/DTHRESH: 0.194958 0.000050 lamb/lambp: 0.002 0.005 
- mag/DTHRESH: 0.049028 0.000050 lamb/lambp: 0.010 0.010 
- mag/DTHRESH: 0.709226 0.000050 lamb/lambp: 0.020 0.035 
+ mag/DTHRESH: 0.054534 0.000050 lamb/lambp: 0.001 0.005 
+ mag/DTHRESH: 0.008234 0.000050 lamb/lambp: 0.010 0.010 
+ vector 1 converged 
+ mag/DTHRESH: 6.145364 0.000050 lamb/lambp: 0.026 0.035 
 
  Davidson iteration 6 
- eg eg eg eg eg eg
- mag/DTHRESH: 0.112083 0.000050 lamb/lambp: -0.000 0.002 
- mag/DTHRESH: 0.128596 0.000050 lamb/lambp: 0.003 0.010 
- mag/DTHRESH: 0.007084 0.000050 lamb/lambp: 0.011 0.020 
+ eg eg eg eg
+ mag/DTHRESH: 0.015777 0.000050 lamb/lambp: 0.000 0.001 
+ mag/DTHRESH: 0.084797 0.000050 lamb/lambp: 0.010 0.010 
+ vector 1 converged 
+ mag/DTHRESH: 0.212866 0.000050 lamb/lambp: 0.017 0.026 
 
  Davidson iteration 7 
- eg eg eg eg eg eg
- mag/DTHRESH: 0.007441 0.000050 lamb/lambp: -0.001 -0.000 
- mag/DTHRESH: 0.022693 0.000050 lamb/lambp: 0.001 0.003 
- mag/DTHRESH: 0.009338 0.000050 lamb/lambp: 0.010 0.011 
- vector 2 converged 
+ eg eg eg eg
+ mag/DTHRESH: 0.010836 0.000050 lamb/lambp: 0.000 0.000 
+ vector 0 converged 
+ mag/DTHRESH: 0.204703 0.000050 lamb/lambp: 0.006 0.010 
+ mag/DTHRESH: 0.003792 0.000050 lamb/lambp: 0.010 0.017 
 
  Davidson iteration 8 
  eg eg eg eg
- mag/DTHRESH: 0.011479 0.000050 lamb/lambp: -0.002 -0.001 
+ mag/DTHRESH: 0.001533 0.000050 lamb/lambp: -0.000 0.000 
  vector 0 converged 
- mag/DTHRESH: 0.003462 0.000050 lamb/lambp: 0.001 0.001 
- mag/DTHRESH: 0.008994 0.000050 lamb/lambp: 0.010 0.010 
+ mag/DTHRESH: 0.036228 0.000050 lamb/lambp: 0.003 0.006 
+ mag/DTHRESH: 0.002584 0.000050 lamb/lambp: 0.010 0.010 
  vector 2 converged 
 
  Davidson iteration 9 
  eg eg
- mag/DTHRESH: 0.001580 0.000050 lamb/lambp: -0.002 -0.002 
+ mag/DTHRESH: 0.000368 0.000050 lamb/lambp: -0.000 -0.000 
  vector 0 converged 
- mag/DTHRESH: 0.003347 0.000050 lamb/lambp: 0.001 0.001 
+ mag/DTHRESH: 0.026228 0.000050 lamb/lambp: 0.003 0.003 
  vector 1 converged 
- mag/DTHRESH: 0.008635 0.000050 lamb/lambp: 0.010 0.010 
+ mag/DTHRESH: 0.002521 0.000050 lamb/lambp: 0.010 0.010 
  vector 2 converged 
  Davidson converged 
 
  now saving vibrations to stringfile.xyz0001fr 
- Hessian eigenvalues: -0.002 0.001 0.010
+ Hessian eigenvalues: -0.000 0.003 0.010
 
  Updating Hint with new vectors 
- updating vector: 1 with curvature: -0.00176 
- updating vector: 2 with curvature: 0.00063 
- updating vector: 3 with curvature: 0.00990 
+ updating vector: 1 with curvature: -0.00007 
+ updating vector: 2 with curvature: 0.00257 
+ updating vector: 3 with curvature: 0.01014 
 
- Davidson required 46 gradients 
+ Davidson required 42 gradients 
 
  found 1 negative eigenvalue 
  creating final string file  

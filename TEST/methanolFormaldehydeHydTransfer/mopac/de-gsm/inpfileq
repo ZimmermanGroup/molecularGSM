@@ -8,7 +8,7 @@ GSM_go1q       # name of run
 ------------ String Info --------------------------------
 SM_TYPE                 GSM    # SSM, FSM or GSM
 RESTART                 0      # read restart.xyz
-MAX_OPT_ITERS           80     # maximum iterations
+MAX_OPT_ITERS           120    # maximum iterations
 STEP_OPT_ITERS          30     # for FSM/SSM
 CONV_TOL           	    0.0005 # perp grad
 ADD_NODE_TOL		    0.1    # for GSM

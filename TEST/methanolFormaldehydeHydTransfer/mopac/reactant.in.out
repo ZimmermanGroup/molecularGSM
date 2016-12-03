@@ -1,0 +1,258 @@
+ *******************************************************************************
+ ** Site#: 14762        For non-commercial use only     Version 15.168L 64BITS**
+ *******************************************************************************
+ ** Cite this work as:                                                        **
+ **                                                                           **
+ ** (a) MOPAC2012, James J. P. Stewart, Stewart Computational Chemistry,      **
+ **  Version 15.168L web: HTTP://OpenMOPAC.net         Days remaining:   0    **
+ **                                                                           **
+ **                                 AND                                       **
+ **                                                                           **
+ ** (b) Maia, J.D.C., et al., J. Chem. Theory Comput. 2012, 8, 3072-3081.     **
+ **                DOI: 10.1021/ct3004645.                                    **
+ *******************************************************************************
+ **                                                                           **
+ **                                MOPAC2012                                  **
+ **                                                                           **
+ *******************************************************************************
+
+                              PM6 CALCULATION RESULTS
+
+
+ *******************************************************************************
+ *  CALCULATION DONE:                                Fri Dec  2 19:53:49 2016  *
+ *  PM6        - The PM6 Hamiltonian to be used
+ *  SINGLET    - SPIN STATE DEFINED AS A SINGLET
+ *  NOSYM      - POINT-GROUP SYMMETRY SET TO C1
+ *  T=         - A TIME OF     10.0 MINUTES REQUESTED
+ *  DUMP=N     - RESTART FILE WRITTEN EVERY  7200.000 SECONDS
+ *******************************************************************************
+PM6 singlet NOSYM T=10M
+   MOPAC run
+   geometry optimization
+   ATOM   CHEMICAL          X               Y               Z
+  NUMBER   SYMBOL      (ANGSTROMS)     (ANGSTROMS)     (ANGSTROMS)
+ 
+     1       H          0.41168300  *   0.93333600  *  -0.39397200  *
+     2       C          0.23312800  *   1.10588300  *   0.66177400  *
+     3       C          0.64175400  *   0.23723200  *   1.58678200  *
+     4       H         -0.28560000  *   2.00877900  *   0.95846500  *
+     5       H          0.46559200  *   0.41447700  *   2.64839900  *
+     6       O          1.29815400  *  -0.91816100  *   1.28457300  *
+     7       H          1.50352200  *  -1.39287200  *   2.10954200  *
+     8       O          1.19446900  *  -2.73326200  *   3.40257300  *
+     9       C          0.37360700  *  -3.44669600  *   2.86374300  *
+    10       H         -0.00815600  *  -4.35920600  *   3.35786600  *
+    11       H         -0.02602700  *  -3.21472800  *   1.86035600  *
+ 
+
+
+          CARTESIAN COORDINATES 
+
+    NO.       ATOM         X         Y         Z
+
+     1         H        0.4117    0.9333   -0.3940
+     2         C        0.2331    1.1059    0.6618
+     3         C        0.6418    0.2372    1.5868
+     4         H       -0.2856    2.0088    0.9585
+     5         H        0.4656    0.4145    2.6484
+     6         O        1.2982   -0.9182    1.2846
+     7         H        1.5035   -1.3929    2.1095
+     8         O        1.1945   -2.7333    3.4026
+     9         C        0.3736   -3.4467    2.8637
+    10         H       -0.0082   -4.3592    3.3579
+    11         H       -0.0260   -3.2147    1.8604
+
+ General Reference for PM6:
+ "Optimization of Parameters for Semiempirical Methods V: Modification of NDDO Approximations
+ and Application to 70 Elements", J. J. P. Stewart, J. Mol. Mod., 13, 1173-1213 (2007)
+ URL: http://www.springerlink.com/content/ar33482301010477/fulltext.pdf
+
+           Empirical Formula: C3 H6 O2  =    11 atoms
+
+
+
+      MOLECULAR POINT GROUP   :   C1  
+
+
+ SINGLET STATE CALCULATION
+
+
+      RHF CALCULATION, NO. OF DOUBLY OCCUPIED LEVELS =   15
+
+      Geometry optimization using EF
+
+          DIAGONAL MATRIX USED AS START HESSIAN
+
+ CYCLE:     1 TIME:   0.008 TIME LEFT: 10.00M  GRAD.:    41.755 HEAT: -52.40935
+ CYCLE:     2 TIME:   0.008 TIME LEFT: 10.00M  GRAD.:    23.664 HEAT: -53.13790
+ CYCLE:     3 TIME:   0.008 TIME LEFT: 10.00M  GRAD.:    28.723 HEAT: -53.34783
+ CYCLE:     4 TIME:   0.000 TIME LEFT: 10.00M  GRAD.:    25.654 HEAT: -53.57444
+ CYCLE:     5 TIME:   0.008 TIME LEFT: 10.00M  GRAD.:    27.315 HEAT: -53.70637
+ CYCLE:     6 TIME:   0.000 TIME LEFT: 10.00M  GRAD.:    13.540 HEAT: -53.80864
+ CYCLE:     7 TIME:   0.008 TIME LEFT: 10.00M  GRAD.:     7.923 HEAT: -53.87780
+ CYCLE:     8 TIME:   0.000 TIME LEFT: 10.00M  GRAD.:     6.868 HEAT: -53.94977
+ CYCLE:     9 TIME:   0.008 TIME LEFT: 10.00M  GRAD.:     8.165 HEAT: -54.04866
+ CYCLE:    10 TIME:   0.000 TIME LEFT: 10.00M  GRAD.:    10.318 HEAT: -54.11802
+ CYCLE:    11 TIME:   0.000 TIME LEFT: 10.00M  GRAD.:    11.796 HEAT: -54.14874
+ CYCLE:    12 TIME:   0.008 TIME LEFT: 10.00M  GRAD.:     8.997 HEAT: -54.21471
+ CYCLE:    13 TIME:   0.000 TIME LEFT: 10.00M  GRAD.:     7.374 HEAT: -54.24387
+ CYCLE:    14 TIME:   0.008 TIME LEFT: 10.00M  GRAD.:     8.245 HEAT: -54.24687
+ CYCLE:    15 TIME:   0.000 TIME LEFT: 10.00M  GRAD.:     3.530 HEAT: -54.28156
+ CYCLE:    16 TIME:   0.000 TIME LEFT: 10.00M  GRAD.:     2.726 HEAT: -54.29391
+ CYCLE:    17 TIME:   0.008 TIME LEFT: 10.00M  GRAD.:     2.845 HEAT: -54.31222
+ CYCLE:    18 TIME:   0.000 TIME LEFT: 10.00M  GRAD.:     2.546 HEAT: -54.33670
+ CYCLE:    19 TIME:   0.000 TIME LEFT: 10.00M  GRAD.:     1.850 HEAT: -54.34161
+ CYCLE:    20 TIME:   0.008 TIME LEFT: 10.00M  GRAD.:     1.608 HEAT: -54.34597
+ CYCLE:    21 TIME:   0.000 TIME LEFT: 10.00M  GRAD.:     1.319 HEAT: -54.34957
+ CYCLE:    22 TIME:   0.008 TIME LEFT: 10.00M  GRAD.:     1.576 HEAT: -54.35550
+ CYCLE:    23 TIME:   0.000 TIME LEFT: 10.00M  GRAD.:     1.747 HEAT: -54.36027
+ CYCLE:    24 TIME:   0.000 TIME LEFT: 10.00M  GRAD.:     1.909 HEAT: -54.36930
+ CYCLE:    25 TIME:   0.008 TIME LEFT: 10.00M  GRAD.:     1.658 HEAT: -54.37531
+ CYCLE:    26 TIME:   0.000 TIME LEFT: 10.00M  GRAD.:     1.740 HEAT: -54.38507
+ CYCLE:    27 TIME:   0.008 TIME LEFT: 10.00M  GRAD.:     1.148 HEAT: -54.38730
+ CYCLE:    28 TIME:   0.000 TIME LEFT: 10.00M  GRAD.:     1.356 HEAT: -54.39090
+ CYCLE:    29 TIME:   0.000 TIME LEFT: 10.00M  GRAD.:     1.533 HEAT: -54.39436
+ CYCLE:    30 TIME:   0.008 TIME LEFT: 10.00M  GRAD.:     1.799 HEAT: -54.40578
+ CYCLE:    31 TIME:   0.000 TIME LEFT: 10.00M  GRAD.:     1.320 HEAT: -54.40950
+ CYCLE:    32 TIME:   0.008 TIME LEFT: 10.00M  GRAD.:     0.724 HEAT: -54.41181
+
+     GRADIENT =  0.72403  IS LESS THAN CUTOFF =  1.00000
+
+
+
+ -------------------------------------------------------------------------------
+PM6 singlet NOSYM T=10M
+   MOPAC run
+   geometry optimization
+
+
+     GEOMETRY OPTIMISED USING EIGENVECTOR FOLLOWING (EF).     
+     SCF FIELD WAS ACHIEVED                                   
+
+
+                              PM6 CALCULATION
+                                                       MOPAC2012 (Version: 15.168L)
+                                                       Fri Dec  2 19:53:49 2016
+                                                       No. of days left =   0
+
+
+
+
+          FINAL HEAT OF FORMATION =        -54.41182 KCAL/MOL =    -227.65904 KJ/MOL
+
+
+          TOTAL ENERGY            =      -1030.65354 EV
+          ELECTRONIC ENERGY       =      -3126.61334 EV  POINT GROUP:     C1  
+          CORE-CORE REPULSION     =       2095.95980 EV
+          COSMO AREA              =        127.14 SQUARE ANGSTROMS
+          COSMO VOLUME            =        107.42 CUBIC ANGSTROMS
+
+          GRADIENT NORM           =          0.72403
+          IONIZATION POTENTIAL    =          9.307811 EV
+          HOMO LUMO ENERGIES (EV) =         -9.308 -0.478
+          NO. OF FILLED LEVELS    =         15
+          MOLECULAR WEIGHT        =         74.079
+
+          MOLECULAR DIMENSIONS (Angstroms)
+
+            Atom       Atom       Distance
+            H    10    H     4     6.91709
+            H     5    H     1     2.72380
+            H     7    H    10     1.74914
+
+
+          SCF CALCULATIONS        =         38
+ 
+          WALL-CLOCK TIME         =          0.141 SECONDS
+          COMPUTATION TIME        =          0.139 SECONDS
+
+
+
+
+   ATOM   CHEMICAL          X               Y               Z
+  NUMBER   SYMBOL      (ANGSTROMS)     (ANGSTROMS)     (ANGSTROMS)
+ 
+     1       H          0.38655952  *   0.84100935  *  -0.38943026  *
+     2       C          0.22615547  *   1.08319748  *   0.65040837  *
+     3       C          0.65476160  *   0.30578145  *   1.64513921  *
+     4       H         -0.30028057  *   2.00775822  *   0.80830276  *
+     5       H          0.54298058  *   0.48567206  *   2.70817162  *
+     6       O          1.31263303  *  -0.85916902  *   1.31266625  *
+     7       H          1.61083196  *  -1.35802681  *   2.13386396  *
+     8       O          1.16856318  *  -2.72739355  *   3.31053581  *
+     9       C          0.35064844  *  -3.51374630  *   2.87360466  *
+    10       H          0.00854181  *  -4.37037236  *   3.46729368  *
+    11       H         -0.08367118  *  -3.40153552  *   1.87095891  *
+
+                             CARTESIAN COORDINATES
+
+   1    H        0.386559516     0.841009349    -0.389430255
+   2    C        0.226155467     1.083197482     0.650408366
+   3    C        0.654761596     0.305781448     1.645139213
+   4    H       -0.300280569     2.007758224     0.808302764
+   5    H        0.542980585     0.485672057     2.708171624
+   6    O        1.312633028    -0.859169021     1.312666247
+   7    H        1.610831961    -1.358026807     2.133863963
+   8    O        1.168563176    -2.727393553     3.310535811
+   9    C        0.350648440    -3.513746298     2.873604661
+  10    H        0.008541806    -4.370372362     3.467293685
+  11    H       -0.083671179    -3.401535518     1.870958909
+
+
+           Empirical Formula: C3 H6 O2  =    11 atoms
+
+
+
+      MOLECULAR POINT GROUP   :   C1  
+
+
+                  EIGENVALUES  
+ -32.46088 -30.05305 -26.36074 -23.98110 -20.41011 -18.97611 -17.47611 -15.72870
+ -15.26907 -14.95147 -13.69087 -13.44335 -12.23180 -10.77939  -9.30781  -0.47826
+   1.36004   2.87013   3.59691   3.98932   4.38054   5.14675   5.42455   6.05116
+   6.52610   6.99616
+
+
+              NET ATOMIC CHARGES AND DIPOLE CONTRIBUTIONS
+
+  ATOM NO.   TYPE          CHARGE      No. of ELECS.   s-Pop       p-Pop       
+    1          H           0.180754        0.8192     0.81925
+    2          C          -0.494395        4.4944     1.11151     3.38289
+    3          C           0.177486        3.8225     1.10265     2.71986
+    4          H           0.169975        0.8300     0.83002
+    5          H           0.117889        0.8821     0.88211
+    6          O          -0.512602        6.5126     1.81170     4.70090
+    7          H           0.340695        0.6593     0.65930
+    8          O          -0.451614        6.4516     1.85216     4.59945
+    9          C           0.253624        3.7464     1.15132     2.59505
+   10          H           0.104830        0.8952     0.89517
+   11          H           0.113357        0.8866     0.88664
+ DIPOLE           X         Y         Z       TOTAL
+ POINT-CHG.    -2.326    -2.191     1.057     3.366
+ HYBRID         0.354    -0.236     0.279     0.509
+ SUM           -1.972    -2.427     1.337     3.401
+
+
+          ATOMIC ORBITAL ELECTRON POPULATIONS
+
+     Atom    s        px        py        pz   
+    1  H   0.81925
+    2  C   1.11151   1.15764   1.11404   1.11120
+    3  C   1.10265   0.89346   0.81923   1.00718
+    4  H   0.83002
+    5  H   0.88211
+    6  O   1.81170   1.74591   1.43758   1.51740
+    7  H   0.65930
+    8  O   1.85216   1.34065   1.49330   1.76550
+    9  C   1.15132   0.74824   0.85868   0.98813
+   10  H   0.89517
+   11  H   0.88664
+
+          JOB ENDED NORMALLY
+
+
+
+ TOTAL JOB TIME:             0.14 SECONDS
+
+ == MOPAC DONE ==
