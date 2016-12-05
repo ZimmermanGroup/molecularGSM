@@ -175,7 +175,7 @@ void ICoord::create_xyz()
   return;
 }
 
-
+///creates the internal coordinates
 int ICoord::ic_create()
 {
   make_bonds();

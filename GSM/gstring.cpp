@@ -43,7 +43,10 @@ using namespace std;
 
 #define ADD_EXTRA_BONDS 0
 
-
+/**
+ * The main driver for DE and SE methods, growth and optimization. Can only 
+ * be called after coordinates have been set.
+ */
 void GString::String_Method_Optimization()
 {
 
@@ -1067,6 +1070,9 @@ void GString::init(string infilename, int run, int nprocs){
   //cout << endl << "***** Initialization complete *****" << endl;
 }
 
+/*
+ * Reads parameter file, normally defined at command line as inpfileq
+ */
 void GString::parameter_init(string infilename)
 {
   nnmax = 9;
@@ -1259,7 +1265,9 @@ void GString::parameter_init(string infilename)
   printf(" Done reading inpfileq \n\n");
 }
 
-
+/**
+ * Reads xyz file defined from commnand line
+ */
 void GString::structure_init(string xyzfile)
 {
   printf("Reading and initializing string coordinates \n");
@@ -1382,7 +1390,7 @@ void GString::structure_init(string xyzfile)
 }
 
 
-//calls get_eigenv_finite after constructing tangent
+///calls get_eigenv_finite after constructing tangent
 void GString::get_eigenv_finite(int enode)
 {
   //printf(" this function doesn't work (yet) \n"); fflush(stdout);
@@ -1415,7 +1423,7 @@ void GString::get_eigenv_finite(int enode)
   return;
 }
 
-
+///modifies hessian using RP direction
 void GString::get_eigenv_finite(int enode, double** ictan) 
 {
 //  int nmax = TSnode0;
@@ -1652,6 +1660,7 @@ void GString::get_eigenv_bofill()
   delete [] gp;
 }
 
+///Calculates the DE internal coordinate tangent vector.
 void GString::tangent_1(double* ictan)
 {
   int nbonds = newic.nbonds;
@@ -1678,7 +1687,7 @@ void GString::tangent_1(double* ictan)
 }
 
 
-//bond tangent for SSM
+///bond tangent for SSM
 double GString::tangent_1b(double* ictan)
 {
   printf("\n");
@@ -1924,7 +1933,7 @@ void GString::align_rxn()
   return;
 }
 
-
+///Grows the initial nodes for SE and DE. nnodes is 4 for DE and 3 for SE.
 void GString::starting_string(double* dq, int nnodes)
 {
 
@@ -2085,6 +2094,10 @@ void GString::starting_string(double* dq, int nnodes)
   return;
 }
 
+/**
+ * Adds a node between n1 and n3. In SE, n2 is nnmax-1
+ * arbitrarily because the added node is not "between" any node. 
+ */
 int GString::addNode(int n1, int n2, int n3)
 {
   printf(" adding node: %i between %i %i \n",n2,n1,n3);
@@ -2249,7 +2262,7 @@ int GString::addNode(int n1, int n2, int n3)
 
   return success;
 }
-
+///Add space node between n1-1 and n1
 int GString::addCNode(int n1)
 {
   if (nnmax>=nnmax0)
@@ -2991,7 +3004,11 @@ void GString::opt_r()
   return;
 }
 
-
+/**
+ * Optimizes each active node. 
+ * osteps is the number of optimization steps for the nodes
+ * oesteps is the number of eigenvector following steps for the TS
+ */
 void GString::opt_steps(double** dqa, double** ictan, int osteps, int oesteps)
 {
   printf("\n"); fflush(stdout);
@@ -3411,7 +3428,7 @@ void GString::add_angles(int nadd, int* newangles)
   return;
 }
 
-
+///reparametrizes the string along the constraint during the growth phase, only used by DE
 void GString::ic_reparam_g(double** dqa, double* dqmaga) 
 {
   close_dist_fix(0);
@@ -3581,7 +3598,7 @@ void GString::ic_reparam_g(double** dqa, double* dqmaga)
   return;
 }
 
-
+///reparametrizes the string along the constraint after the growth phase
 void GString::ic_reparam(double** dqa, double* dqmaga, int rtype) 
 {
   int size_ic = newic.nbonds+newic.nangles+newic.ntor;
@@ -3665,7 +3682,7 @@ void GString::ic_reparam(double** dqa, double* dqmaga, int rtype)
     }
 
  
-    //using average
+    ///rtype==0 using average
     if (rtype==0 && i==0)
     {
       if (!climb)
@@ -4927,7 +4944,7 @@ int GString::find_uphill(double cutoff)
 
   return nup;
 }
-
+///Finds peaks, used by opt_iters to know which node to climb.
 int GString::find_peaks(int type)
 {
   printf(" in find_peaks (%i) \n",type);
@@ -5090,6 +5107,7 @@ int GString::find_peaks(int type)
   return npeaks;
 }
 
+///tangents pairwise, returns distance magnitudes also
 void GString::get_tangents_1(double** dqa, double* dqmaga, double** ictan)
 {
   int nbonds = newic.nbonds;
@@ -5167,7 +5185,7 @@ void GString::get_tangents_1(double** dqa, double* dqmaga, double** ictan)
 
   return;
 }
-
+///Finds the tangents during the growth phase. Tangents referenced to left or right during growing phase
 void GString::get_tangents_1g(double** dqa, double* dqmaga, double** ictan)
 {
   int nbonds = newic.nbonds;
@@ -6510,6 +6528,7 @@ void GString::set_ssm_bonds(ICoord &ic1)
   return;
 } 
 
+///Checks if string is past_ts. Used by SSM.
 int GString::past_ts()
 {
   int ispast = 0; //return value
@@ -6597,7 +6616,11 @@ int GString::past_ts()
   return ispast;
 }
 
-
+/**
+ * Optimization and add node driver for SE and DE during growth phase.
+ * max_iter is the max number of iterations for the entire calculation (growth and
+ * optimiazation)
+ */
 void GString::growth_iters(int max_iter, double& totalgrad, double& gradrms, double endenergy, string strfileg, int& tscontinue, double gaddmax, int osteps, int oesteps, double** dqa, double* dqmaga, double** ictan)
 {
   double rn3m6 = sqrt(3*natoms-6);
@@ -6859,7 +6882,10 @@ void GString::print_em(int nmaxp)
 
   return;
 }
-
+/**Optimization driver for DE and SE during the optimization phase.
+ * climber=1 uses climbing image, 
+ *  finder=1 finds the exact TS
+ */
 void GString::opt_iters(int max_iter, double& totalgrad, double& gradrms, double endenergy, string strfileg, int& tscontinue, double gaddmax, int osteps, int oesteps, double** dqa, double* dqmaga, double** ictan, int finder, int climber, int do_tp, int& tp)
 {
   double rn3m6 = sqrt(3*natoms-6);
