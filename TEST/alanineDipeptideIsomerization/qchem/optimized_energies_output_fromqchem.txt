@@ -1,2 +1,0 @@
--495.852867902974 q001.reactant.inp.out
--495.850978569766 q002.product.inp.out
