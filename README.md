@@ -15,7 +15,7 @@ This code can be built using CMake. To do so:
 3. Clone this repository
 
 ```bash
-    $ git clone git@github.com:ZimmermanGroup/molecularGSM.git
+		$ git clone https://github.com/ZimmermanGroup/molecularGSM.git
 ```
 4. Clone TriBITS repository
 ```bash
