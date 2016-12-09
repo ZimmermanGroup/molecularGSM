@@ -14,7 +14,7 @@ ${CMAKE_CURRENT_BINARY_DIR}/${TEST_DIR})
         EXEC gsm.${CALCULATOR} NOEXEPREFIX 
 				DIRECTORY ${PROJECT_BINARY_DIR}/${PROJECT_NAME}
         # the args for gstringq, 1 is the file name and 4 is the number of processors
-        ARGS 1 4
+        ARGS 1 1
         # where it executes
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${TEST_DIR}
         # don't clean it because we copied things there that it needs

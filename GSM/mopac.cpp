@@ -156,7 +156,9 @@ double Mopac::opt(string filename, ICoord icoords) {
     xyzfile << " " << anames[i] << " " << xyz[3*i+0] << " " << xyz[3*i+1] << " " << xyz[3*i+2] << endl;
   }
 
-  string cmd = "/tmp/MOPAC2016.exe "+filename;
+  //string cmd = "/tmp/MOPAC2016.exe "+filename;
+  //CRA 12/8/2016 why is this referencing /tmp/?
+  string cmd = "mopac "+filename;
   system(cmd.c_str());
 
   energy = read_output(filename);
@@ -220,7 +222,8 @@ double Mopac::opt(string filename) {
   }
 //  xyzfile << " " << natoms << endl << endl;
 
-  string cmd = "/tmp/MOPAC2016.exe "+filename;
+  //string cmd = "/tmp/MOPAC2016.exe "+filename;
+  string cmd = "mopac "+filename;
   system(cmd.c_str());
 
   energy = read_output(filename);
@@ -282,7 +285,8 @@ double Mopac::grads(string filename)
 //    xyzfile << " " << anames[i] << " " << xyz[3*i+0] << " " << xyz[3*i+1] << " " << xyz[3*i+2] << endl;
   }
 
-  string cmd = "/tmp/MOPAC2016.exe "+filename;
+  //string cmd = "/tmp/MOPAC2016.exe "+filename;
+  string cmd = "mopac "+filename;
   system(cmd.c_str());
 
   //sleep(1);
