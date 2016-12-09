@@ -19,14 +19,14 @@ def main():
         currentOutput = csv.reader(open('stringfile.xyz0001', 'r'), delimiter=' ')
     except IOError:
         print("Error: File cannot be found!")
-        return 1
+        exit(1)
     for rowStd, rowOut in zip(standard, currentOutput):
         rowStd = filter(None, rowStd)
         rowOut = filter(None, rowOut)
         for valStd, valOut in zip(list(convertToFloat(rowStd)), list(convertToFloat(rowOut))):
             if ((subtractFloat(valStd, valOut)) > 0.001):
                 print ((subtractFloat(valStd, valOut)))
-                return 2
+                exit(2)
     return 0
 
 if __name__ == "__main__":
