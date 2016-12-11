@@ -175,7 +175,7 @@ void GString::String_Method_Optimization()
   printf(" END NOTICES \n\n");
 
   //#include "savefile.cpp"
-  printf("%c \n",g_GIT_SHA1);
+  printf("Version: %s \n\n",g_GIT_SHA1);
 
   for (int i=0;i<nnmax;i++)
     active[i] = -1;
