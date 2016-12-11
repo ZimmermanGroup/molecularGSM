@@ -27,10 +27,9 @@ ${CMAKE_CURRENT_BINARY_DIR}/${TEST_DIR})
         TIMEOUT 100000
 
     TEST_1
-        MESSAGE "-- Comparing output in
-        ${CMAKE_CURRENT_BINARY_DIR}/${TEST_DIR}"
+        MESSAGE "-- Comparing output in ${CMAKE_CURRENT_BINARY_DIR}/${TEST_DIR}"
         # the execution command
-        CMND python
+				CMND python
         # the args for CMND
         ARGS compare.py
         # where it executes
@@ -54,7 +53,7 @@ ENDFUNCTION()
 if(GSM_ENABLE_QCHEM)
     MESSAGE(STATUS "QCHEM is enabled.")
     #GFSTRINGQ_TEST(alanineDipeptideIsomerization/qchem/de-gsm alanine)
-    #GFSTRINGQ_TEST(ammoniaBorane/qchem/de-gsm ammonia)
+    GFSTRINGQ_TEST(ammoniaBorane/qchem/de-gsm ammonia)
     GFSTRINGQ_TEST(dielsAlder/qchem/de-gsm diels)
     GFSTRINGQ_TEST(ethyleneRotation/qchem/de-gsm ethylene)
     GFSTRINGQ_TEST(methanolFormaldehydeHydTransfer/qchem/de-gsm methanol)
@@ -79,7 +78,9 @@ else()
     MESSAGE(STATUS "MOPAC is enabled.")
     #GFSTRINGQ_TEST(alanineDipeptideIsomerization/mopac/de-gsm alanine)
     #GFSTRINGQ_TEST(ammoniaBorane/mopac/de-gsm ammonia)
-    GFSTRINGQ_TEST(dielsAlder/mopac/de-gsm diels)
     #GFSTRINGQ_TEST(ethyleneRotation/mopac/de-gsm ethene)
     #GFSTRINGQ_TEST(methanolFormaldehydeHydTransfer/mopac/de-gsm methanol)
+		#GFSTRINGQ_TEST(dielsAlder/mopac/de-gsm diels)
+    GFSTRINGQ_TEST(ethyleneRotation/mopac/de-gsm ethylene)
+    GFSTRINGQ_TEST(methanolFormaldehydeHydTransfer/mopac/de-gsm methanol)
 endif()
