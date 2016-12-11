@@ -295,8 +295,8 @@ int Gradient::external_grad(double* coords, double* grad)
   Mopac mop1; 
   mop1.alloc(natoms);
   mop1.reset(natoms,anumbers,anames,coords);
-  //string cmd = "mkdir "+pdir+"scratch";
-  //system(cmd.c_str());
+  string cmd = "mkdir "+pdir+"scratch";
+  system(cmd.c_str());
   energy = mop1.grads(pdir+"scratch/mxyzfile"+runends);
   for (int i=0;i<N3;i++)
     grad[i] = mop1.grad[i];
