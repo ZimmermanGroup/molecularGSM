@@ -12,11 +12,13 @@ This code can be built using CMake. To do so:
 
 1. Load/install CMake
 2. Load Intel compilers (if not loaded)
-3. Clone this repository
+3. Clone this repository and checkout tribits branch
 
 ```bash
 		$ git clone https://github.com/ZimmermanGroup/molecularGSM.git
+		$ git checkout tribits
 ```
+
 4. Clone TriBITS repository
 ```bash
 	 $ git clone https://github.com/TriBITSPub/TriBITS.git

@@ -1,8 +1,10 @@
-#!/bin/sh
+#!/bin/bash
+##This file was created on 12/12/2016
+#this is a pbs script for the FLUX HPC, change accordingly
+
+
 ####  PBS preamble
-
 #PBS -N test
-
 #PBS -M craldaz@umich.edu
 #PBS -m abe
 
