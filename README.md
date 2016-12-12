@@ -44,6 +44,6 @@ This code can be built using CMake. To do so:
     
     $make -j8
 
-8. An executable named "gfstringq.exe" will be created in BUILD/GSM directory.
+8. An executable named "gsm.${CALCULATOR}.exe" will be created in BUILD/GSM directory, where ${CALCULATOR} is the name of the QM package.
 
-To run gfstringq.exe, copy the executable to the working directory (where the input files are) or create a symbolic link to it in the working directory.
+To run gsm, copy the executable to the working directory (where the input files are) or reference it with using the full path. 
