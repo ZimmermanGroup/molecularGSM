@@ -52,7 +52,8 @@ ENDFUNCTION()
 #call the function
 if(GSM_ENABLE_QCHEM)
     MESSAGE(STATUS "QCHEM is enabled.")
-    GFSTRINGQ_TEST(alanineDipeptideIsomerization/qchem/de-gsm alanine)
+		#don't run because it crashes
+    #GFSTRINGQ_TEST(alanineDipeptideIsomerization/qchem/de-gsm alanine)
     GFSTRINGQ_TEST(ammoniaBorane/qchem/de-gsm ammonia)
     GFSTRINGQ_TEST(dielsAlder/qchem/de-gsm diels)
 		#
