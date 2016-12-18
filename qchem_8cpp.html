@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<title>Growing String Method</title>
+<title>/export/zimmerman/mjafari/ners590-project/fresh-copy/molecularGSM/GSM/qchem.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javaScript" src="search/search.js"></script>
@@ -17,11 +17,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="navigation" id="top">
   <div class="tabs">
     <ul>
-      <li class="current"><a href="index.html"><span>Main&nbsp;Page</span></a></li>
+      <li><a href="index.html"><span>Main&nbsp;Page</span></a></li>
       <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
-      <li><a href="files.html"><span>Files</span></a></li>
+      <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <img id="MSearchSelect" src="search/search.png"
@@ -37,21 +37,38 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </li>
     </ul>
   </div>
+  <div class="tabs">
+    <ul>
+      <li><a href="files.html"><span>File&nbsp;List</span></a></li>
+      <li><a href="globals.html"><span>File&nbsp;Members</span></a></li>
+    </ul>
+  </div>
 </div>
 <div class="contents">
-<h1>Growing String Method</h1><h3></h3><p>The Growing String Method (GSM) is a reaction path (RP) and transition state (TS) finding tool. GSM is utilized in two main fashions, double-ended (DE) and single-ended (SE). DE requires a reactant and product pair, wheras SE only requires a reactant and a driving coorindate. The driving coordinate are internal coordinates (angles, bonds, and torsions) corresponding to the assumed ideal reaction coordinate.</p>
-<p>GSM is written in C++11, and requires the Intel C++ Composer XE 2013 and higher as well as the MKL library. Furthermore, GSM requires an electronic structure package that is properly sourced, and available at the command line. The following electronic structure packages are implemented with GSM:</p>
-<ul>
-<li><a class="el" href="classQChem.html">QChem</a></li>
-<li><a class="el" href="classORCA.html">ORCA</a></li>
-<li><a class="el" href="classGAUSSIAN.html">GAUSSIAN</a></li>
-<li><a class="el" href="classMopac.html">Mopac</a></li>
-<li><a class="el" href="classMolpro.html">Molpro</a></li>
-</ul>
-<p>For more information, check out the wiki page: <a href="https://github.com/ZimmermanGroup/molecularGSM/wiki">https://github.com/ZimmermanGroup/molecularGSM/wiki</a></p>
-<p>We recommend running CTest to check that the executable was linked properly to the electronic structure package and MKL. The TEST folders also provide a "template" for performing calculations i.e. it has the requisite input files necessary for the calculation.</p>
-<p>Common build errors are 1. INTEL is not loaded or MKLROOT is not set as an environment variable.</p>
-<dl class="date"><dt><b>Date:</b></dt><dd>2016-12-1  MIT Licence </dd></dl>
+<h1>/export/zimmerman/mjafari/ners590-project/fresh-copy/molecularGSM/GSM/qchem.cpp File Reference</h1><code>#include &quot;qchem.h&quot;</code><br/>
+<div class="dynheader">
+Include dependency graph for qchem.cpp:</div>
+<div class="dynsection">
+<div class="center"><img src="qchem_8cpp__incl.png" border="0" usemap="#_2export_2zimmerman_2mjafari_2ners590-project_2fresh-copy_2molecularGSM_2GSM_2qchem_8cpp_map" alt=""/></div>
+</div>
+<table border="0" cellpadding="0" cellspacing="0">
+<tr><td colspan="2"><h2>Defines</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">#define&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="qchem_8cpp.html#ad9850aa2001375751832e4dd68ef2159">COPY_GRAD</a>&nbsp;&nbsp;&nbsp;0</td></tr>
+</table>
+<hr/><h2>Define Documentation</h2>
+<a class="anchor" id="ad9850aa2001375751832e4dd68ef2159"></a><!-- doxytag: member="qchem.cpp::COPY_GRAD" ref="ad9850aa2001375751832e4dd68ef2159" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define COPY_GRAD&nbsp;&nbsp;&nbsp;0</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+</div>
+</div>
 </div>
 <!--- window showing the filter options -->
 <div id="MSearchSelectWindow"
