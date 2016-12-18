@@ -58,3 +58,29 @@ To run gsm, copy the executable to the working directory (where the input files 
 ##CTest
 
 There are five test examples: alanine dipeptide isomerization, ammonia borane reactions, diels alder reaction, ethylene rotation, and methanol formaldehyde reaction. After building the executable you can use type $ ctest to run the tests. When each test is complete, the output will be compared with the standard output in each test directory. If the difference in coordinates of a each atom is more than 0.001, the test will fail.
+
+##Documentation
+
+The documentation is generated using Doxygen and hosted on github pages:
+
+https://zimmermangroup.github.io/molecularGSM/
+
+Maintaining this page is not very straightforward and it does not update every time one builds the documentation. Here are some links on how it works:
+
+http://rickfoosusa.blogspot.com/2011/10/howto-use-doxygen-with-github.html
+
+https://help.github.com/articles/configuring-a-publishing-source-for-github-pages/
+
+https://help.github.com/articles/creating-project-pages-using-the-command-line/
+
+This is apparently a better solution:
+
+https://martinhh.github.io/2014/08/27/hosting-doxygen-as-github-page/
+
+This how the main page can be accessed:
+
+https://pages.github.com/
+
+```bash
+git clone git@github.com:TriBITSPub/TriBITS.git
+```
