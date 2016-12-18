@@ -11,43 +11,50 @@ Sample tutorial files can be found under the tutorial folder:
 https://github.com/ZimmermanGroup/molecularGSM/tree/master/tutorial
 
 ## Installation
-To compile:
+This code can be built using CMake. To do so:
 
-1. Set FC and LINKERFLAGS in Makefile
- --I have used Intel 12 and 13 compilers 
-2. type: make
-3. copy gfstringq.exe to run directory
-4. copy nwchem.py to your ase/calculators/ directory
+1. Load/install CMake
+2. Load Intel compilers (if not loaded)
+3. Clone this repository and checkout tribits branch
 
+```bash
+		$ git clone https://github.com/ZimmermanGroup/molecularGSM.git
+        $ cd molecularGSM
+		$ git checkout tribits
+```
 
-To run gfstringq.exe:
+4. Clone TriBITS repository
+```bash
+	 $ git clone https://github.com/TriBITSPub/TriBITS.git
+```
 
-1. Setup grad.py by setting scratch directory to local scratch
- --default is $PBSTMPDIR
-2. Set XC and basis in grad.py
- --default B3LYP/6-31G**
-3. Check inpfileq for string method settings
-4. To run:
- a. NWChem must be available at command line (e.g. source setnw)
- b. export OMP_NUM_THREADS=1
- c. to execute: ./gfstringq.exe jobnumber numberofcores > scratch/paragsmXXXX
- d. initialXXXX.xyz and ISOMERSXXXX must be present in scratch
-5. example/qmakeg can create a queuing script in scratch/ called go_gsm_dft.qsh
- --add "#PBS -t jobnumber1,jobnumber2,..." at the top of go_gsm_dft.qsh
+5. Create a BUILD directory at the same level as GSM
+```bash
+    $ mkdir BUILD
+    $ cd BUILD
+```
 
+6. Configure using CMake
+```bash
+    $ cmake -D GSM_ENABLE_QCHEM=1 ../
+```
+    - other options:
+        - GSM_ENABLE_QCHEM_SF=1
+        - GSM_ENABLE_ORCA=1
+        - GSM_ENABLE_GAUSSIAN=1
+        - GSM_ENABLE_MOLPRO=1
+        - GSM_ENABLE_ASE=1
+    - If no option is specified, the code will use MOPAC as its energy calculator. Check mopac.cpp to make sure charge/multiplicity is correct, since that is hard-coded.
 
-Analysis:
+7. After successful configuration. To compile:
+```bash
+    $make -j8
+```
 
-1. stringfile.xyz#### contains the reaction path and TS
- --variants on this file w/"g" at the end are growth phase strings
- --"fr" at the end is a partial Hessian analysis, showing the first 3 vibrational modes
- --comment lines are energies relative to first structure in kcal/mol
-2. paragsm#### contains the optimization output
-3. ./status shows the current state of the various runs
+8. An executable named "gsm.${CALCULATOR}.exe" will be created in BUILD/GSM directory, where ${CALCULATOR} is the name of the QM package.
 
+To run gsm, copy the executable to the working directory (where the input files are) or reference it using the full path. 
 
-Examples in example/ directory:
+##CTest
 
-0007: This is a Diels-Alder reaction. initial0007.xyz contains input for SE-GSM (SSM) or DE-GSM (GSM)
-
-0076: H2 addition to SiH2. initial0076.xyz contains SSM and GSM input.
+There are five test examples: alanine dipeptide isomerization, ammonia borane reactions, diels alder reaction, ethylene rotation, and methanol formaldehyde reaction. After building the executable you can use type $ ctest to run the tests. When each test is complete, the output will be compared with the standard output in each test directory. If the difference in coordinates of a each atom is more than 0.001, the test will fail.
