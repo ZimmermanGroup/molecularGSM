@@ -1394,7 +1394,6 @@ void GString::structure_init(string xyzfile)
 void GString::get_eigenv_finite(int enode)
 {
   //printf(" this function doesn't work (yet) \n"); fflush(stdout);
-
   int size_ic = newic.nbonds + newic.nangles + newic.ntor;
   int len_d = newic.nicd0;
   //printf(" nnmax: %i size_ic: %i len_d: %i \n",nnmax,size_ic,len_d); fflush(stdout);
@@ -1573,8 +1572,6 @@ void GString::get_eigenv_finite(int enode, double** ictan)
 
   return;
 }
-
-
 
 void GString::get_eigenv_bofill() 
 {
@@ -1789,26 +1786,6 @@ double GString::tangent_1b(double* ictan)
   for (int i=0;i<size_ic;i++)
     ictan[i] = ictan[i] / norm;
 
-
-//CPMZ clean up!
-#if 0
-  if (nadd==0)
-    bdist = nbrk * 0.5;
-  else if (bdist < nadd*DQMAG_SSM && nbrk>0) 
-    bdist = nbrk * 0.5;
-  if (nadd==0 && nbrk==0)
-    bdist = nangle * 0.5 + ntors * 0.5;
-#endif
-#if 0
-  bdist = nadd * 0.5 + nbrk * 0.5 + nangle * 0.25 + ntors * 0.25;
-#endif
-#if 0
- //bdist starts from bond from actual distances
-  bdist += nbrk * 0.5 + nangle * 0.25 + ntors * 0.25;
-  if (nadd == 0 && nbrk == 0)
-    bdist = nangle * 0.5 + ntors * 0.5;
-#endif
-
   bdist = norm;
 
  // printf(" bdist: %4.3f norm: %4.3f \n",bdist,norm);
@@ -1907,7 +1884,6 @@ void GString::align_rxn()
     nnew_tor = 2;
     
   }
-
 
   //opt first structure with force
   int osteps = 200;
@@ -2031,9 +2007,6 @@ void GString::starting_string(double* dq, int nnodes)
 
     printf(" dqmag: %1.2f",dqmag);
 
-//    newic.bmatp_create();
-//    newic.bmatp_to_U();
-//    newic.opt_constraint(ictan);
     newic.bmat_create();
     if (nnmax-n!=1)
       newic.dq0[newic.nicd0-1] = -dqmag/(nnmax-n);
@@ -2186,9 +2159,6 @@ int GString::addNode(int n1, int n2, int n3)
 
     printf(" dqmag: %1.2f",dqmag);
 
-//    newic.bmatp_create();
-//    newic.bmatp_to_U();
-//    newic.opt_constraint(ictan);
     newic.bmat_create();
     if (nnmax-nn!=1)
       newic.dq0[newic.nicd0-1] = -dqmag/(nnmax-nn);
@@ -2262,6 +2232,7 @@ int GString::addNode(int n1, int n2, int n3)
 
   return success;
 }
+
 ///Add space node between n1-1 and n1
 int GString::addCNode(int n1)
 {
@@ -2346,9 +2317,6 @@ int GString::addCNode(int n1)
 
     printf(" dqmag: %1.2f",dqmag);
 
-//    newic.bmatp_create();
-//    newic.bmatp_to_U();
-//    newic.opt_constraint(ictan);
     newic.bmat_create();
     newic.dq0[newic.nicd0-1] = -dqmag/2;
 
@@ -2400,7 +2368,6 @@ int GString::addCNode(int n1)
     nn++;
     nnmax++;
   }
-
 
   return 1;
 }
@@ -2516,8 +2483,6 @@ void GString::com_rotate_move(int iR, int iP, int iN, double ff) {
 
   return;
 }
-
-
 
 void GString::starting_string_dm(double* dq)
 {
@@ -4511,9 +4476,6 @@ void GString::ic_reparam_cut(int min, double** dqa, double* dqmaga, int rtype)
  
   return;
 }
-
-
-
 
 void GString::ic_reparam_dm(double** dqa, double* dqmaga, int rtype) 
 {
