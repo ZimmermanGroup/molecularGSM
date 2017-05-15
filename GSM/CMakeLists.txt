@@ -60,6 +60,7 @@ file(GLOB GSM_SRC
 list(APPEND GSM_SRC "${CMAKE_CURRENT_BINARY_DIR}/GitSHA1.cpp" GitSHA1.h)
 
 # set up libraries
+set(MKL_FIND_DEBUG ON)
 find_package(MKL REQUIRED)
 include_directories(${MKL_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${MKL_LIBRARIES})

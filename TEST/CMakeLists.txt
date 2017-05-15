@@ -74,12 +74,12 @@ elseif(GSM_ENABLE_ORCA)
 		#
 		# Don't run alanine --causes GSM to stall
     #GFSTRINGQ_TEST(alanineDipeptideIsomerization/orca/de-gsm alanine)
-    GFSTRINGQ_TEST(ammoniaBorane/orca/de-gsm ammonia)
+   # GFSTRINGQ_TEST(ammoniaBorane/orca/de-gsm ammonia)
     GFSTRINGQ_TEST(dielsAlder/orca/de-gsm diels)
 		#
 		#Don't run ethene --causes GSM to stall
     #GFSTRINGQ_TEST(ethyleneRotation/orca/de-gsm ethylene)
-    GFSTRINGQ_TEST(methanolFormaldehydeHydTransfer/orca/de-gsm methanol)
+    #GFSTRINGQ_TEST(methanolFormaldehydeHydTransfer/orca/de-gsm methanol)
 
 else()
     MESSAGE(STATUS "MOPAC is enabled.")
