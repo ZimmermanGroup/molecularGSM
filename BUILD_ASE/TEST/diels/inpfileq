@@ -1,0 +1,27 @@
+
+# FSM/GSM/SSM inpfileq
+
+------------- QCHEM Scratch Info ------------------------
+$QCSCRATCH/    # path for scratch dir. end with "/" 
+GSM_go1q       # name of run
+---------------------------------------------------------
+
+------------ String Info --------------------------------
+SM_TYPE                 GSM    # SSM, FSM or GSM
+RESTART                 0      # read restart.xyz
+MAX_OPT_ITERS           80     # maximum iterations
+STEP_OPT_ITERS          30     # for FSM/SSM
+CONV_TOL                0.0005 # perp grad
+ADD_NODE_TOL            0.1    # for GSM
+SCALING                 1.0    # for opt steps
+SSM_DQMAX               0.8    # add step size
+GROWTH_DIRECTION        0      # normal/react/prod: 0/1/2
+INT_THRESH              2.0    # intermediate detection
+MIN_SPACING             5.0    # node spacing SSM
+BOND_FRAGMENTS          1      # make IC's for fragments
+INITIAL_OPT             0      # opt steps first node
+FINAL_OPT               150    # opt steps last SSM node
+PRODUCT_LIMIT           100.0  # kcal/mol
+TS_FINAL_TYPE           1      # any/delta bond: 0/1
+NNODES                  9      # including endpoints
+---------------------------------------------------------
