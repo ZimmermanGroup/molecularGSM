@@ -3,7 +3,6 @@
 *.exe
 *.log
 tags
-grad.py
 example.tgz
 gstring.cpp_1
 BUILD/
