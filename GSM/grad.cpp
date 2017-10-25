@@ -1,4 +1,5 @@
 #include "grad.h"
+
 #include "mopac.h"
 
 using namespace std;
@@ -282,6 +283,12 @@ int Gradient::external_grad(double* coords, double* grad)
 #elif USE_ASE
   //printf(" grad ase \n"); fflush(stdout);
   energy = ase1.grads(coords,grad);
+  //printf(" done grad ase \n"); fflush(stdout);
+#elif TURBOMOLE
+  //printf(" grad ase \n"); fflush(stdout);
+  //cout << "NOW turbomole energy calc" <<endl;
+  energy = turbo1.grads(coords,grad);
+  //cout << "after turbo1.grads" <<endl;
   //printf(" done grad ase \n"); fflush(stdout);
 #else
   char* pbsPath;
@@ -590,6 +597,11 @@ void Gradient::init(string infilename, int natoms0, int* anumbers0, string* anam
   gaus1.CHARGE = CHARGE;
   gaus1.ncpu = ncpu;
 #endif
+#if TURBOMOLE
+  turbo1.init(infilename,natoms,anumbers,anames,run,rune);
+//  turbo1.CHARGE = CHARGE;
+      turbo1.ncpu = ncpu;
+#endif
 #if USE_ASE
   ase1.init(infilename,natoms,anumbers,anames,run,rune);
   ase1.CHARGE = CHARGE;
@@ -648,6 +660,8 @@ void Gradient::init(string infilename, int natoms0, int* anumbers0, string* anam
   printf("  grad initiated: ASE mode \n");
 #elif USE_MOLPRO
   printf("  grad initiated: MOLPRO mode \n");
+#elif TURBOMOLE
+  printf("  grad initiated: Turbomole mode \n");
 #else
   printf("  grad initiated: Mopac mode \n");
 #endif

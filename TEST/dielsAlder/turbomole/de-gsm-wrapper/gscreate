@@ -1,0 +1,31 @@
+#!/bin/bash
+
+if [ ! -d $TMSCRATCH/COORD_$1 ]; then
+  mkdir $TMSCRATCH/COORD_$1
+fi
+
+cat $TMSCRATCH/COORD_$1/coord >> $TMSCRATCH/COORD_$1/coord_PREV
+number=$(echo $1 | sed 's/^0*//')
+#echo "MOLECULE NUMBER:" $number
+
+if [ $number = 1 ]; then
+  if [ ! -f $TMSCRATCH/COORD_$1/control ];
+  then
+    cp tm_define cosmo_inp $TMSCRATCH/COORD_$1
+    x2t $TMSCRATCH/molecule$1 > $TMSCRATCH/COORD_$1/coord
+    cd $TMSCRATCH/COORD_$1/
+    define < tm_define > define_$1.log
+    cd -
+  else
+    x2t $TMSCRATCH/molecule$1 > $TMSCRATCH/COORD_$1/coord
+  fi
+else
+#  cp TM/* $TMSCRATCH/COORD_$1
+  if [ ! -f $TMSCRATCH/COORD_$1/control ];
+  then
+    previous=$(printf "%07d" $(($number-1)))
+    cp $TMSCRATCH/COORD_"$previous"/* $TMSCRATCH/COORD_$1 
+  fi
+  x2t $TMSCRATCH/molecule$1 > $TMSCRATCH/COORD_$1/coord
+fi
+
