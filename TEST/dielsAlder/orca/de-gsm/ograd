@@ -10,7 +10,8 @@ fi
 
 #echo " in ograd: $1 $2 "
 
-ofile=scratch/orcain$1.in
+#ofile=scratch/orcain$1.in
+ofile=$SLURM_LOCAL_SCRATCH/orcain$1.in
 ofileout=scratch/orcain$1.out
 molfile=scratch/structure$1
 ncpu=$2
@@ -19,7 +20,7 @@ ncpu=$2
 
 ########## DFT settings: #################
 #echo '! DFT BP86 ECP{LANL2} ENGRAD' > $ofile
-echo '! DFT B3LYP ENGRAD' > $ofile
+echo '! DFT B3LYP ENGRAD 6-31G*' > $ofile
 #echo '! veryslowconv SCFCONV6' >> $ofile
 echo '! nomoprint' >> $ofile
 echo '%scf' >> $ofile
@@ -31,4 +32,5 @@ cat $molfile >> $ofile
 echo '*' >> $ofile
 
 #echo "running: orca $ofile > $ofileout"
-orca $ofile > $ofileout
+#orca $ofile > $ofileout
+/export/zimmerman/khyungju/orca_4_0_0_2_linux_x86-64/orca $ofile > $ofileout
