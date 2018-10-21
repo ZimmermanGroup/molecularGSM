@@ -1,10 +1,19 @@
 #include "grad.h"
 #include "mopac.h"
+#include "xtb.h"
 
 using namespace std;
 
 #define NOGRAD 0
 
+
+double Gradient::sphere_force(double rf)
+{
+  double f1 = 0.;
+  if (rf<0.)
+    f1 = rf*sphereF;
+  return f1;
+}
 
 void Gradient::add_force(double* coords, double* grad)
 {
@@ -40,6 +49,90 @@ void Gradient::add_force(double* coords, double* grad)
       printf("f");
     }
   }
+
+  int do_spherical = 0;
+  if (sphereF!=0.) do_spherical = 1;
+
+  if (do_spherical)
+  {
+    double* sgrad = new double[3*natoms];
+    double comx = 0.;
+    double comy = 0.;
+    double comz = 0.;
+    for (int j=0;j<natoms;j++)
+    {
+      comx += coords[3*j+0];
+      comy += coords[3*j+1];
+      comz += coords[3*j+2];
+    }
+    comx /= natoms; comy /= natoms; comz /= natoms;
+    comx *= ANGtoBOHR; comy *= ANGtoBOHR; comz *= ANGtoBOHR;
+
+    int nsteps = 0;
+    int maxsteps = 50000;
+    double ftot;
+    int signp = 1;
+    double maxstep = 0.5;
+    while (do_spherical)
+    {
+      //printf("  step %2i \n",nsteps+1);
+      ftot = 0.;
+      fdE = 0.;
+      for (int j=0;j<natoms;j++)
+      {
+        double x1 = coords[3*j+0]*ANGtoBOHR; double x1r = x1 - comx;
+        double y1 = coords[3*j+1]*ANGtoBOHR; double y1r = y1 - comy;
+        double z1 = coords[3*j+2]*ANGtoBOHR; double z1r = z1 - comz;
+        double r1 = sqrt(x1r*x1r+y1r*y1r+z1r*z1r);
+       //normal vector pointing "out"
+        x1r /= r1; y1r /= r1; z1r /= r1;
+
+        double rf = sphereR - r1;
+        double f1 = sphere_force(rf);
+        ftot += fabs(f1);
+        //printf("  j: %i rf: %8.5f f1: %8.5f \n",j+1,rf,f1);
+
+        fdE += 0.5*rf*f1;
+
+        sgrad[3*j+0] = -f1 * x1r;
+        sgrad[3*j+1] = -f1 * y1r;
+        sgrad[3*j+2] = -f1 * z1r;
+        //printf(" %8.5f %8.5f %8.5f \n",sgrad[3*j+0],sgrad[3*j+1],sgrad[3*j+2]);
+      }
+
+#if 0
+      if (fabs(ftot-sphereFT)<0.0000001) break;
+      if (nsteps++>maxsteps) break;
+
+      double diff = ftot-sphereFT;
+      if (diff<-0.9*sphereFT)
+        sphereR -= 0.25;
+      else
+      {
+        int sign1 = sign(signp);
+        if (signp!=sign1) maxstep *= 0.5; if (maxstep<0.000001) maxstep = 0.000001;
+        if (fabs(diff)>fabs(maxstep)) diff = sign(diff)*maxstep;
+        sphereR += diff;
+        signp = sign1;
+      }
+      printf(" R: %8.5f ftot: %8.6f fdE: %8.6f maxstep: %8.6f \n",sphereR,ftot,fdE,maxstep);
+#endif
+
+     //only works for fixed R!
+      break;
+    } //loop to converge forces
+
+//    printf(" final sgrad: \n");
+//    for (int j=0;j<natoms;j++)
+//      printf(" %8.5f %8.5f %8.5f \n",sgrad[3*j+0],sgrad[3*j+1],sgrad[3*j+2]);
+
+
+    printf(" sphere R: %8.5f ftot: %8.6f fdE: %8.6f maxstep: %8.6f \n",sphereR,ftot,fdE,maxstep);
+    for (int j=0;j<3*natoms;j++)
+      grad[j] += sgrad[j];
+
+    delete [] sgrad;
+  } //adding sphere forces
 
   return;
 }
@@ -139,9 +232,9 @@ double Gradient::grads(double* coords, double* grad, double* Ut, int type)
     printf(" kg"); 
 
   add_force(coords,grad);
-  //printf(" E: %12.8f",energy);
+  printf(" E: %12.8f",energy);
   energy += fdE*627.5;
-  //printf(" E+fdE: %12.8f \n",energy);
+  printf(" E+fdE: %12.8f \n",energy);
 
 #if 0
   if (xyz_grad)
@@ -292,15 +385,33 @@ int Gradient::external_grad(double* coords, double* grad)
     string pstr(pbsPath);
     pdir = pstr + "/";
   }
+
+#if USE_XTB
+  XTB xtb1;
+  xtb1.alloc(natoms);
+  xtb1.reset(natoms,anumbers,anames,coords);
+  xtb1.set_charge(CHARGE);
+  string cmd = "mkdir scratch/"
+  system(cmd.c_str();
+  energy = xtb1.grads("scratch/xtbfile"+runends);
+  for (int i=0;i<N3;i++)
+    grad[i] = xtb1.grad[i];
+  xtb1.freemem();
+#else
   Mopac mop1; 
   mop1.alloc(natoms);
   mop1.reset(natoms,anumbers,anames,coords);
+  mop1.set_charge(CHARGE);
   string cmd = "mkdir "+pdir+"scratch";
   system(cmd.c_str());
   energy = mop1.grads(pdir+"scratch/mxyzfile"+runends);
+  if (nforce>0)
+    energy -= 100000.;
   for (int i=0;i<N3;i++)
     grad[i] = mop1.grad[i];
   mop1.freemem();
+#endif
+
 #endif
   gradcalls++;
 
@@ -661,6 +772,10 @@ int Gradient::force_init(string ffile)
 {
   int use_force = 0;
 
+  sphereF = 0.05;
+  sphereR = 25.;
+  sphereFT = 0.15;
+
   int* fa1 = new int[20];
   double* fv1 = new double[10];
   double* fk1 = new double[10];
@@ -668,7 +783,12 @@ int Gradient::force_init(string ffile)
   ifstream infile;
   infile.open(ffile.c_str());
   if (!infile)
-    return 0;
+  {
+    string ffile1 = "scratch/"+ffile;
+    infile.open(ffile1.c_str());
+    if (!infile)
+      return 0;
+  }
 
 
   string line;
@@ -687,8 +807,22 @@ int Gradient::force_init(string ffile)
       fk1[use_force] = atof(tok_line[3].c_str());
       use_force++;
     }
+    else if (tok_line.size()==2)
+    {
+      sphereR = atof(tok_line[0].c_str())*ANGtoBOHR;
+      sphereF = atof(tok_line[1].c_str());
+      printf("  found spherical force parameters: %5.2f Bohr %5.2f a.u. \n",sphereR,sphereF);
+    }
   }
+  infile.close();
   //printf("  found %i forces \n",use_force); fflush(stdout);
+  if (use_force==0)
+  {
+    delete [] fa1;
+    delete [] fv1;
+    delete [] fk1;
+    return 0;
+  }
 
  //save forces
   fa = new int[2*use_force];

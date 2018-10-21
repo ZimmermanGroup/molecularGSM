@@ -57,6 +57,10 @@ class Gradient
    int read_molpro_init(string* &hf_lines);
    int force_init(string ffile);
 
+   double sphere_force(double rf);
+   double sphereR;
+   double sphereF;
+   double sphereFT;
 
   public:
 
