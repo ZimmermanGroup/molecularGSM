@@ -125,11 +125,14 @@ void Gradient::add_force(double* coords, double* grad)
 //    printf(" final sgrad: \n");
 //    for (int j=0;j<natoms;j++)
 //      printf(" %8.5f %8.5f %8.5f \n",sgrad[3*j+0],sgrad[3*j+1],sgrad[3*j+2]);
-
-
-    printf(" sphere R: %8.5f ftot: %8.6f fdE: %8.6f maxstep: %8.6f \n",sphereR,ftot,fdE,maxstep);
-    for (int j=0;j<3*natoms;j++)
-      grad[j] += sgrad[j];
+    
+    
+    if (sphereR<50.)
+    {
+      printf(" sphere R: %8.5f ftot: %8.6f fdE: %8.6f maxstep: %8.6f \n",sphereR,ftot,fdE,maxstep);
+      for (int j=0;j<3*natoms;j++)
+        grad[j] += sgrad[j];
+    }
 
     delete [] sgrad;
   } //adding sphere forces
@@ -392,10 +395,13 @@ int Gradient::external_grad(double* coords, double* grad)
   xtb1.reset(natoms,anumbers,anames,coords);
   xtb1.set_charge(CHARGE);
   string cmd = "mkdir scratch/"
-  system(cmd.c_str();
-  energy = xtb1.grads("scratch/xtbfile"+runends);
+  system(cmd.c_str());
+  xtb1.sdir = "scratch/"+runName0+"/";
+  //energy = xtb1.grads("scratch/xtbfile"+runends);
+  energy = xtb1.grads("xtbfile"*627.5);
   for (int i=0;i<N3;i++)
-    grad[i] = xtb1.grad[i];
+    //grad[i] = xtb1.grad[i];
+    grad[i] = xtb1.grad[i]*ANGtoBOHR;
   xtb1.freemem();
 #else
   Mopac mop1; 
@@ -759,10 +765,21 @@ void Gradient::init(string infilename, int natoms0, int* anumbers0, string* anam
   printf("  grad initiated: ASE mode \n");
 #elif USE_MOLPRO
   printf("  grad initiated: MOLPRO mode \n");
+#elif USE_XTB
+  printf("  grad initiated: XTB mode \n");
 #else
   printf("  grad initiated: Mopac mode \n");
 #endif
 
+#if USE_XTB
+  string cmd = "mkdir scratch/";
+  system(smd.c_str());
+  //cmd "mkdir scratch/"+runends;
+  cmd = "mkdir scratch/"+runName0;
+  system(cmd.c_str());
+  //printf("  runName0: %s \n",runName0.c_str());
+#endif
+  
   //printf(" grad init knnr_active: %i \n",knnr_active);
 
   return;
