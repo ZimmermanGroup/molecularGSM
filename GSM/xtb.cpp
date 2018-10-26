@@ -1,6 +1,69 @@
 #include "xtb.h"
 using namespace std;
 #include "constants.h"
+#include <algorithm>
+
+
+double XTB::grad(string filename)
+{
+    //printf(" in XTB/grads() \n");
+
+  energy0 = energy = 0;
+
+#if SKIPXTB
+  printf(" skipping xtb grad! \n");
+#endif
+
+  ofstream inpfile;
+  string inpfile_string = sdir+filename;
+  string outfile0 = filename+".out";
+  string outfile = sdir+filename+".xyz";
+
+  //printf("  filename: %s inpfile: %s outfile: %s \n",filename.c_str(),inpfile_string.c_str(),outfile.c_str());
+#if !SKIPXTB
+  inpfile.open(inpfile_string.c_str());
+  inpfile.setf(ios::fixed);
+  inpfile.setf(ios::left);
+  inpfile << setprecision(6);
+
+  inpfile << " " << natoms << endl << endl;
+
+  for (int i=0;i<natoms;i++)
+  //if (!skip[i])
+  {
+    inpfile << " " << anames[i] << " " << xyz[3*i+0] << " " << xyz[3*i+1] << " " << xyz[3*i+2] << endl;
+  }
+
+  inpfile << endl << "$set" << endl;
+  inpfile << "charge " << charge << endl;
+  if (nfrz>0)
+  {
+    inpfile << "fix";
+    for (int j=0;j<natoms;j++)
+    if (frzlistb[j])
+      inpfile << " " << j+1;
+    inpfile << endl;
+  }
+  inpfile << "$end" << endl;
+
+
+  inpfile.close();
+
+  string cmd = "cd "+sdir+"; /export/zimmerman/adewyer/bin/xtb/xtb "+filename+" -grad > "+outfile0;
+  //printf(" cmd: %s \n",cmd.c_str());
+  system(cmd.c_str());
+#endif
+
+  energy = read_grad(sdir+filename);
+
+  if (abs(energy)<0.00001)
+  {
+    printf(" energy zero, xtb failed \n");
+    return 10000.;
+  }
+
+  return energy;
+}
 
 //GRADNORM was 1.5
 #define GRADNORM 5.
@@ -233,6 +296,59 @@ void XTB::opt_write(string filename) {
   return;
 }
 
+double XTB::read_grad(string filename) 
+{
+  energy = 10000;
+  
+  string oname = filename+".out";
+  ifstream output(oname.c_str(),ios::in);
+  string line;
+  vector<string> tok_line;
+  int ne = 0;
+  while(!output.eof())
+  {
+    getline(output,line);
+    //cout << " RR " << line << endl;
+    if (line.find("total E")!=string::npos)
+    {
+      //cout << " found E: " << line << endl;
+      tok_line = StringTools::tokenize(line, " \t");
+      energy = atof(tok_line[3].c_str());
+    }
+  }
+  
+  output.close();
+  
+  string gname = sdir+"gradient";
+  ifstream outputg(gname.c_str(),ios::in);
+  int c = 0;
+  int i = 0;
+  while (!outputg.eof())
+  {
+    getline(outputg,line);
+    std::replace( line.begin(), line.end(), 'D', 'E');
+    tok_line = StringTools::tokenize(line, " \t");
+    if (c>natoms && tok_line.size()==3)
+    {
+      //cout << " RR " << line << endl;
+      grad[3*i+0] = atof(tok_line[0].c_str());
+      grad[3*i+1] = atof(tok_line[1].c_str());
+      grad[3*i+2] = atof(tok_line[2].c_str());
+      i++;
+    }
+    if (i==natoms) i=0;
+    c++;
+  }
+  
+  //  printf("\n grad: \n");
+  //  for (int i=0;i<natoms;i++)
+  //    printf(" %10.7f %10.7f %10.7f \n",grad[3*i+0],grad[3*i+1],grad[3*i+2]);
+  
+  outputg.close();
+ 
+  return energy;
+}
+
 double XTB::read_output(string filename) {
 
   //double energy = -1;
@@ -258,6 +374,8 @@ double XTB::read_output(string filename) {
     }
   }
 
+  output.close();
+  
   return energy;
 }
 
@@ -273,7 +391,8 @@ void XTB::alloc(int natoms_i) {
 
   xyz0 = new double[3*natoms];
   xyz = new double[3*natoms];
-
+  grad = new double[3*natoms];
+  
   nfrz = 0;
   frzlist = new int[natoms];
   frzlistb = new int[natoms];
@@ -283,6 +402,8 @@ void XTB::alloc(int natoms_i) {
   for (int i=0;i<natoms;i++)
     skip[i] = 0;
 
+  sdir = "scratch/";
+  
   return;
 }
 
@@ -298,7 +419,8 @@ void XTB::init(int natoms_i, int* anumbers_i, string* anames_i, double* xyz_i) {
 
   xyz0 = new double[3*natoms];
   xyz = new double[3*natoms];
-
+  grad = new double[3*natoms];
+  
   for (int i=0;i<natoms;i++)
     anumbers[i] = anumbers_i[i];
   for (int i=0;i<natoms;i++)
@@ -321,6 +443,8 @@ void XTB::init(int natoms_i, int* anumbers_i, string* anames_i, double* xyz_i) {
     skip[i] = 1;
   }
 
+  sdir = "scratch/";
+  
   return;
 }
 
@@ -328,6 +452,7 @@ void XTB::freemem() {
 
   delete [] xyz0;
   delete [] xyz;
+  delete [] grad;
   delete [] anumbers;
   delete [] anames;
 
