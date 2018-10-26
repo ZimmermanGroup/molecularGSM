@@ -35,6 +35,7 @@ class XTB {
    void opt_write(string filename);
    void opt_write(string filename, ICoord icoords);
 
+   double read_grad(string filename);
    double read_output(string filename);
    void xyz_read(string filename);
    void xyz_read_aux(string filename);
@@ -56,6 +57,7 @@ class XTB {
 
    double* xyz0;
    double* xyz;
+   double* grad;
 
 };
 
