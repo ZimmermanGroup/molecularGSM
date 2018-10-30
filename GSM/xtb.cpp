@@ -4,7 +4,7 @@ using namespace std;
 #include <algorithm>
 
 
-double XTB::grad(string filename)
+double XTB::grads(string filename)
 {
     //printf(" in XTB/grads() \n");
 
