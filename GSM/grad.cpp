@@ -394,11 +394,13 @@ int Gradient::external_grad(double* coords, double* grad)
   xtb1.alloc(natoms);
   xtb1.reset(natoms,anumbers,anames,coords);
   xtb1.set_charge(CHARGE);
-  string cmd = "mkdir scratch/"
+  //xtb1.sdir = "scratch/"+runends+"/";
+  xtb1.sdir = "scratch/"+runName0+"/";
+  //string cmd = "mkdir scratch/"
   system(cmd.c_str());
   xtb1.sdir = "scratch/"+runName0+"/";
   //energy = xtb1.grads("scratch/xtbfile"+runends);
-  energy = xtb1.grads("xtbfile"*627.5);
+  energy = xtb1.grads("xtbfile")*627.5;
   for (int i=0;i<N3;i++)
     //grad[i] = xtb1.grad[i];
     grad[i] = xtb1.grad[i]*ANGtoBOHR;
@@ -773,7 +775,7 @@ void Gradient::init(string infilename, int natoms0, int* anumbers0, string* anam
 
 #if USE_XTB
   string cmd = "mkdir scratch/";
-  system(smd.c_str());
+  system(cmd.c_str());
   //cmd "mkdir scratch/"+runends;
   cmd = "mkdir scratch/"+runName0;
   system(cmd.c_str());
