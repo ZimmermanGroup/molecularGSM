@@ -97,7 +97,7 @@ double XTB::opt_check(string filename)
 
 double XTB::opt() {
 
-  string filename = "scratch/testxtb.mop";
+  string filename = sdir+"testxtb.mop";
 
   energy = opt(filename);
  
@@ -106,7 +106,7 @@ double XTB::opt() {
 
 void XTB::opt_write() {
 
-  string filename = "scratch/testxtb.mop";
+  string filename = sdir+"testxtb.mop";
 
   opt_write(filename);
  
@@ -134,7 +134,7 @@ double XTB::opt(string filename, ICoord icoords) {
   ofstream inpfile;
   string inpfile_string = filename;
   ofstream xyzfile;
-  string xyzfile_string = "scratch/testxtb.xyz";
+  string xyzfile_string = sdir+"testxtb.xyz";
 #if !SKIPXTB
   inpfile.open(inpfile_string.c_str());
   inpfile.setf(ios::fixed);
@@ -205,9 +205,9 @@ double XTB::opt(string filename)
 #endif
 
   ofstream inpfile;
-  string inpfile_string = "scratch/"+filename;
+  string inpfile_string = sdir+filename;
   string outfile0 = filename+".out";
-  string outfile = "scratch/"+filename+".xyz";
+  string outfile = sdir+filename+".xyz";
 
   //printf("  filename: %s inpfile: %s outfile: %s \n",filename.c_str(),inpfile_string.c_str(),outfile.c_str());
 #if !SKIPXTB
@@ -239,12 +239,12 @@ double XTB::opt(string filename)
 
   inpfile.close();
 
-  string cmd = "cd scratch; /export/zimmerman/adewyer/bin/xtb/xtb "+filename+" -opt > "+outfile0+"; mv xtbopt.xyz "+filename+".xyz";
+  string cmd = "cd "+sdir+"; /export/zimmerman/adewyer/bin/xtb/xtb "+filename+" -opt > "+outfile0+"; mv xtbopt.xyz "+filename+".xyz";
   //printf(" cmd: %s \n",cmd.c_str());
   system(cmd.c_str());
 #endif
 
-  energy = read_output("scratch/"+filename);
+  energy = read_output(sdir+filename);
  
   // need to retrieve final geometry, write to xyz
   xyz_read(outfile);
