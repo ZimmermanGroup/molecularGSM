@@ -317,6 +317,7 @@ int Gradient::external_grad(double* coords, double* grad)
     grad[i] = mop1.grad[i];
   mop1.freemem();
 #endif
+#endif
   gradcalls++;
 
   int success = 1;
