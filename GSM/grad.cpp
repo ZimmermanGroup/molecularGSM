@@ -1,5 +1,6 @@
 #include "grad.h"
 #include "mopac.h"
+#include "xtb.h"
 
 using namespace std;
 
@@ -292,6 +293,20 @@ int Gradient::external_grad(double* coords, double* grad)
     string pstr(pbsPath);
     pdir = pstr + "/";
   }
+
+#if USE_XTB
+  XTB xtb1;
+  xtb1.alloc(natoms);
+  xtb1.reset(natoms,anumbers,anames,coords);
+  xtb1.set_charge(CHARGE);
+  //xtb1.sdir = "scratch/"+runends+"/";
+  xtb1.sdir = "scratch/"+runName0+"/";
+  energy = xtb1.grads("xtbfile")*627.5;
+  for (int i=0;i<N3;i++)
+    grad[i] = xtb1.grad[i]*ANGtoBOHR;
+//    grad[i] = xtb1.grad[i]*ANGtoBOHR/627.5;
+  xtb1.freemem();
+#else
   Mopac mop1; 
   mop1.alloc(natoms);
   mop1.reset(natoms,anumbers,anames,coords);
@@ -648,8 +663,19 @@ void Gradient::init(string infilename, int natoms0, int* anumbers0, string* anam
   printf("  grad initiated: ASE mode \n");
 #elif USE_MOLPRO
   printf("  grad initiated: MOLPRO mode \n");
+#elif USE_XTB
+  printf("  grad initiated: XTB mode \n");
 #else
   printf("  grad initiated: Mopac mode \n");
+#endif
+
+#if USE_XTB
+  string cmd = "mkdir scratch/";
+  system(cmd.c_str());
+  //cmd = "mkdir scratch/"+runends;
+  cmd = "mkdir scratch/"+runName0;
+  system(cmd.c_str());
+  //printf("  runName0: %s \n",runName0.c_str());
 #endif
 
   //printf(" grad init knnr_active: %i \n",knnr_active);
