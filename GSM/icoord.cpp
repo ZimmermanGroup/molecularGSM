@@ -175,7 +175,7 @@ void ICoord::create_xyz()
   return;
 }
 
-
+///creates the internal coordinates
 int ICoord::ic_create()
 {
   make_bonds();
@@ -286,47 +286,31 @@ void ICoord::hbond_frags()
           a3 = b2;
         if (b2==a1 && anumbers[b1]==1)
           a3 = b1;
-        if (a3>-1)
-        {
-          water[3*nwater+0] = a1;
-          water[3*nwater+1] = a2;
-          water[3*nwater+2] = a3;
-          nwater++; 
-          break;
-        }
+        water[3*nwater+0] = a1;
+        water[3*nwater+1] = a2;
+        water[3*nwater+2] = a3;
+        nwater++; 
+        break;
       } 
     } //loop j over nbonds
 
   } //loop i over oxygen atoms
 
-#if 0
-  for (int i=0;i<nwater;i++)
-  if (water[3*i+0]==-1 || water[3*i+1]==-1 || water[3*i+2]==-1)
-  {
-    printf("   removing water %i \n",i);
-    nwater--;
-  }
-#endif
-
-  printf("  found %2i water molecules \n",nwater);
-  for (int i=0;i<nwater;i++)
-    printf("   OHH: %2i %2i %2i \n",water[3*i+0]+1,water[3*i+1]+1,water[3*i+2]+1);
-
-  int* addw = new int[nwater];
-  for (int i=0;i<nwater;i++) addw[i] = 0;
+//  printf("  found %2i water molecules \n",nwater);
+//  for (int i=0;i<nwater;i++)
+//    printf("   OHH: %2i %2i %2i \n",water[3*i+0]+1,water[3*i+1]+1,water[3*i+2]+1);
 
   for (int i=0;i<nwater;i++)
   for (int j=0;j<nwater;j++)
   if (i!=j)
   {
-//    printf(" bond check on: %i %i - %4.2f %4.2f \n",water[3*i+0],water[3*j+1],distance(water[3*i+0],water[3*j+1]),distance(water[3*i+0],water[3*j+2]));
+   // printf(" bond check on: %i %i \n",water[3*i+0],water[3*j+1]);
     if (distance(water[3*i+0],water[3*j+1])<2.0 && !bond_exists(water[3*i+0],water[3*j+1]))
     {
       printf("   adding H-bond as bond: %i %i \n",water[3*i+0]+1,water[3*j+1]+1);
       bonds[nbonds][0] = water[3*i+0];
       bonds[nbonds][1] = water[3*j+1];
       nbonds++;
-      addw[i]++; addw[j]++;
     }
     if (distance(water[3*i+0],water[3*j+2])<2.0 && !bond_exists(water[3*i+0],water[3*j+2]))
     {
@@ -334,43 +318,8 @@ void ICoord::hbond_frags()
       bonds[nbonds][0] = water[3*i+0];
       bonds[nbonds][1] = water[3*j+2];
       nbonds++;
-      addw[i] = 1; addw[j]++;
     }
   }
-
-  printf("\n addw:");
-  for (int i=0;i<nwater;i++) 
-    printf(" %i",addw[i]);
-  printf("\n");
-
-  for (int i=0;i<nwater;i++)
-  if (addw[i]<2)
-  {
-    printf("   need water bond for %2i \n",i+1);
-    for (int j=0;j<nwater;j++)
-    if (i!=j)
-    {
-      if (distance(water[3*i+0],water[3*j+1])<3.0 && !bond_exists(water[3*i+0],water[3*j+1]))
-      {
-        printf("   adding H-bond as bond: %i %i \n",water[3*i+0]+1,water[3*j+1]+1);
-        bonds[nbonds][0] = water[3*i+0];
-        bonds[nbonds][1] = water[3*j+1];
-        nbonds++;
-        addw[i] = 1; addw[j]++;
-      }
-      if (distance(water[3*i+0],water[3*j+2])<3.0 && !bond_exists(water[3*i+0],water[3*j+2]))
-      {
-        printf("   adding H-bond as bond: %i %i \n",water[3*i+0]+1,water[3*j+2]+1);
-        bonds[nbonds][0] = water[3*i+0];
-        bonds[nbonds][1] = water[3*j+2];
-        nbonds++;
-        addw[i] = 1; addw[j]++;
-      }
-    }
-  }
-
-  delete [] addw;
-  delete [] water;
 
   return;
 }
@@ -905,7 +854,6 @@ void ICoord::bond_frags()
     b1 = -1;
     b2 = -1;
     mclose2 = 1000.;
-    if (a1>-1 && a2>-1)
     for (int i=0;i<natoms;i++)
     for (int j=0;j<natoms;j++)
     if (frags[i]==n1 && frags[j]==n2)
@@ -933,8 +881,6 @@ void ICoord::bond_frags()
     c1 = -1;
     c2 = -1;
     mclose3 = 1000.;
-    if (a1>-1 && a2>-1)
-    if (b1>-1 && b2>-1)
     for (int i=0;i<natoms;i++)
     for (int j=0;j<natoms;j++)
     if (frags[i]==n1 && frags[j]==n2)
@@ -1657,7 +1603,7 @@ double ICoord::getR(int i){
   else if (anumbers[i]==79) value = 3.45;
   else 
   {
-    printf(" Need to add atomic number %i (of atom %i) to getR! \n",anumbers[i],i+1);
+    printf(" Need to add atomic number %i to getR! \n",anumbers[i]);
     exit(1);
   }
 //  else value = 0.;

@@ -164,7 +164,6 @@ class GString {
   double V0; // zero reference E
 
   int* active;
-  int* frozen;
 
   int nn;
   int nnR;

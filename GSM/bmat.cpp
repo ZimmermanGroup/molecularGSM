@@ -77,7 +77,6 @@ int ICoord::bmat_alloc() {
   noptdone = 0;
   nneg = 0;
   isDavid = 0;
-  nretry = 0;
 
   FMAG = 0.015; //was 0.015
 
@@ -130,7 +129,7 @@ int ICoord::bmat_free() {
   return 0;
 }
 
-
+///forms the original B matrix
 int ICoord::bmatp_create() {
 
  // printf(" in bmatp_create \n");
@@ -283,7 +282,7 @@ int ICoord::bmatp_create() {
   return 0;
 }
 
-
+///Diagonalizes G to form U
 int ICoord::bmatp_to_U()
 {
  // printf(" in bmatp_to_U \n");
@@ -302,10 +301,10 @@ int ICoord::bmatp_to_U()
     tmp[i] = bmatp[i];
 
   double* G = new double[len*len];
-  for (int i=0;i<len*len;i++) G[i] = 0.;
 #if 1
   mat_times_mat_bt(G,bmatp,bmatp,len,len,N3);
 #else
+  for (int i=0;i<len*len;i++) G[i] = 0.;
   for (int i=0;i<len;i++) 
   for (int j=0;j<len;j++)
   for (int k=0;k<N3;k++)
@@ -458,6 +457,7 @@ int ICoord::bmatp_to_U()
 }
 
 
+///Determines q the components of the molecular geometry in the DI space. Also forms the active B matrix.
 
 int ICoord::bmat_create() 
 {
@@ -1685,7 +1685,6 @@ void ICoord::make_Hint()
 
 
 
-
 void ICoord::opt_constraint(double* C) 
 {
   int len = nbonds+nangles+ntor;
@@ -1704,9 +1703,10 @@ void ICoord::opt_constraint(double* C)
   nicd--;
   //printf(" nicd: %i \n",nicd);
 
-  //take constraint vector, project it out of all Ut
-  //orthonormalize vectors
-  //last vector becomes C (projection onto space)
+  /** take constraint vector, project it out of all Ut
+  * orthonormalize vectors
+  * last vector becomes C (projection onto space)
+	*/
 
   double norm = 0.;
   for (int i=0;i<len;i++)
@@ -1900,7 +1900,6 @@ double ICoord::opt_a(int nnewb, int* newb, int nnewt, int* newt, string xyzfile_
 
     update_ic_eigen();
 
-    nretry = 0;
     rflag = ic_to_xyz_opt();
     update_ic();
     //print_ic();
@@ -1996,7 +1995,7 @@ double ICoord::opt_a(int nnewb, int* newb, int nnewt, int* newt, string xyzfile_
 
   return energy;
 }
-
+/// optimizes the node to the minimum without a constraint
 double ICoord::opt_b(string xyzfile_string, int nsteps){
 
   printout = "";
@@ -2085,7 +2084,6 @@ double ICoord::opt_b(string xyzfile_string, int nsteps){
 
     update_ic_eigen();
 
-    nretry = 0;
     rflag = ic_to_xyz_opt();
     update_ic();
     //print_ic();
@@ -2202,7 +2200,7 @@ double ICoord::opt_b(string xyzfile_string, int nsteps){
 
 
 
-
+///Optimizes the node subject to a constraint, nsteps times.
 double ICoord::opt_c(string xyzfile_string, int nsteps, double* C, double* C0)
 {
   //printf(" oc"); fflush(stdout);
@@ -2361,7 +2359,6 @@ double ICoord::opt_c(string xyzfile_string, int nsteps, double* C, double* C0)
       for (int j=0;j<3*natoms;j++) xyzl[j] = coords[j];
     }
 
-    nretry = 0;
     rflag = ic_to_xyz_opt();
     update_ic();
     //print_xyz();
@@ -2692,7 +2689,6 @@ double ICoord::opt_r(string xyzfile_string, int nsteps, double* C, double* C0, d
       for (int j=0;j<3*natoms;j++) xyzl[j] = coords[j];
     }
 
-    nretry = 0;
     rflag = ic_to_xyz_opt();
     update_ic();
     //print_xyz();
@@ -2975,7 +2971,6 @@ double ICoord::opt_eigen_ts(string xyzfile_string, int nsteps, double* C, double
     }
     if (gradrms<OPTTHRESH) break;
 
-    nretry = 0;
     update_ic_eigen_ts(Cn);
     rflag = ic_to_xyz_opt();
     update_ic();
@@ -3183,7 +3178,7 @@ void ICoord::save_hess()
 
   return;
 }
-
+///Transforms the gradient in Cartesian representation to delocalized internal coordinate representation
 int ICoord::grad_to_q() {
 
 #if USE_NOTBONDS
@@ -4241,7 +4236,7 @@ void ICoord::print_q(){
   return;
 }
 
-
+///back transforms from delocalized IC representation to Cartesian represention
 int ICoord::ic_to_xyz() {
 
   int MAX_STEPS = 10; //was 6
@@ -4608,8 +4603,6 @@ int ICoord::ic_to_xyz_opt() {
       for (int i=0;i<nicd;i++)
         dq0[i] = dq0[i] / 2.0;
       retry = 1;
-      if (nretry++>100)
-        retry = 0;
     }
   }
   else if (ixflag>0)
@@ -5416,7 +5409,7 @@ int ICoord::davidson_H(int nval)
 
   if (dcontinue)
   {
-    string savestr = "scratch/stringfile.xyz"+runends+"fr";
+    string savestr = "stringfile.xyz"+runends+"fr";
     string tstr;
     printf("\n now saving vibrations to %s \n",savestr.c_str());
     DIST = 0.3;
