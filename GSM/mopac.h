@@ -18,6 +18,7 @@ class Mopac {
    int nfrz0; //total "moved" frozen atoms
    int* frzlist;
    int* frzlistb;
+   int charge;
 
    int gradcalls; 
    int rnum;
@@ -41,6 +42,7 @@ class Mopac {
    void init(int natoms, int* anumbers, string* anames, double* xyz);
    void reset(int natoms, int* anumbers, string* anames, double* xyz);
    void reset(double* xyz_i);
+   void set_charge(int c0);
    void freemem();
    void write_xyz_grad(string filename);
 

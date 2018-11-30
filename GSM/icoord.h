@@ -12,6 +12,8 @@ class ICoord {
   //move gradient back to private!
     int g_inited;
 
+    int nretry;
+
 //    int* atypes;                  //array of MM atom types  
     double* amasses;              //array of atomic masses
     double* amasses3;

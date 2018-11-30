@@ -221,6 +221,8 @@ void GString::String_Method_Optimization()
   ic2.reset(natoms,anames,anumbers,coords[nnmax-1]);
   ic1.ic_create();
   ic2.ic_create();
+  ic1.frozen = frozen;
+  ic2.frozen = frozen;
 
 
  //add bonds in isomers list
@@ -270,6 +272,9 @@ void GString::String_Method_Optimization()
   newic.reset(natoms,anames,anumbers,icoords[0].coords);
   intic.reset(natoms,anames,anumbers,icoords[nnmax-1].coords);
   int2ic.reset(natoms,anames,anumbers,icoords[nnmax-1].coords);
+  newic.frozen = frozen;
+  intic.frozen = frozen;
+  int2ic.frozen = frozen;
 
 #if 1
   newic.union_ic(ic1,ic2);  
@@ -327,6 +332,8 @@ void GString::String_Method_Optimization()
   for (int n=0;n<nnmax;n++)
   for (int i=0;i<len_d;i++) 
     icoords[n].dq0[i] = 0.;
+  for (int n=0;n<nnmax;n++)
+    icoords[n].frozen = frozen;
 
   for (int i=0;i<len_d;i++) newic.dq0[i] = 0.;
   for (int i=0;i<len_d;i++) intic.dq0[i] = 0.;
@@ -1052,7 +1059,7 @@ void GString::init(string infilename, int run, int nprocs){
   else
     isomerfile = "scratch/ISOMERS"+nstr;
   int nfound = isomer_init(isomerfile);
-  if (isSSM)
+  if (isSSM>0)
   {
     if (nfound!=1)
     {
@@ -1305,6 +1312,9 @@ void GString::structure_init(string xyzfile)
   anumbers = new int[1+natoms];
   amasses = new double[1+natoms];
   anames = new string[1+natoms];
+  frozen = new int[1+natoms];
+  for (int i=0;i<natoms;i++)
+    frozen[i] = 0;
 
   cout <<"  -Reading the atomic names...";
   for (int i=0;i<natoms;i++){
@@ -1386,7 +1396,14 @@ void GString::structure_init(string xyzfile)
     exit(1);
   }
 
+  printf("  printing frozen list:");
+  for (int i=0;i<natoms;i++)
+    printf(" %i",frozen[i]);
+  printf("\n");
+
   cout << "Finished reading information from structure file" << endl;
+
+  return;
 }
 
 
@@ -7216,7 +7233,7 @@ void GString::opt_iters(int max_iter, double& totalgrad, double& gradrms, double
   {   
     int wts,wint;
     int rxnocc = check_for_reaction(wts,wint);
-    if (!rxnocc && tstype==1)
+    if (!rxnocc && tstype==1 && isSSM)
     {
       printf("\n WARNING: no bond changes in reaction \n");
       climb = find = 0;
