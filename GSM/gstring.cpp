@@ -1374,6 +1374,8 @@ void GString::structure_init(string xyzfile)
       coords[n][3*j+0]=atof(tok_line[1].c_str());
       coords[n][3*j+1]=atof(tok_line[2].c_str());
       coords[n][3*j+2]=atof(tok_line[3].c_str());
+      if (tok_line.size()>4 && tok_line[4] == "*") 
+          frozen[j] = 1;
       perp_grads[i][3*j+0] = 0.0;
       perp_grads[i][3*j+1] = 0.0;
       perp_grads[i][3*j+2] = 0.0;
