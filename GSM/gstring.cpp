@@ -216,6 +216,12 @@ void GString::String_Method_Optimization()
     ic1.isOpt = 2;
     ic2.isOpt = 2;
   }
+  if (bondfrags==3)
+  {
+    printf(" turning on XYZ-IC mode \n");
+    ic1.use_xyz = 2; 
+    ic2.use_xyz = 2; 
+  }
 
   ic1.reset(natoms,anames,anumbers,coords[0]);
   ic2.reset(natoms,anames,anumbers,coords[nnmax-1]);
@@ -7622,61 +7628,61 @@ void GString::trim_string()
   }
 
 #if 1
-  printf(" min nodes: ");
-  for (int n=1;n<maxn-1;n++)
-  if (min[n])
-    printf(" %i",n);
-  printf(" max nodes: ");
-  for (int n=1;n<maxn-1;n++)
-  if (max[n])
-    printf(" %i",n);
-  printf("\n");
+   printf(" min nodes: ");
+   for (int n=1;n<maxn-1;n++)
+   if (min[n])
+     printf(" %i",n);
+   printf(" max nodes: ");
+   for (int n=1;n<maxn-1;n++)
+   if (max[n])
+     printf(" %i",n);
+   printf("\n");
 #endif
-
-  for (int n=1;n<maxn-1;n++)
-  if (max[n])
-    npeaks1++;
-
-  double ediff = PEAK4_EDIFF; //same as in find_peaks(4)
-  double emax = -1000.;
-  int nmax = 0;
-  int found = 0;
-  if (npeaks1)
-  for (int n=1;n<maxn-1;n++)
-  if (max[n] && !found)
-  {
-    emax = V_profile[n];
-    nmax = n;
-    printf(" at max node: %i \n",n);
-    for (int m=n+1;m<maxn;m++)
-    {
-      printf(" V[n]: %4.3f V[m]: %4.3f \n",V_profile[n],V_profile[m]);
-      if (emax - V_profile[m] > ediff)
-      {
-        found = m;
-        break;
-      }
+ 
+   for (int n=1;n<maxn-1;n++)
+   if (max[n])
+     npeaks1++;
+ 
+   double ediff = PEAK4_EDIFF; //same as in find_peaks(4)
+   double emax = -1000.;
+   int nmax = 0;
+   int found = 0;
+   if (npeaks1)
+   for (int n=1;n<maxn-1;n++)
+   if (max[n] && !found)
+   {
+     emax = V_profile[n];
+     nmax = n;
+     printf(" at max node: %i \n",n);
+     for (int m=n+1;m<maxn;m++)
+     {
+       printf(" V[n]: %4.3f V[m]: %4.3f \n",V_profile[n],V_profile[m]);
+       if (emax - V_profile[m] > ediff)
+       {
+         found = m;
+         break;
+       }
 //      if (max[m] && V_profile[m] > emax) break;
-      if (max[m]) break;
-    } //loop over m
-  } //loop over n, if max[n]
-
-  int nextmin = nmax;
-  for (int n=found;n<maxn;n++)
-  if (min[n])
-  {
-    nextmin = n;
-    break;
-  }
-
-  if (nmax==nextmin)
-  {
-    printf(" couldn't find next min mode, something is wrong \n");
-    printf(" nmax: %i nextmin: %i found: %i \n",nmax,nextmin,found);
-    //exit(1);
-  }
-  else
-    trim_string(nextmin);
+       if (max[m]) break;
+     } //loop over m
+   } //loop over n, if max[n]
+ 
+   int nextmin = nmax;
+   for (int n=found;n<maxn;n++)
+   if (min[n])
+   {
+     nextmin = n;
+     break;
+   }
+ 
+   if (nmax==nextmin)
+   {
+     printf(" couldn't find next min mode, something is wrong \n");
+     printf(" nmax: %i nextmin: %i found: %i \n",nmax,nextmin,found);
+     //exit(1);
+   }
+   else
+     trim_string(nextmin);
 
   delete [] min;
   delete [] max;
