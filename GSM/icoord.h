@@ -29,6 +29,8 @@ class ICoord {
 
     int nfrags;
     int* frags;
+    int nwater;
+    int* water;
 
     int max_bonds;
     int max_angles;
@@ -44,11 +46,14 @@ class ICoord {
   void alloc_mem();
   void make_bonds();
   void coord_num();
+  void get_xyzic();
   void make_angles();
   void make_torsions();
 
   void make_frags();
   void bond_frags();
+  void bond_frags_xyz();
+  void setup_water();
   void hbond_frags();
   void linear_ties();
   void h2o_torsions();
@@ -145,6 +150,8 @@ class ICoord {
 
   public:
 
+  ICoord();
+
   int revertOpt;
   Gradient grad1;
   string printout;
@@ -159,6 +166,8 @@ class ICoord {
 
   double V0;
   int* frozen;
+  int use_xyz;
+  int* xyzic;
 
   double farBond;
   int isTSnode;
@@ -192,7 +201,8 @@ class ICoord {
   int** angles;
   int nangles;
   int** torsions;
-  int ntor;
+  int ntor; 
+  int nxyzic;
 
   double* grad;
  // double* pgrad;
