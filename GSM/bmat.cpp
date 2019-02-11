@@ -523,6 +523,17 @@ int ICoord::bmat_create()
   for (int i=0;i<len_d;i++)
     for (int j=0;j<ntor;j++)
       q[i] += Ut[len*i+nbonds+nangles+j]*(torfix[j]+torsion_val(torsions[j][0],torsions[j][1],torsions[j][2],torsions[j][3]))*3.14159/180;
+  for (int i=0;i<len_d;i++)                                                                             
+    {   
+        int cxyzic = 0;
+        for (int j=0;j<natoms;j++)                                                                        
+            if (xyzic[j])                                                                                 
+            {   
+                q[i] += Ut[len*i+len_icp+cxyzic++]*coords[3*j+0];                                         
+                q[i] += Ut[len*i+len_icp+cxyzic++]*coords[3*j+1];                                         
+                q[i] += Ut[len*i+len_icp+cxyzic++]*coords[3*j+2];                                         
+            }                                                                                             
+    }
 #endif
 
 #if 0
@@ -1607,6 +1618,8 @@ void ICoord::make_Hint()
     Hdiagp[i] = 0.2;
   for (int i=nbonds+nangles;i<nbonds+nangles+ntor;i++)
     Hdiagp[i] = 0.035;
+	for (int i=size_icp;i<size_ic;i++)
+		Hdiagp[i] = 1.0;
 #endif
 #if 0
   printf(" Hdiagp elements: \n");
