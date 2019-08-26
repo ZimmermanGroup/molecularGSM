@@ -1671,6 +1671,7 @@ double ICoord::getR(int i){
   else if (anumbers[i]==77) value = 3.35;
   else if (anumbers[i]==78) value = 3.35;
   else if (anumbers[i]==79) value = 3.45;
+  else if (anumbers[i]==80) value = 3.25; //CRA guess
   else if (anumbers[i]==81) value = 3.25; //CRA guess
   else if (anumbers[i]==82) value = 3.25; //CRA guess
   else if (anumbers[i]==83) value = 3.25; //CRA guess
