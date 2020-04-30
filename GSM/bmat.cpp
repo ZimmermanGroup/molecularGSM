@@ -31,8 +31,7 @@ int ICoord::bmat_alloc() {
   bmat = new double[size_ic*size_xyz+100];
   bmatp = new double[size_ic*size_xyz+1000];
   bmatti = new double[size_ic*size_xyz+100];
-  torv0 = new double[max_torsions+100];
-  for (int i=0;i<max_torsions;i++) torv0[i] = 0;
+  torv0 = new double[max_torsions+100]();
   torfix = new double[max_torsions+100];
   Ut = new double[size_ic*size_ic+100];
   Ut0 = new double[size_ic*size_ic+100];
@@ -305,7 +304,7 @@ int ICoord::bmatp_to_U()
   int N3 = 3*natoms;
   int max_size_ic = len;
   int size_xyz = N3;
-  if (use_xyz==2) printf(" bmatp_to_U. nbonds: %2i nangles: %2i ntorsions: %2i XYZ: %2i  total: %3i \n",nbonds,nangles,ntor,nxyzic,len);
+  //if (use_xyz==2) printf(" bmatp_to_U. nbonds: %2i nangles: %2i ntorsions: %2i XYZ: %2i  total: %3i \n",nbonds,nangles,ntor,nxyzic,len);
 
   int len_d;
   double* e = new double[len];
@@ -352,7 +351,7 @@ int ICoord::bmatp_to_U()
   if (e[len-1-i]<0.001)
   {
 #if 0
-    printf(" small ev: %10.8f \n",e[len-1-i]);
+    printf(" small ev: %10.8f",e[len-1-i]);
     int i1 = len-1-i;
   //  for (int j=0;j<len;j++)
   //    printf(" %8.5f",G[i1*len+j]);
@@ -523,17 +522,18 @@ int ICoord::bmat_create()
   for (int i=0;i<len_d;i++)
     for (int j=0;j<ntor;j++)
       q[i] += Ut[len*i+nbonds+nangles+j]*(torfix[j]+torsion_val(torsions[j][0],torsions[j][1],torsions[j][2],torsions[j][3]))*3.14159/180;
-  for (int i=0;i<len_d;i++)                                                                             
-    {   
-        int cxyzic = 0;
-        for (int j=0;j<natoms;j++)                                                                        
-            if (xyzic[j])                                                                                 
-            {   
-                q[i] += Ut[len*i+len_icp+cxyzic++]*coords[3*j+0];                                         
-                q[i] += Ut[len*i+len_icp+cxyzic++]*coords[3*j+1];                                         
-                q[i] += Ut[len*i+len_icp+cxyzic++]*coords[3*j+2];                                         
-            }                                                                                             
+  if (use_xyz==2)
+  for (int i=0;i<len_d;i++)
+  {
+    int cxyzic = 0;
+    for (int j=0;j<natoms;j++)
+    if (xyzic[j])
+    {
+      q[i] += Ut[len*i+len_icp+cxyzic++]*coords[3*j+0];
+      q[i] += Ut[len*i+len_icp+cxyzic++]*coords[3*j+1];
+      q[i] += Ut[len*i+len_icp+cxyzic++]*coords[3*j+2];
     }
+  }
 #endif
 
 #if 0
@@ -1601,9 +1601,9 @@ void ICoord::make_Hint()
   int len0 = nicd0;
   int len = nicd;
   
-  double* tmp = new double[len0*size_ic];
+  double* tmp = new double[len0*size_ic]();
 
-  double* Hdiagp = new double[size_ic];
+  double* Hdiagp = new double[size_ic]();
 #if 0
   for (int i=0;i<nbonds;i++)
     Hdiagp[i] = 0.5*close_bond(i);
@@ -1618,8 +1618,8 @@ void ICoord::make_Hint()
     Hdiagp[i] = 0.2;
   for (int i=nbonds+nangles;i<nbonds+nangles+ntor;i++)
     Hdiagp[i] = 0.035;
-	for (int i=size_icp;i<size_ic;i++)
-		Hdiagp[i] = 1.0;
+  for (int i=size_icp;i<size_ic;i++)
+    Hdiagp[i] = 1.0;
 #endif
 #if 0
   printf(" Hdiagp elements: \n");
@@ -3259,6 +3259,10 @@ int ICoord::grad_to_q() {
   for (int i=0;i<len_d;i++)
     gradq[i] = grad[i];
  
+  gradmax = 0.;
+  for (int i=0;i<nicd;i++)
+  if (gradmax<fabs(gradq[i]))
+    gradmax = fabs(gradq[i]);
   gradrms = 0.;
   for (int i=0;i<nicd;i++)
     gradrms+=gradq[i]*gradq[i];
@@ -4486,6 +4490,15 @@ int ICoord::ic_to_xyz_opt() {
     qprim[nbonds+i] = anglev[i];
   for (int i=0;i<ntor;i++)
     qprim[nbonds+nangles+i] = torv[i];
+  int cxyzic = 0;
+  if (use_xyz==2)
+  for (int i=0;i<natoms;i++)
+  if (xyzic[i])
+  {
+    qprim[len_icp+cxyzic++] = coords[3*i+0];
+    qprim[len_icp+cxyzic++] = coords[3*i+1];
+    qprim[len_icp+cxyzic++] = coords[3*i+2];
+  }
 #if 0
   printf(" printing qprim: ");
   for (int i=0;i<nbonds+nangles+ntor;i++)

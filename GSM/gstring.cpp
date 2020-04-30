@@ -1,6 +1,6 @@
 #include "gstring.h"
 #include "omp.h"
-#include "GitSHA1.h"
+//#include "GitSHA1.h"
 using namespace std;
 
 //opt should quit right after gradient converges
@@ -21,7 +21,7 @@ using namespace std;
 #define HESS_TANG 1
 #define RIBBONS 0
 
-#define FINAL_FREQ 1
+#define FINAL_FREQ 0
 
 //skip one opt round for converged node
 #define ONE_SKIP 0
@@ -47,6 +47,72 @@ using namespace std;
  * The main driver for DE and SE methods, growth and optimization. Can only 
  * be called after coordinates have been set.
  */
+
+
+
+void GString::optimize_ts(int wn, int max_iters, double& gradrms, double& gradmax, int& ngrad, int& overlapn, double& overlap, double& ETSf, double** dqa, double* dqmaga, double** ictan)
+{
+  printf("  in optimize_ts for node %i \n",wn);
+
+  //need ictan for TS node
+  int nbonds = newic.nbonds;
+  int nangles = newic.nangles;
+  int ntor = newic.ntor;
+  int size_ic = newic.nbonds+newic.nangles+newic.ntor+newic.nxyzic;
+  int len_d = newic.nicd0;
+
+  get_tangents_1e(dqa,dqmaga,ictan);
+
+  double* C = new double[size_ic]();
+  double* C0 = new double[size_ic]();
+        
+  icoords[wn].OPTTHRESH = TS_CONV_TOL;
+  icoords[wn].OPTMAX = TS_GRAD_MAX_TOL;
+  //icoords[wn].use_xyz_conv = TS_USE_XYZ_CONV;
+  icoords[wn].update_ic();
+  
+  double norm = 0.;
+  for (int i=0;i<size_ic;i++)
+    norm += ictan[wn][i]*ictan[wn][i];
+  norm = sqrt(norm);
+  for (int i=0;i<size_ic;i++)
+    C[i] = ictan[wn][i]/norm;
+
+  for (int i=0;i<nbonds;i++)
+    C0[i] = icoords[wn].bondd[i]*C[i];
+  for (int i=0;i<nangles;i++)
+    C0[nbonds+i] = icoords[wn].anglev[i]*3.14159/180*C[nbonds+i];
+  for (int i=0;i<ntor;i++)
+    C0[nbonds+nangles+i] = icoords[wn].torv[i]*3.14159/180*C[nbonds+nangles+i];
+
+  int tssteps = 10;
+  int m;
+  for (m=0;m<max_iters;m++)
+  {
+    V_profile[wn] = ETSf = icoords[wn].opt_eigen_ts("scratch/xyzfile.xyzts",tssteps,C,C0);
+    printf(" %s",icoords[wn].printout.c_str());
+
+    gradrms = icoords[wn].gradrms;
+    gradmax = icoords[wn].gradmax;
+    overlap = overlap = icoords[wn].path_overlap;
+    ngrad += icoords[wn].noptdone;
+    printf("\n opt_iter(TS): %2i current ETS: %7.3f gradrms: %8.6f gradmax: %8.6f overlap: %5.3f \n",m+1,ETSf,gradrms,gradmax,overlap);
+ 
+    if (overlap<0.25) { printf("    error: overlap too low to proceed,\n       refine string further before final ts optimization \n"); break; }
+    else if (overlap<0.5) printf("    warning: overlap is low \n");
+
+    if (gradrms<TS_CONV_TOL && gradmax<TS_GRAD_MAX_TOL) break;
+  }
+  if (m==max_iters) printf("\n warning: maximum iterations reached \n");
+
+  delete [] C;
+  delete [] C0;
+
+  return;
+}
+
+
+
 void GString::String_Method_Optimization()
 {
 
@@ -175,7 +241,7 @@ void GString::String_Method_Optimization()
   printf(" END NOTICES \n\n");
 
   //#include "savefile.cpp"
-  printf("Version: %s \n\n",g_GIT_SHA1);
+  //printf("Version: %s \n\n",g_GIT_SHA1);
 
   for (int i=0;i<nnmax;i++)
     active[i] = -1;
@@ -219,8 +285,8 @@ void GString::String_Method_Optimization()
   if (bondfrags==3)
   {
     printf(" turning on XYZ-IC mode \n");
-    ic1.use_xyz = 2; 
-    ic2.use_xyz = 2; 
+    ic1.use_xyz = 2;
+    ic2.use_xyz = 2;
   }
 
   ic1.reset(natoms,anames,anumbers,coords[0]);
@@ -312,7 +378,7 @@ void GString::String_Method_Optimization()
   int2ic.bmatp_to_U();
   int2ic.bmat_create();
 
-  int size_ic = newic.nbonds + newic.nangles + newic.ntor;
+  int size_ic = newic.nbonds + newic.nangles + newic.ntor + newic.nxyzic;
   int len_d = newic.nicd0;
 
   printf("\n");
@@ -711,6 +777,19 @@ void GString::String_Method_Optimization()
 
   printf("\n oi: %i nmax: %i TSnode0: %i overlapn: %i \n",oi,nmax,TSnode0,overlapn);
 
+  if (converged && do_post_ts)
+  {
+    printf("\n will reoptimize TS to higher tolerance %8.5f / %8.5f \n",TS_CONV_TOL,TS_GRAD_MAX_TOL);
+    int gradTSCount = 0;
+    double ETSf = 0.;
+    int ts_iters = ts_opt_steps / 10; if (ts_iters<1) ts_iters = 1;
+ 
+    double gradmax = 0.;
+    optimize_ts(TSnode0,ts_iters,gradrms,gradmax,gradTSCount,overlapn,overlap,ETSf,dqa,dqmaga,ictan);
+ 
+    printf("\n opt_iters over (TS): gradrms: %6.4f gradmax: %8.6f tgrads: %4i  ol(%i): %3.2f max E: %5.1f \n",gradrms,gradmax,gradTSCount,overlapn,overlap,ETSf);
+  }
+
 #if USE_KNNR
   printf(" recomputing energies for kNNR nodes \n");
   printf(" WARNING: doesn't skip already computed nodes \n");
@@ -1031,6 +1110,8 @@ void GString::init(string infilename, int run, int nprocs){
   endearly = 0;
   using_break_planes = 0;
   bondfrags = 1;
+  do_post_ts = 0;
+  ts_opt_steps = 0;
 
   printf("  -structure filename from input: %s \n",xyzfile.c_str());
   //general_init(infilename);
@@ -1102,6 +1183,10 @@ void GString::parameter_init(string infilename)
   isSSM = 0;
   isFSM = 0;
   use_exact_climb = 2;
+  CONV_TOL = 0.001;  
+  TS_CONV_TOL = 0.0005;
+  GRAD_MAX_TOL = 0.15;
+  TS_GRAD_MAX_TOL = 0.02;
 
   printf("Initializing Tolerances and Parameters... \n");
   printf("  -Opening %s \n",infilename.c_str());
@@ -1157,6 +1242,26 @@ void GString::parameter_init(string infilename)
         printf("  TS_FINAL_TYPE must be 0, 1 or 2 \n");
         exit(1);
       }
+    }
+    if (tagname=="TS_CONV_TOL") {
+      TS_CONV_TOL=atof(tok_line[1].c_str());
+      stillreading=true;
+      cout <<"  -TS_CONV_TOL = " << TS_CONV_TOL << endl;
+      do_post_ts = 1;
+      if (ts_opt_steps==0) ts_opt_steps = 50;
+    }
+    if (tagname=="TS_GRAD_MAX_TOL") {
+      TS_GRAD_MAX_TOL=atof(tok_line[1].c_str());
+      stillreading=true;
+      cout <<"  -TS_GRAD_MAX_TOL = " << TS_GRAD_MAX_TOL << endl;
+      do_post_ts = 1;
+    }
+    if (tagname=="TS_FINAL_OPT") {
+      ts_opt_steps=atoi(tok_line[1].c_str());
+      stillreading=true;
+      cout <<"  -TS_FINAL_OPT = " << ts_opt_steps << endl;
+      do_post_ts = 1;
+      if (TS_CONV_TOL==0) TS_CONV_TOL = CONV_TOL;
     }
     if (tagname=="PRODUCT_LIMIT") {
       prodelim = atof(tok_line[1].c_str());
@@ -1228,6 +1333,11 @@ void GString::parameter_init(string infilename)
       CONV_TOL=atof(tok_line[1].c_str());
       stillreading=true;
       cout <<"  -CONV_TOL = " << CONV_TOL << endl;
+    }
+    if (tagname=="GRAD_MAX_TOL") {
+      GRAD_MAX_TOL=atof(tok_line[1].c_str());
+      stillreading=true;
+      cout <<"  -GRAD_MAX_TOL = " << GRAD_MAX_TOL << endl;
     }
     if (tagname=="ADD_NODE_TOL"){
       ADD_NODE_TOL=atof(tok_line[1].c_str());
@@ -1318,9 +1428,7 @@ void GString::structure_init(string xyzfile)
   anumbers = new int[1+natoms];
   amasses = new double[1+natoms];
   anames = new string[1+natoms];
-  frozen = new int[1+natoms];
-  for (int i=0;i<natoms;i++)
-    frozen[i] = 0;
+  frozen = new int[1+natoms]();
 
   cout <<"  -Reading the atomic names...";
   for (int i=0;i<natoms;i++){
@@ -1380,11 +1488,11 @@ void GString::structure_init(string xyzfile)
       coords[n][3*j+0]=atof(tok_line[1].c_str());
       coords[n][3*j+1]=atof(tok_line[2].c_str());
       coords[n][3*j+2]=atof(tok_line[3].c_str());
-      if (tok_line.size()>4 && tok_line[4] == "*") 
-          frozen[j] = 1;
       perp_grads[i][3*j+0] = 0.0;
       perp_grads[i][3*j+1] = 0.0;
       perp_grads[i][3*j+2] = 0.0;
+//      printf("  line: %s size: %i \n",line.c_str(),tok_line.size());
+      if (tok_line.size()>4) frozen[j] = 1;
     }
   }
 
@@ -1420,7 +1528,7 @@ void GString::get_eigenv_finite(int enode)
 {
   //printf(" this function doesn't work (yet) \n"); fflush(stdout);
 
-  int size_ic = newic.nbonds + newic.nangles + newic.ntor;
+  int size_ic = newic.nbonds + newic.nangles + newic.ntor + newic.nxyzic;
   int len_d = newic.nicd0;
   //printf(" nnmax: %i size_ic: %i len_d: %i \n",nnmax,size_ic,len_d); fflush(stdout);
 
@@ -1462,7 +1570,7 @@ void GString::get_eigenv_finite(int enode, double** ictan)
   newic.bmatp_create();
   newic.bmatp_to_U();
 
-  int size_ic = newic.nbonds+newic.nangles+newic.ntor;
+  int size_ic = newic.nbonds+newic.nangles+newic.ntor+newic.nxyzic;
   int len = newic.nicd0;
   //printf(" get_eigenv_finite, nicd0: %i 3N-6: %i \n",len,3*natoms-6);
   int N3 = 3*natoms;
@@ -1609,7 +1717,7 @@ void GString::get_eigenv_bofill()
   icoords[nmax].bmat_create();
   //icoords[nmax].make_Hint();
   
-  int size_ic = newic.nbonds+newic.nangles+newic.ntor;
+  int size_ic = newic.nbonds+newic.nangles+newic.ntor+newic.nxyzic;
   int len = newic.nicd0;
   int N3 = 3*natoms;
 
@@ -1691,7 +1799,8 @@ void GString::tangent_1(double* ictan)
   int nbonds = newic.nbonds;
   int nangles = newic.nangles;
   int ntor = newic.ntor;
-  int size_ic = newic.nbonds+newic.nangles+newic.ntor;
+  int size_icp = newic.nbonds+newic.nangles+newic.ntor;
+  int size_ic = size_icp + newic.nxyzic;
   int len_d = newic.nicd0;
 
  //full redundant tangent
@@ -1707,6 +1816,15 @@ void GString::tangent_1(double* ictan)
     if (ictan[nbonds+nangles+i]<-3.14159)
       ictan[nbonds+nangles+i] = 2*3.14159 + ictan[nbonds+nangles+i];
   }
+  int cxyzic = 0;
+  if (newic.nxyzic>0)
+  for (int i=0;i<natoms;i++)
+  if (newic.xyzic[i])
+  {
+    ictan[size_icp+cxyzic++] = newic.coords[3*i+0] - intic.coords[3*i+0];
+    ictan[size_icp+cxyzic++] = newic.coords[3*i+1] - intic.coords[3*i+1];
+    ictan[size_icp+cxyzic++] = newic.coords[3*i+2] - intic.coords[3*i+2];
+  }
 
   return;
 }
@@ -1719,7 +1837,8 @@ double GString::tangent_1b(double* ictan)
   int nbonds = newic.nbonds;
   int nangles = newic.nangles;
   int ntor = newic.ntor;
-  int size_ic = newic.nbonds+newic.nangles+newic.ntor;
+  int size_icp = newic.nbonds+newic.nangles+newic.ntor;
+  int size_ic = size_icp + newic.nxyzic;
   int len_d = newic.nicd0;
 
   double bdist = 0.;
@@ -1804,6 +1923,18 @@ double GString::tangent_1b(double* ictan)
 
     printf(" tangent tor: %i %i %i %i is #%i \n",b1+1,b2+1,b3+1,b4+1,an1);
     printf(" torv: %4.3f tort: %4.3f diff(rad): %4.3f \n",newic.torv[an1],tort[i],(tordiff+torfix)*3.14159/180.);
+  }
+
+  //Cartesian tangent, NOT USING
+  int cxyzic = 0;
+  int len_icp = size_icp;
+  if (newic.nxyzic>0)
+  for (int i=0;i<natoms;i++)
+  if (newic.xyzic[i])
+  {
+    ictan[len_icp+cxyzic++] = newic.coords[3*i+0] - intic.coords[3*i+0];
+    ictan[len_icp+cxyzic++] = newic.coords[3*i+1] - intic.coords[3*i+1];
+    ictan[len_icp+cxyzic++] = newic.coords[3*i+2] - intic.coords[3*i+2];
   }
 
   //some normalization
@@ -1965,7 +2096,7 @@ void GString::starting_string(double* dq, int nnodes)
   int nbonds = newic.nbonds;
   int nangles = newic.nangles;
   int ntor = newic.ntor;
-  int size_ic = newic.nbonds+newic.nangles+newic.ntor;
+  int size_ic = newic.nbonds+newic.nangles+newic.ntor+newic.nxyzic;
   int len_d = newic.nicd0;
   double* ictan = new double[size_ic];
   double* ictan0 = new double[size_ic];
@@ -2141,7 +2272,8 @@ int GString::addNode(int n1, int n2, int n3)
   int nbonds = newic.nbonds;
   int nangles = newic.nangles;
   int ntor = newic.ntor;
-  int size_ic = newic.nbonds+newic.nangles+newic.ntor;
+  int size_icp = newic.nbonds+newic.nangles+newic.ntor;
+  int size_ic = size_icp + newic.nxyzic;
   int len_d = newic.nicd0;
   double* ictan = new double[size_ic];
   double* ictan0 = new double[size_ic];
@@ -2203,7 +2335,7 @@ int GString::addNode(int n1, int n2, int n3)
     {
       for (int i=0;i<size_ic;i++) ictan0[i] = ictan[i];
 
-      for (int j=0;j<size_ic-ntor;j++)
+      for (int j=0;j<size_icp-ntor;j++)
         dqmag += ictan0[j]*newic.Ut[newic.nicd*size_ic+j];
       for (int j=nbonds+nangles;j<size_ic;j++)
         dqmag += ictan0[j]*newic.Ut[newic.nicd*size_ic+j]; //CPMZ check
@@ -2303,7 +2435,9 @@ int GString::addCNode(int n1)
   int nbonds = newic.nbonds;
   int nangles = newic.nangles;
   int ntor = newic.ntor;
-  int size_ic = nbonds + nangles + ntor;
+  int nxyzic = newic.nxyzic;
+  int size_icp = nbonds + nangles + ntor;
+  int size_ic = size_icp + nxyzic;
   int len_d = newic.nicd0;
   double* ictan = new double[size_ic];
   double* ictan0 = new double[size_ic];
@@ -2547,7 +2681,7 @@ void GString::com_rotate_move(int iR, int iP, int iN, double ff) {
 void GString::starting_string_dm(double* dq)
 {
 
-  int size_ic = newic_dm.nbonds+newic_dm.nangles+newic_dm.ntor;
+  int size_ic = newic_dm.nbonds+newic_dm.nangles+newic_dm.ntor+newic_dm.nxyzic;
   int len_d = newic_dm.nicd0;
   double* ictan_dm = new double[size_ic];
 
@@ -2647,7 +2781,8 @@ void GString::scan_r(int weig)
   int nbonds = newic.nbonds;
   int nangles = newic.nangles;
   int ntor = newic.ntor;
-  int size_ic = nbonds+nangles+ntor;
+  int nxyzic = newic.nxyzic;
+  int size_ic = nbonds+nangles+ntor+nxyzic;
   int len_d = newic.nicd0;
 
   grad1.init(infile0,natoms,anumbers,anames,icoords[0].coords,runNum,runend,ncpu,3,CHARGE);
@@ -2781,7 +2916,8 @@ void GString::opt_tr()
   int nbonds = newic.nbonds;
   int nangles = newic.nangles;
   int ntor = newic.ntor;
-  int size_ic = nbonds+nangles+ntor;
+  int nxyzic = newic.nxyzic;
+  int size_ic = nbonds+nangles+ntor+nxyzic;
   int len_d = newic.nicd0;
 
   double* C0 = new double[size_ic];
@@ -2941,7 +3077,8 @@ void GString::opt_r()
   int nbonds = newic.nbonds;
   int nangles = newic.nangles;
   int ntor = newic.ntor;
-  int size_ic = nbonds+nangles+ntor;
+  int nxyzic = newic.nxyzic;
+  int size_ic = nbonds+nangles+ntor+nxyzic;
   int len_d = newic.nicd0;
 
   double* C0 = new double[size_ic];
@@ -3041,10 +3178,11 @@ void GString::opt_steps(double** dqa, double** ictan, int osteps, int oesteps)
   int nbonds = newic.nbonds;
   int nangles = newic.nangles;
   int ntor = newic.ntor;
-  int size_ic = newic.nbonds+newic.nangles+newic.ntor;
+  int size_icp = newic.nbonds+newic.nangles+newic.ntor;
+  int size_ic = size_icp + newic.nxyzic;
   int len_d = newic.nicd0;
-  double* aC = new double[nnmax*size_ic];
-  double* aC0 = new double[nnmax*size_ic];
+  double* aC = new double[nnmax*size_ic]();
+  double* aC0 = new double[nnmax*size_ic]();
   int* do_knnr = new int[nnmax];
   for (int n=0;n<nnmax;n++) do_knnr[n] = 0;
 
@@ -3139,10 +3277,10 @@ void GString::opt_steps(double** dqa, double** ictan, int osteps, int oesteps)
 #endif
   for (int n=n0+1;n<nnmax;n++)
   {
-#ifdef _OPENMP
+//#ifdef _OPENMP
   if (omp_get_num_threads()>1 && active[n]>0)
     printf(" tid: %i/%i node: %i status: %i \n",omp_get_thread_num()+1,omp_get_num_threads(),n,active[n]);
-#endif
+//#endif
     if (active[n]>0 && n!=nnmax-1)
     {
       //printf(" os1l"); fflush(stdout);
@@ -3456,9 +3594,10 @@ void GString::add_angles(int nadd, int* newangles)
 ///reparametrizes the string along the constraint during the growth phase, only used by DE
 void GString::ic_reparam_g(double** dqa, double* dqmaga) 
 {
-  close_dist_fix(0);
+  if (bondfrags<2)
+    close_dist_fix(0);
 
-  int size_ic = newic.nbonds+newic.nangles+newic.ntor;
+  int size_ic = newic.nbonds+newic.nangles+newic.ntor+newic.nxyzic;
   int len_d = newic.nicd0;
   double** ictan0 = new double*[nnmax];
   for (int i=0;i<nnmax;i++)
@@ -3626,7 +3765,7 @@ void GString::ic_reparam_g(double** dqa, double* dqmaga)
 ///reparametrizes the string along the constraint after the growth phase
 void GString::ic_reparam(double** dqa, double* dqmaga, int rtype) 
 {
-  int size_ic = newic.nbonds+newic.nangles+newic.ntor;
+  int size_ic = newic.nbonds+newic.nangles+newic.ntor+newic.nxyzic;
   int len_d = newic.nicd0;
   int ictalloc = nnmax+1;
   double** ictan0 = new double*[ictalloc];
@@ -3914,7 +4053,7 @@ void GString::ic_reparam(double** dqa, double* dqmaga, int rtype)
 
 void GString::ic_reparam_new(double** dqa, double* dqmaga, int rtype) 
 {
-  int size_ic = newic.nbonds+newic.nangles+newic.ntor;
+  int size_ic = newic.nbonds+newic.nangles+newic.ntor+newic.nxyzic;
   int len_d = newic.nicd0;
   double** ictan0 = new double*[nnmax];
   for (int i=0;i<nnmax;i++)
@@ -4127,7 +4266,7 @@ void GString::ic_reparam_h(double** dqa, double* dqmaga, int rtype)
   if (isSSM)
     printf(" NOT SET UP FOR SSM \n");
 
-  int size_ic = newic.nbonds+newic.nangles+newic.ntor;
+  int size_ic = newic.nbonds+newic.nangles+newic.ntor+newic.nxyzic;
   int len_d = newic.nicd0;
   double** ictan0 = new double*[nnmax];
   for (int i=0;i<nnmax;i++)
@@ -4359,7 +4498,8 @@ void GString::ic_reparam_cut(int min, double** dqa, double* dqmaga, int rtype)
 {
   if (isSSM)
     printf(" NOT SET UP FOR SSM \n");
-  close_dist_fix(0);
+  if (bondfrags<2)
+    close_dist_fix(0);
 
   printf(" found new intermediate \n");
   printf(" reparameterizing string to node: %i \n",min);
@@ -4393,12 +4533,13 @@ void GString::ic_reparam_cut(int min, double** dqa, double* dqmaga, int rtype)
   //icoords[nnmax-1].print_xyz();
   nn++;
 
-  close_dist_fix(0);
+  if (bondfrags<2)
+    close_dist_fix(0);
   for (int n=min;n<nnmax-1;n++)
     addNode(n-1,n,nnmax-1);
 
  
-  int size_ic = newic.nbonds+newic.nangles+newic.ntor;
+  int size_ic = newic.nbonds+newic.nangles+newic.ntor+newic.nxyzic;
   int len_d = newic.nicd0;
   double** ictan0 = new double*[nnmax];
   for (int i=0;i<nnmax;i++)
@@ -4546,7 +4687,7 @@ void GString::ic_reparam_dm(double** dqa, double* dqmaga, int rtype)
     printf(" NOT SET UP FOR SSM \n");
  // printf(" WARNING: disabled reparam_dm \n");
  // return;
-  int size_ic = newic_dm.nbonds+newic_dm.nangles+newic_dm.ntor;
+  int size_ic = newic_dm.nbonds+newic_dm.nangles+newic_dm.ntor+newic.nxyzic;
   int len_d = newic_dm.nicd0;
   double** ictan = new double*[nnmax];
   for (int i=0;i<nnmax;i++)
@@ -5138,7 +5279,9 @@ void GString::get_tangents_1(double** dqa, double* dqmaga, double** ictan)
   int nbonds = newic.nbonds;
   int nangles = newic.nangles;
   int ntor = newic.ntor;
-  int size_ic = nbonds+nangles+ntor;
+  int nxyzic = newic.nxyzic;
+  int size_icp = nbonds+nangles+ntor;
+  int size_ic = size_icp+nxyzic;
   int len_d = newic.nicd0;
   //printf(" get_tangents_1, nicd0: %i 3N-6: %i \n",len_d,3*natoms-6);
   double* ictan0 = new double[size_ic];
@@ -5167,10 +5310,12 @@ void GString::get_tangents_1(double** dqa, double* dqmaga, double** ictan)
 #if 1
     for (int j=0;j<nbonds;j++) 
       dqmaga[n] += ictan0[j]*newic.Ut[newic.nicd*size_ic+j] *2.5; //CPMZ removed *2.5 weight
-    for (int j=nbonds;j<size_ic-ntor;j++) 
+    for (int j=nbonds;j<size_icp-ntor;j++) 
       dqmaga[n] += ictan0[j]*newic.Ut[newic.nicd*size_ic+j];
-    for (int j=nbonds+nangles;j<size_ic;j++)
+    for (int j=nbonds+nangles;j<size_icp;j++)
       dqmaga[n] += ictan0[j]*newic.Ut[newic.nicd*size_ic+j]; //CPMZ check
+    for (int j=size_icp;j<size_ic;j++)
+      dqmaga[n] += ictan0[j]*newic.Ut[newic.nicd*size_ic+j];
 #else
     for (int j=0;j<nbonds;j++) 
       dqmaga[n] += ictan0[j]*newic.Ut[newic.nicd*size_ic+j];
@@ -5178,6 +5323,8 @@ void GString::get_tangents_1(double** dqa, double* dqmaga, double** ictan)
       dqmaga[n] += ictan0[j]*newic.Ut[newic.nicd*size_ic+j]/1.5;
     for (int j=nbonds+nangles;j<size_ic;j++)
       dqmaga[n] += ictan0[j]*newic.Ut[newic.nicd*size_ic+j]/1.5; //CPMZ check
+    for (int j=size_icp;j<size_ic;j++)
+      dqmaga[n] += ictan0[j]*newic.Ut[newic.nicd*size_ic+j];
 #endif
 #else
     for (int j=0;j<size_ic-ntor;j++) 
@@ -5216,7 +5363,8 @@ void GString::get_tangents_1g(double** dqa, double* dqmaga, double** ictan)
   int nbonds = newic.nbonds;
   int nangles = newic.nangles;
   int ntor = newic.ntor;
-  int size_ic = newic.nbonds+newic.nangles+newic.ntor;
+  int size_icp = nbonds+nangles+ntor;
+  int size_ic = size_icp+newic.nxyzic;
   int len_d = newic.nicd0;
   double* ictan0 = new double[size_ic];
   int* nlist = new int[2*nnmax];
@@ -5272,10 +5420,12 @@ void GString::get_tangents_1g(double** dqa, double* dqmaga, double** ictan)
     newic.opt_constraint(ictan[nlist[2*n]]);
     //newic.bmat_create();
 
-    for (int j=0;j<size_ic-ntor;j++) 
+    for (int j=0;j<size_icp-ntor;j++) 
       dqmaga[nlist[2*n]] += ictan0[j]*newic.Ut[newic.nicd*size_ic+j];
-    for (int j=nbonds+nangles;j<size_ic;j++)
+    for (int j=nbonds+nangles;j<size_icp;j++)
       dqmaga[nlist[2*n]] += ictan0[j]*newic.Ut[newic.nicd*size_ic+j]; //CPMZ check
+    for (int j=size_icp;j<size_ic;j++)
+      dqmaga[nlist[2*n]] += ictan0[j]*newic.Ut[newic.nicd*size_ic+j];
 #else
     for (int j=0;j<size_ic-ntor;j++) 
       dqmaga[nlist[2*n]] += ictan[nlist[2*n]][j]*ictan[nlist[2*n]][j];
@@ -5314,7 +5464,8 @@ void GString::get_tangents_1e(double** dqa, double* dqmaga, double** ictan)
   int nbonds = newic.nbonds;
   int nangles = newic.nangles;
   int ntor = newic.ntor;
-  int size_ic = newic.nbonds+newic.nangles+newic.ntor;
+  int size_icp = nbonds+nangles+ntor;
+  int size_ic = size_icp+newic.nxyzic;
   int len_d = newic.nicd0;
 //  printf(" get_tangents_1e, nicd0: %i 3N-6: %i \n",len_d,3*natoms-6);
   double* t1 = new double[size_ic];
@@ -5431,6 +5582,20 @@ void GString::get_tangents_1e(double** dqa, double* dqmaga, double** ictan)
         if (t2[nbonds+nangles+i]<-3.14159)
           t2[nbonds+nangles+i] = 2*3.14159 + t2[nbonds+nangles+i];
       }
+
+      int cxyzic = 0;
+      if (newic.nxyzic>0)
+      for (int i=0;i<natoms;i++)
+      if (newic.xyzic[i])
+      {
+        t1[size_icp+cxyzic]   = intic.coords[3*i+0] - newic.coords[3*i+0];
+        t2[size_icp+cxyzic++] = newic.coords[3*i+0] - int2ic.coords[3*i+0];
+        t1[size_icp+cxyzic]   = intic.coords[3*i+1] - newic.coords[3*i+1];
+        t2[size_icp+cxyzic++] = newic.coords[3*i+1] - int2ic.coords[3*i+1];
+        t1[size_icp+cxyzic]   = intic.coords[3*i+2] - newic.coords[3*i+2];
+        t2[size_icp+cxyzic++] = newic.coords[3*i+2] - int2ic.coords[3*i+2];
+      }
+
       for (int i=0;i<size_ic;i++)
         ictan[n][i] = f1 * t1[i] + (1-f1) * t2[i];
       for (int i=0;i<ntor;i++)
@@ -5454,10 +5619,12 @@ void GString::get_tangents_1e(double** dqa, double* dqmaga, double** ictan)
 #if 1
     for (int j=0;j<nbonds;j++) 
       dqmaga[n] += ictan0[j]*newic.Ut[newic.nicd*size_ic+j] *2.5;
-    for (int j=nbonds;j<size_ic-ntor;j++) 
+    for (int j=nbonds;j<size_icp-ntor;j++) 
       dqmaga[n] += ictan0[j]*newic.Ut[newic.nicd*size_ic+j];
-    for (int j=nbonds+nangles;j<size_ic;j++)
+    for (int j=nbonds+nangles;j<size_icp;j++)
       dqmaga[n] += ictan0[j]*newic.Ut[newic.nicd*size_ic+j]; //CPMZ check
+    for (int j=size_icp;j<size_ic;j++)
+      dqmaga[n] += ictan0[j]*newic.Ut[newic.nicd*size_ic+j];
 #else
     for (int j=0;j<nbonds;j++) 
       dqmaga[n] += ictan0[j]*newic.Ut[newic.nicd*size_ic+j];
@@ -5507,7 +5674,8 @@ void GString::get_tangents(double** dqa, double* dqmaga, double** ictan)
   int nbonds = newic.nbonds;
   int nangles = newic.nangles;
   int ntor = newic.ntor;
-  int size_ic = newic.nbonds+newic.nangles+newic.ntor;
+  int size_icp = newic.nbonds+newic.nangles+newic.ntor;
+  int size_ic = size_icp+newic.nxyzic;
   int len_d = newic.nicd0;
 
   for (int n=1;n<nnmax-1;n++)
@@ -5546,6 +5714,8 @@ void GString::get_tangents(double** dqa, double* dqmaga, double** ictan)
         //printf(" new %1.4f tor tangent %i %i %i %i \n",ictan[n][nbonds+nangles+i],newic.torsions[i][0],newic.torsions[i][1],newic.torsions[i][2],newic.torsions[i][3]);
       }
     }
+    //for (int i=0;i<nxyzic;i++)
+    //  ictan[n][size_icp+i] = 0.; 
 #endif
     dqmaga[n] = 0.;
     for (int j=0;j<size_ic;j++)
@@ -5583,7 +5753,8 @@ void GString::get_tangents_dm(double** dqa, double* dqmaga, double** ictan)
   int nbonds = newic_dm.nbonds;
   int nangles = newic_dm.nangles;
   int ntor = newic_dm.ntor;
-  int size_ic_dm = nbonds+nangles+ntor;
+  int nxyzic = newic_dm.nxyzic;
+  int size_ic_dm = nbonds+nangles+ntor+nxyzic;
   int len_d = newic_dm.nicd0;
 
   //printf(" get_tangents_dm, size_ic_dm: %i len_d: %i \n",size_ic_dm,len_d);
@@ -5655,7 +5826,7 @@ void GString::get_distances(double* dqmaga, double** ictan)
   int nbonds = newic.nbonds;
   int nangles = newic.nangles;
   int ntor = newic.ntor;
-  int size_ic = newic.nbonds+newic.nangles+newic.ntor;
+  int size_ic = newic.nbonds+newic.nangles+newic.ntor+newic.nxyzic;
   int len_d = newic.nicd0;
 
   double** dqa = new double*[nnmax];
@@ -5723,7 +5894,7 @@ void GString::get_distances_dm(double* dqmaga, double** ictan)
   if (isSSM)
     printf(" NOT SET UP FOR SSM \n");
 
-  int size_ic_dm = newic_dm.nbonds+newic_dm.nangles+newic_dm.ntor;
+  int size_ic_dm = newic_dm.nbonds+newic_dm.nangles+newic_dm.ntor+newic_dm.nxyzic;
   int len_d = newic_dm.nicd0;
 
   double** dqa = new double*[nnmax];
@@ -7562,7 +7733,7 @@ void GString::add_last_node(int type)
     return;
   }
   int noptsteps = 15;
-  int size_ic = icoords[nnR-1].nbonds + icoords[nnR-1].nangles + icoords[nnR-1].ntor;
+  int size_ic = icoords[nnR-1].nbonds + icoords[nnR-1].nangles + icoords[nnR-1].ntor + icoords[nnR-1].nxyzic;
   icoords[nnR].OPTTHRESH = CONV_TOL;
   if (type==1)
   {
@@ -7628,61 +7799,61 @@ void GString::trim_string()
   }
 
 #if 1
-   printf(" min nodes: ");
-   for (int n=1;n<maxn-1;n++)
-   if (min[n])
-     printf(" %i",n);
-   printf(" max nodes: ");
-   for (int n=1;n<maxn-1;n++)
-   if (max[n])
-     printf(" %i",n);
-   printf("\n");
+  printf(" min nodes: ");
+  for (int n=1;n<maxn-1;n++)
+  if (min[n])
+    printf(" %i",n);
+  printf(" max nodes: ");
+  for (int n=1;n<maxn-1;n++)
+  if (max[n])
+    printf(" %i",n);
+  printf("\n");
 #endif
- 
-   for (int n=1;n<maxn-1;n++)
-   if (max[n])
-     npeaks1++;
- 
-   double ediff = PEAK4_EDIFF; //same as in find_peaks(4)
-   double emax = -1000.;
-   int nmax = 0;
-   int found = 0;
-   if (npeaks1)
-   for (int n=1;n<maxn-1;n++)
-   if (max[n] && !found)
-   {
-     emax = V_profile[n];
-     nmax = n;
-     printf(" at max node: %i \n",n);
-     for (int m=n+1;m<maxn;m++)
-     {
-       printf(" V[n]: %4.3f V[m]: %4.3f \n",V_profile[n],V_profile[m]);
-       if (emax - V_profile[m] > ediff)
-       {
-         found = m;
-         break;
-       }
+
+  for (int n=1;n<maxn-1;n++)
+  if (max[n])
+    npeaks1++;
+
+  double ediff = PEAK4_EDIFF; //same as in find_peaks(4)
+  double emax = -1000.;
+  int nmax = 0;
+  int found = 0;
+  if (npeaks1)
+  for (int n=1;n<maxn-1;n++)
+  if (max[n] && !found)
+  {
+    emax = V_profile[n];
+    nmax = n;
+    printf(" at max node: %i \n",n);
+    for (int m=n+1;m<maxn;m++)
+    {
+      printf(" V[n]: %4.3f V[m]: %4.3f \n",V_profile[n],V_profile[m]);
+      if (emax - V_profile[m] > ediff)
+      {
+        found = m;
+        break;
+      }
 //      if (max[m] && V_profile[m] > emax) break;
-       if (max[m]) break;
-     } //loop over m
-   } //loop over n, if max[n]
- 
-   int nextmin = nmax;
-   for (int n=found;n<maxn;n++)
-   if (min[n])
-   {
-     nextmin = n;
-     break;
-   }
- 
-   if (nmax==nextmin)
-   {
-     printf(" couldn't find next min mode, something is wrong \n");
-     printf(" nmax: %i nextmin: %i found: %i \n",nmax,nextmin,found);
-     //exit(1);
-   }
-   else
-     trim_string(nextmin);
+      if (max[m]) break;
+    } //loop over m
+  } //loop over n, if max[n]
+
+  int nextmin = nmax;
+  for (int n=found;n<maxn;n++)
+  if (min[n])
+  {
+    nextmin = n;
+    break;
+  }
+
+  if (nmax==nextmin)
+  {
+    printf(" couldn't find next min mode, something is wrong \n");
+    printf(" nmax: %i nextmin: %i found: %i \n",nmax,nextmin,found);
+    //exit(1);
+  }
+  else
+    trim_string(nextmin);
 
   delete [] min;
   delete [] max;
