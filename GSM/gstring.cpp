@@ -984,6 +984,7 @@ int GString::isomer_init(string isofilename)
 
   nfound = 0;
 
+  nbond = 0;
   nadd = 0;
   nbrk = 0;
   nangle = 0;
