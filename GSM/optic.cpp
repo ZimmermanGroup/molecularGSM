@@ -342,8 +342,10 @@ int ICoord::union_ic(ICoord ic1, ICoord ic2)
 
   nxyzic = 0;
   if (xyzic!=NULL) delete [] xyzic;
-  xyzic = new int[natoms];
+  xyzic = new int[natoms]();
   for (int i=0;i<ic1.natoms;i++) xyzic[i] = 0;
+
+  if (ic1.nxyzic>0)
   for (int i=0;i<ic1.natoms;i++)
   if (ic1.xyzic[i] || ic2.xyzic[i])
   {  
