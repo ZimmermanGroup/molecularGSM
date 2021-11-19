@@ -1,5 +1,5 @@
 ## Questions?
-Contact Nicole Perkins: nsperkin@umich.edu
+Contact Nicole Woodall: nsperkin@umich.edu
 
 ## Overview
 The growing string method is a reaction path and transition state finding method developed in c++.
@@ -9,6 +9,9 @@ https://github.com/ZimmermanGroup/molecularGSM/wiki
 
 Sample tutorial files can be found under the tutorial folder:
 https://github.com/ZimmermanGroup/molecularGSM/tree/master/tutorial
+
+Running GSM with the XTB package (from the Grimme lab):
+https://github.com/grimme-lab/xtb_docs/blob/master/source/gsm.rst
 
 ## Installation
 This code can be built using CMake. To do so:
