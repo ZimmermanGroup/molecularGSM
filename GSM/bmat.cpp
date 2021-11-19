@@ -24,14 +24,15 @@ using namespace std;
 
 int ICoord::bmat_alloc() {
 
-  int size_ic = nbonds+nangles+ntor+nxyzic+150; //buffer of 150 for new primitives
+  int size_ic = nbonds+nangles+ntor+150; //buffer of 150 for new primitives
   int size_xyz = 3*natoms;
   //printf(" in bmat_alloc, size_ic: %i size_xyz: %i \n",size_ic-150,size_xyz);
   //printf(" max_bonds: %i max_angles: %i max_torsions: %i \n",max_bonds,max_angles,max_torsions);
   bmat = new double[size_ic*size_xyz+100];
   bmatp = new double[size_ic*size_xyz+1000];
   bmatti = new double[size_ic*size_xyz+100];
-  torv0 = new double[max_torsions+100]();
+  torv0 = new double[max_torsions+100];
+  for (int i=0;i<max_torsions;i++) torv0[i] = 0;
   torfix = new double[max_torsions+100];
   Ut = new double[size_ic*size_ic+100];
   Ut0 = new double[size_ic*size_ic+100];
@@ -76,7 +77,6 @@ int ICoord::bmat_alloc() {
   noptdone = 0;
   nneg = 0;
   isDavid = 0;
-  nretry = 0;
 
   FMAG = 0.015; //was 0.015
 
@@ -129,13 +129,12 @@ int ICoord::bmat_free() {
   return 0;
 }
 
-
+///forms the original B matrix
 int ICoord::bmatp_create() {
 
  // printf(" in bmatp_create \n");
 
-  int len_icp = nbonds+nangles+ntor;
-  int len = len_icp + nxyzic;
+  int len = nbonds+nangles+ntor;
   int N3 = 3*natoms;
   int max_size_ic = len;
   int size_xyz = N3;
@@ -199,16 +198,6 @@ int ICoord::bmatp_create() {
     bmatp[i*N3+3*a4+1] = dqtdx[10];
     bmatp[i*N3+3*a4+2] = dqtdx[11];
   }
-  int cxyzic = 0;
-  //printf(" bmatp. use_xyz: %i \n",use_xyz);
-  if (use_xyz==2)
-  for (int i=0;i<natoms;i++)
-  if (xyzic[i])
-  {
-    bmatp[(len_icp+cxyzic++)*N3+3*i+0] = 1.0;
-    bmatp[(len_icp+cxyzic++)*N3+3*i+1] = 1.0;
-    bmatp[(len_icp+cxyzic++)*N3+3*i+2] = 1.0;
-  }
 
   //printf(" \n after creating bmatp \n");
 
@@ -271,7 +260,6 @@ int ICoord::bmatp_create() {
     printf(" xyz components for IC %i: %8.5f %8.5f %8.5f \n",i,x[0],x[1],x[2]);
     x[0]=x[1]=x[2] = 0.;
   }
-  delete [] x;
 #endif
 #if 0
   double* x1 = new double[N3];
@@ -294,17 +282,16 @@ int ICoord::bmatp_create() {
   return 0;
 }
 
-
+///Diagonalizes G to form U
 int ICoord::bmatp_to_U()
 {
-  //printf(" in bmatp_to_U. \n");
-
-  int len_icp = nbonds+nangles+ntor;
-  int len = len_icp + nxyzic;
+ // printf(" in bmatp_to_U \n");
+ // fflush(stdout);
+  int len = nbonds+nangles+ntor;
   int N3 = 3*natoms;
   int max_size_ic = len;
   int size_xyz = N3;
-  //if (use_xyz==2) printf(" bmatp_to_U. nbonds: %2i nangles: %2i ntorsions: %2i XYZ: %2i  total: %3i \n",nbonds,nangles,ntor,nxyzic,len);
+  //printf(" bmatp_to_U. nbonds: %2i nangles: %2i ntorsions: %2i  total: %3i \n",nbonds,nangles,ntor,len);
 
   int len_d;
   double* e = new double[len];
@@ -314,10 +301,10 @@ int ICoord::bmatp_to_U()
     tmp[i] = bmatp[i];
 
   double* G = new double[len*len];
-  for (int i=0;i<len*len;i++) G[i] = 0.;
 #if 1
   mat_times_mat_bt(G,bmatp,bmatp,len,len,N3);
 #else
+  for (int i=0;i<len*len;i++) G[i] = 0.;
   for (int i=0;i<len;i++) 
   for (int j=0;j<len;j++)
   for (int k=0;k<N3;k++)
@@ -334,10 +321,13 @@ int ICoord::bmatp_to_U()
   }
 #endif
 
+//  printf("\n using diagonalize(G) \n");
+//  printf(" before diagonalize: mkl_threads: %i \n",mkl_get_max_threads());
+//  fflush(stdout);
   Diagonalize(G,e,len);
   len_d = N3-6;
-  if (use_xyz==2)
-    len_d = N3;
+//  printf(" after diagonalize \n");
+//  fflush(stdout);
 
 #if 0
   printf(" eigenvalues:");
@@ -351,7 +341,7 @@ int ICoord::bmatp_to_U()
   if (e[len-1-i]<0.001)
   {
 #if 0
-    printf(" small ev: %10.8f",e[len-1-i]);
+    printf(" small ev: %10.8f \n",e[len-1-i]);
     int i1 = len-1-i;
   //  for (int j=0;j<len;j++)
   //    printf(" %8.5f",G[i1*len+j]);
@@ -364,7 +354,7 @@ int ICoord::bmatp_to_U()
   len_d -= lowev;
   if (lowev>3)
   {
-    printf("\n\n ERROR: optimization space (%3i) less than 3N-6 DOF (%3i) \n",len_d,N3-6);
+    printf("\n\n ERROR: optimization space less than 3N-6 DOF \n");
     printf("  probably need more IC's \n");
     printf("  check fragmentation or linear angles \n");
     exit(-1);
@@ -467,14 +457,14 @@ int ICoord::bmatp_to_U()
 }
 
 
+///Determines q the components of the molecular geometry in the DI space. Also forms the active B matrix.
 
 int ICoord::bmat_create() 
 {
  // printf(" in bmat_create() \n");
  // fflush(stdout);
 
-  int len_icp = nbonds+nangles+ntor;
-  int len = len_icp + nxyzic;
+  int len = nbonds+nangles+ntor;
   int N3 = 3*natoms;
   int max_size_ic = len;
   int size_xyz = N3;
@@ -522,18 +512,6 @@ int ICoord::bmat_create()
   for (int i=0;i<len_d;i++)
     for (int j=0;j<ntor;j++)
       q[i] += Ut[len*i+nbonds+nangles+j]*(torfix[j]+torsion_val(torsions[j][0],torsions[j][1],torsions[j][2],torsions[j][3]))*3.14159/180;
-  if (use_xyz==2)
-  for (int i=0;i<len_d;i++)
-  {
-    int cxyzic = 0;
-    for (int j=0;j<natoms;j++)
-    if (xyzic[j])
-    {
-      q[i] += Ut[len*i+len_icp+cxyzic++]*coords[3*j+0];
-      q[i] += Ut[len*i+len_icp+cxyzic++]*coords[3*j+1];
-      q[i] += Ut[len*i+len_icp+cxyzic++]*coords[3*j+2];
-    }
-  }
 #endif
 
 #if 0
@@ -662,14 +640,7 @@ int ICoord::bmatp_finite() {
 
   printf(" in bmatp_finite() \n");
 
-  if (use_xyz==2)
-  {
-    printf(" NOT IMPLEMENTED for xyzic \n");
-    exit(1);
-  }
-
-  int len_icp = nbonds+nangles+ntor;
-  int len = len_icp + nxyzic;
+  int len = nbonds+nangles+ntor;
   int N3 = 3*natoms;
   int max_size_ic = len;
   int size_xyz = N3;
@@ -1257,8 +1228,7 @@ void ICoord::update_bfgsp(int makeHint)
 
   newHess--;
 
-  int len_icp = nbonds+nangles+ntor;
-  int len0 = len_icp + nxyzic;
+  int len0 = nbonds+nangles+ntor;
   int len_d = nicd0;
 
   double* dg = new double[len0];
@@ -1379,8 +1349,7 @@ void ICoord::update_bfgsp(int makeHint)
 void ICoord::Hintp_to_Hint()
 {
 
-  int len_icp = nbonds+nangles+ntor;
-  int len0 = len_icp + nxyzic;
+  int len0 = nbonds+nangles+ntor;
   int len_d = nicd0;
 
   double* tmp = new double[len0*len0];
@@ -1596,14 +1565,13 @@ void ICoord::make_Hint()
 
  // printf(" in make_Hint() \n");
 
-  int size_icp = nbonds+nangles+ntor;
-  int size_ic = size_icp + nxyzic;
+  int size_ic = nbonds+nangles+ntor;
   int len0 = nicd0;
   int len = nicd;
   
-  double* tmp = new double[len0*size_ic]();
+  double* tmp = new double[len0*size_ic];
 
-  double* Hdiagp = new double[size_ic]();
+  double* Hdiagp = new double[size_ic];
 #if 0
   for (int i=0;i<nbonds;i++)
     Hdiagp[i] = 0.5*close_bond(i);
@@ -1618,8 +1586,6 @@ void ICoord::make_Hint()
     Hdiagp[i] = 0.2;
   for (int i=nbonds+nangles;i<nbonds+nangles+ntor;i++)
     Hdiagp[i] = 0.035;
-  for (int i=size_icp;i<size_ic;i++)
-    Hdiagp[i] = 1.0;
 #endif
 #if 0
   printf(" Hdiagp elements: \n");
@@ -1719,11 +1685,9 @@ void ICoord::make_Hint()
 
 
 
-
 void ICoord::opt_constraint(double* C) 
 {
-  int len_icp = nbonds+nangles+ntor;
-  int len = len_icp + nxyzic;
+  int len = nbonds+nangles+ntor;
 
 #if 0
   printf(" constraint: ");
@@ -1739,9 +1703,10 @@ void ICoord::opt_constraint(double* C)
   nicd--;
   //printf(" nicd: %i \n",nicd);
 
-  //take constraint vector, project it out of all Ut
-  //orthonormalize vectors
-  //last vector becomes C (projection onto space)
+  /** take constraint vector, project it out of all Ut
+  * orthonormalize vectors
+  * last vector becomes C (projection onto space)
+	*/
 
   double norm = 0.;
   for (int i=0;i<len;i++)
@@ -1854,8 +1819,7 @@ double ICoord::opt_a(int nnewb, int* newb, int nnewt, int* newt, string xyzfile_
   int OPTSTEPS = nsteps;
   //printf("  \n"); 
   
-  int len_icp = nbonds+nangles+ntor;
-  int len = len_icp + nxyzic;
+  int len = nbonds+nangles+ntor;
   for (int i=0;i<len;i++)
     dq0[i] = 0.;
   n_nonbond = make_nonbond();
@@ -1936,7 +1900,6 @@ double ICoord::opt_a(int nnewb, int* newb, int nnewt, int* newt, string xyzfile_
 
     update_ic_eigen();
 
-    nretry = 0;
     rflag = ic_to_xyz_opt();
     update_ic();
     //print_ic();
@@ -2032,7 +1995,7 @@ double ICoord::opt_a(int nnewb, int* newb, int nnewt, int* newt, string xyzfile_
 
   return energy;
 }
-
+/// optimizes the node to the minimum without a constraint
 double ICoord::opt_b(string xyzfile_string, int nsteps){
 
   printout = "";
@@ -2040,8 +2003,7 @@ double ICoord::opt_b(string xyzfile_string, int nsteps){
   int OPTSTEPS = nsteps;
   //printf("  \n"); 
   
-  int len_icp = nbonds+nangles+ntor;
-  int len = len_icp + nxyzic;
+  int len = nbonds+nangles+ntor;
   for (int i=0;i<len;i++)
     dq0[i] = 0.;
 
@@ -2122,7 +2084,6 @@ double ICoord::opt_b(string xyzfile_string, int nsteps){
 
     update_ic_eigen();
 
-    nretry = 0;
     rflag = ic_to_xyz_opt();
     update_ic();
     //print_ic();
@@ -2239,7 +2200,7 @@ double ICoord::opt_b(string xyzfile_string, int nsteps){
 
 
 
-
+///Optimizes the node subject to a constraint, nsteps times.
 double ICoord::opt_c(string xyzfile_string, int nsteps, double* C, double* C0)
 {
   //printf(" oc"); fflush(stdout);
@@ -2264,8 +2225,7 @@ double ICoord::opt_c(string xyzfile_string, int nsteps, double* C, double* C0)
   int OPTSTEPS = nsteps;
   //printf("  \n"); 
   
-  int len_icp = nbonds+nangles+ntor;
-  int len0 = len_icp + nxyzic;
+  int len0 = nbonds+nangles+ntor;
   int len = nicd0;
   for (int i=0;i<len;i++)
     dq0[i] = 0.;
@@ -2399,7 +2359,6 @@ double ICoord::opt_c(string xyzfile_string, int nsteps, double* C, double* C0)
       for (int j=0;j<3*natoms;j++) xyzl[j] = coords[j];
     }
 
-    nretry = 0;
     rflag = ic_to_xyz_opt();
     update_ic();
     //print_xyz();
@@ -2570,8 +2529,7 @@ double ICoord::opt_r(string xyzfile_string, int nsteps, double* C, double* C0, d
   int OPTSTEPS = nsteps;
   //printf("  \n"); 
   
-  int len_icp = nbonds+nangles+ntor;
-  int len0 = len_icp + nxyzic;
+  int len0 = nbonds+nangles+ntor;
   int len = nicd0;
   for (int i=0;i<len;i++)
     dq0[i] = 0.;
@@ -2731,7 +2689,6 @@ double ICoord::opt_r(string xyzfile_string, int nsteps, double* C, double* C0, d
       for (int j=0;j<3*natoms;j++) xyzl[j] = coords[j];
     }
 
-    nretry = 0;
     rflag = ic_to_xyz_opt();
     update_ic();
     //print_xyz();
@@ -2905,8 +2862,7 @@ double ICoord::opt_eigen_ts(string xyzfile_string, int nsteps, double* C, double
   int stepinc = 1;
   //printf("  \n"); 
   
-  int len_icp = nbonds+nangles+ntor;
-  int len0 = len_icp + nxyzic;
+  int len0 = nbonds+nangles+ntor;
   int len = nicd0;
 
 //Creating Tangent Vector in Delocalized coordinates
@@ -3015,7 +2971,6 @@ double ICoord::opt_eigen_ts(string xyzfile_string, int nsteps, double* C, double
     }
     if (gradrms<OPTTHRESH) break;
 
-    nretry = 0;
     update_ic_eigen_ts(Cn);
     rflag = ic_to_xyz_opt();
     update_ic();
@@ -3223,7 +3178,7 @@ void ICoord::save_hess()
 
   return;
 }
-
+///Transforms the gradient in Cartesian representation to delocalized internal coordinate representation
 int ICoord::grad_to_q() {
 
 #if USE_NOTBONDS
@@ -3234,8 +3189,7 @@ int ICoord::grad_to_q() {
 
   int N3 = 3*natoms;
   int len_d = nicd0;
-  int len_icp = nbonds+nangles+ntor;
-  int len0 = len_icp + nxyzic;
+  int len0 = nbonds+nangles+ntor;
 //  for (int i=0;i<N3;i++)
 //    pgrad[i] = grad[i];
   for (int i=0;i<len_d;i++)
@@ -3259,10 +3213,6 @@ int ICoord::grad_to_q() {
   for (int i=0;i<len_d;i++)
     gradq[i] = grad[i];
  
-  gradmax = 0.;
-  for (int i=0;i<nicd;i++)
-  if (gradmax<fabs(gradq[i]))
-    gradmax = fabs(gradq[i]);
   gradrms = 0.;
   for (int i=0;i<nicd;i++)
     gradrms+=gradq[i]*gradq[i];
@@ -3572,8 +3522,7 @@ void ICoord::update_ic_eigen_h(double* Cn, double* Dn)
 
 
   int len = nicd0;
-  int len_icp = nbonds+nangles+ntor;
-  int len0 = len_icp + nxyzic;
+  int len0 = nbonds+nangles+ntor;
   double* tmph = new double[len*len];
   double* eigen = new double[len];
   double* gqe = new double[len];
@@ -3978,8 +3927,7 @@ void ICoord::update_ic_eigen_ts(double* Cn)
   }
 
   int len = nicd;
-  int len_icp = nbonds+nangles+ntor;
-  int len0 = len_icp + nxyzic;
+  int len0 = nbonds+nangles+ntor;
   double* tmph = new double[len*len];
   double* eigen = new double[len];
   double* gqe = new double[len];
@@ -4288,7 +4236,7 @@ void ICoord::print_q(){
   return;
 }
 
-
+///back transforms from delocalized IC representation to Cartesian represention
 int ICoord::ic_to_xyz() {
 
   int MAX_STEPS = 10; //was 6
@@ -4482,23 +4430,13 @@ int ICoord::ic_to_xyz_opt() {
   double* qn = new double[len]; //target IC values
 
   update_ic();
-  int len_icp = nbonds+nangles+ntor;
-  double* qprim = new double[len_icp+nxyzic+1];
+  double* qprim = new double[nbonds+nangles+ntor+1];
   for (int i=0;i<nbonds;i++)
     qprim[i] = bondd[i];
   for (int i=0;i<nangles;i++)
     qprim[nbonds+i] = anglev[i];
   for (int i=0;i<ntor;i++)
     qprim[nbonds+nangles+i] = torv[i];
-  int cxyzic = 0;
-  if (use_xyz==2)
-  for (int i=0;i<natoms;i++)
-  if (xyzic[i])
-  {
-    qprim[len_icp+cxyzic++] = coords[3*i+0];
-    qprim[len_icp+cxyzic++] = coords[3*i+1];
-    qprim[len_icp+cxyzic++] = coords[3*i+2];
-  }
 #if 0
   printf(" printing qprim: ");
   for (int i=0;i<nbonds+nangles+ntor;i++)
@@ -4665,8 +4603,6 @@ int ICoord::ic_to_xyz_opt() {
       for (int i=0;i<nicd;i++)
         dq0[i] = dq0[i] / 2.0;
       retry = 1;
-      if (nretry++>100)
-        retry = 0;
     }
   }
   else if (ixflag>0)
@@ -4691,16 +4627,6 @@ int ICoord::ic_to_xyz_opt() {
 
       //printf(" tordiff: %1.3f torfix: %1.3f \n",tordiff,torfix);
       dqprim[nbonds+nangles+i] = (tordiff + torfix1)*3.1415926/180.;
-    }
-
-    int cxyzic = 0;
-    if (use_xyz==2)
-    for (int i=0;i<natoms;i++)
-    if (xyzic[i])
-    {
-      dqprim[len_icp+cxyzic++] = coords[3*i+0] - qprim[len_icp+cxyzic];
-      dqprim[len_icp+cxyzic++] = coords[3*i+1] - qprim[len_icp+cxyzic];
-      dqprim[len_icp+cxyzic++] = coords[3*i+2] - qprim[len_icp+cxyzic];
     }
 
 #if 0
@@ -4732,8 +4658,7 @@ int ICoord::ic_to_xyz_opt() {
 void ICoord::read_hessxyz(string filename, int write)
 {
   printf(" reading in Hxyz from file \n");
-  int len_icp = nbonds+nangles+ntor;
-  int len = len_icp + nxyzic;
+  int len = nbonds+nangles+ntor;
   int len_d = nicd0;
   int len0 = nicd0;
   int N3 = natoms*3;
@@ -4894,8 +4819,7 @@ void ICoord::read_hessxyz(string filename, int write)
 void ICoord::read_hessp(string filename)
 {
   printf(" reading in Hintp from file \n");
-  int len_icp = nbonds+nangles+ntor;
-  int len = len_icp + nxyzic;
+  int len = nbonds+nangles+ntor;
 
   ifstream hesspfile;
   hesspfile.open(filename.c_str());
@@ -4910,13 +4834,13 @@ void ICoord::read_hessp(string filename)
   string line;
   bool success=true;
 
-  success=getline(hesspfile, line);
+  success=(bool)getline(hesspfile, line);
   //cout << " RR: " << line << endl;
   int length=StringTools::cleanstring(line);  
   tok_line = StringTools::tokenize(line, " \t");
   natomsf = atoi(tok_line[1].c_str());
 
-  success=getline(hesspfile, line);
+  success=(bool)getline(hesspfile, line);
   //cout << " RR: " << line << endl;
   length=StringTools::cleanstring(line);  
   tok_line = StringTools::tokenize(line, " \t");
@@ -4931,7 +4855,7 @@ void ICoord::read_hessp(string filename)
 
   for (int i=0;i<len;i++)
   {
-    success=getline(hesspfile, line);
+    success=(bool)getline(hesspfile, line);
     length=StringTools::cleanstring(line);
     if (length<1) break;
     tok_line = StringTools::tokenize(line, " \t");
@@ -4973,8 +4897,7 @@ void ICoord::read_hessp(string filename)
 
 void ICoord::save_hessp(string filename)
 {
-  int len_icp = nbonds+nangles+ntor;
-  int len = len_icp + nxyzic;
+  int len = nbonds+nangles+ntor;
 
   ofstream hesspfile;
   hesspfile.open(filename.c_str());
@@ -4998,8 +4921,7 @@ void ICoord::save_hessp(string filename)
 
 void ICoord::save_hesspu(string filename)
 {
-  int len_icp = nbonds+nangles+ntor;
-  int len = len_icp + nxyzic;
+  int len = nbonds+nangles+ntor;
   int len_d = nicd0;
 
   double* Hintpu = new double[len*len];
@@ -5044,8 +4966,7 @@ void ICoord::save_hesspu(string filename)
 
 int ICoord::create_prima(int nnodes0, int nbonds1, int nangles1, int ntor1, double** prima0)
 {
-  int len_icp = nbonds+nangles+ntor;
-  int len = len_icp + nxyzic;
+  int len = nbonds+nangles+ntor;
   nnodes = nnodes0;
 
   mm_init();
@@ -5125,8 +5046,7 @@ double ICoord::prima_force()
   //printf(" adding prima force \n"); fflush(stdout);
   //return 0.;
 
-  int len_icp = nbonds+nangles+ntor;
-  int len = len_icp + nxyzic;
+  int len = nbonds+nangles+ntor;
   int N3 = 3*natoms;
   update_ic();
 
@@ -5245,8 +5165,7 @@ int ICoord::davidson_H(int nval)
 
  //get initial vectors
   int len = nicd0;
-  int len_icp = nbonds+nangles+ntor;
-  int len0 = len_icp + nxyzic;
+  int len0 = nbonds+nangles+ntor;
   double* eigen = new double[len];
   double* tmph = new double[len*len];
   for (int i=0;i<len;i++)
@@ -5490,7 +5409,7 @@ int ICoord::davidson_H(int nval)
 
   if (dcontinue)
   {
-    string savestr = "scratch/stringfile.xyz"+runends+"fr";
+    string savestr = "stringfile.xyz"+runends+"fr";
     string tstr;
     printf("\n now saving vibrations to %s \n",savestr.c_str());
     DIST = 0.3;

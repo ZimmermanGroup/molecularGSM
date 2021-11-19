@@ -318,7 +318,7 @@ int Molpro::read_E()
   int found = 0;
   while(!outfilei.eof())
   {
-    success=getline(outfilei, line);
+    success=(bool)getline(outfilei, line);
     if (line.find("MCSCF STATE 1.1 Energy")!=string::npos)
     {
       //cout << " found: " << line << endl;
@@ -481,11 +481,11 @@ int Molpro::getGrad(double* grads)
 
   string line;
   bool success=true;
-  success=getline(outfilei, line);
+  success=(bool)getline(outfilei, line);
   int cont = 0;
   while(!outfilei.eof())
   {
-    success=getline(outfilei, line);
+    success=(bool)getline(outfilei, line);
     if (line.find("SA-MC GRADIENT FOR STATE")!=string::npos)
     {
       //cout << " found: " << line << endl;
@@ -511,7 +511,7 @@ int Molpro::getGrad(double* grads)
   if (cont)
   for (int i=0;i<natoms;i++)
   {
-    success=getline(outfilei, line);
+    success=(bool)getline(outfilei, line);
     int length=StringTools::cleanstring(line);
     vector<string> tok_line = StringTools::tokenize(line, " \t");
     //cout << " RR: " << line << endl;
@@ -557,11 +557,11 @@ int Molpro::getDVec(double* dvecs)
 
   string line;
   bool success=true;
-  success=getline(outfilei, line);
+  success=(bool)getline(outfilei, line);
   int cont = 0;
   while(!outfilei.eof())
   {
-    success=getline(outfilei, line);
+    success=(bool)getline(outfilei, line);
     if (line.find("SA-MC NACME FOR STATES")!=string::npos)
     {
       //cout << " found: " << line << endl;
@@ -576,7 +576,7 @@ int Molpro::getDVec(double* dvecs)
   if (cont)
   for (int i=0;i<natoms;i++)
   {
-    success=getline(outfilei, line);
+    success=(bool)getline(outfilei, line);
     int length=StringTools::cleanstring(line);
     vector<string> tok_line = StringTools::tokenize(line, " \t");
     //cout << " RR: " << line << endl;

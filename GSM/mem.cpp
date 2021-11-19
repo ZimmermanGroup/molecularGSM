@@ -18,7 +18,6 @@ void ICoord::freemem(){
 
 // delete [] coordn;
 
-  if (nwater>0) delete [] water;
 
   delete [] anumbers;
   delete [] amasses;

@@ -17,6 +17,7 @@
 #include "orca.h"
 #include "molpro.h"
 #include "qchemsf.h"
+#include "turbomole.h"
 
 class Gradient 
 {
@@ -42,6 +43,7 @@ class Gradient
    ASE ase1;
    ORCA orca1;
    Molpro mp1;
+	 Turbomole turbol;
 
    int knn_k;
    KNNR knnr1;

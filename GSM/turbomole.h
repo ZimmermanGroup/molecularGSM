@@ -1,17 +1,5 @@
-#ifndef QCHEM_H
-#define QCHEM_H
-
-#define QCHEM ${GSM_ENABLE_QCHEM}
-#define QCHEMSF ${GSM_ENABLE_QCHEM_SF}
-#define USE_MOLPRO ${GSM_ENABLE_MOLPRO}
-#define USE_ASE ${GSM_ENABLE_ASE}
-#define USE_GAUSSIAN ${GSM_ENABLE_GAUSSIAN}
-#define USE_ORCA ${GSM_ENABLE_ORCA}
-#define THREADS_ON 0
-#define WRITE_FILES 0
-#define USE_KNNR 0
-#define KNN_K 3
-#define KNNR_MAX_DIST 0.3
+#ifndef TURBOMOLE_H
+#define TURBOMOLE_H
 
 #include <iostream>
 #include <iomanip>
@@ -26,7 +14,7 @@
 #include "constants.h"
 #include "utils.h"
 
-class QChem {
+class Turbomole {
   
   private:
   
@@ -35,10 +23,10 @@ class QChem {
 
    int runNum;
    int runend;
-  string qcinfile;   
+  string turboinfile;   
   string inpfile;  
-  string qcoutfile;
-  string qcoutfileh;
+  string turbooutfile;
+  string turbooutfileh;
   string scrdir;  
   string scrBaseDir;
   string runName;
@@ -70,6 +58,10 @@ class QChem {
 
    double energy0;
    double energy;
+
+   bool RI;
+   bool COSMO;
+   string turboDIR;
 
 };
 

@@ -130,7 +130,7 @@ double ASE::get_energy_grad(string file, double* grad, int natoms)
   string line;
   bool success = true;
 
-  success=getline(gradfile, line);
+  success=(bool)getline(gradfile, line);
   double V = -1 * atof(line.c_str()) / 27.2114;
   //printf(" found E: %7.5f \n",V);
 
@@ -142,7 +142,7 @@ double ASE::get_energy_grad(string file, double* grad, int natoms)
       grad[3*i+0] = grad[3*i+1] = grad[3*i+2] = 1.;
       break;
     }
-    success=getline(gradfile, line);
+    success=(bool)getline(gradfile, line);
     //cout << "RR " << line << endl;
     int length=StringTools::cleanstring(line);
     vector<string> tok_line = StringTools::tokenize(line, " \t[]");

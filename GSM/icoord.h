@@ -12,8 +12,6 @@ class ICoord {
   //move gradient back to private!
     int g_inited;
 
-    int nretry;
-
 //    int* atypes;                  //array of MM atom types  
     double* amasses;              //array of atomic masses
     double* amasses3;
@@ -29,8 +27,6 @@ class ICoord {
 
     int nfrags;
     int* frags;
-    int nwater;
-    int* water;
 
     int max_bonds;
     int max_angles;
@@ -46,14 +42,11 @@ class ICoord {
   void alloc_mem();
   void make_bonds();
   void coord_num();
-  void get_xyzic();
   void make_angles();
   void make_torsions();
 
   void make_frags();
   void bond_frags();
-  void bond_frags_xyz();
-  void setup_water();
   void hbond_frags();
   void linear_ties();
   void h2o_torsions();
@@ -150,15 +143,12 @@ class ICoord {
 
   public:
 
-  ICoord();
-
   int revertOpt;
   Gradient grad1;
   string printout;
 
   double FMAG;
   double OPTTHRESH;
-  double OPTMAX;
   double MAXAD;
   double DMAX;
   double DMIN0;
@@ -167,8 +157,6 @@ class ICoord {
 
   double V0;
   int* frozen;
-  int use_xyz;
-  int* xyzic;
 
   double farBond;
   int isTSnode;
@@ -202,8 +190,7 @@ class ICoord {
   int** angles;
   int nangles;
   int** torsions;
-  int ntor; 
-  int nxyzic;
+  int ntor;
 
   double* grad;
  // double* pgrad;
@@ -223,7 +210,6 @@ class ICoord {
   int stage1opt;
   double pgradrms;
   double gradrms;
-  double gradmax;
   void make_Hint();
   void Hintp_to_Hint();
   int davidson_H(int neigen);

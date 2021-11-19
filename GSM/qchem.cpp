@@ -391,9 +391,16 @@ double QChem::get_energy(string filename) {
       energy=atof(tok_line[8].c_str());
       break;
     }
+		else if (line.find("SCF   energy in the final basis set")!=string::npos)
+		{
+      //cout << "  DFT out: " << line << endl;
+      tok_line = StringTools::tokenize(line, " \t");
+      energy=atof(tok_line[8].c_str());
+      break;
+		}
   }
  
-//  printf(" DFT energy: %1.4f \n",energy); 
+  //printf(" DFT energy: %1.4f \n",energy); 
 
   if (abs(energy)<0.00001 || (energy != energy))
   {
@@ -423,9 +430,9 @@ int QChem::scangradient(string file, double* grad, int natoms)
   bool success = true;
   //cout << "reading gradient... " << endl;
 
-  success=getline(gradfile, line);
-  success=getline(gradfile, line);
-  success=getline(gradfile, line);
+  success=(bool)getline(gradfile, line);
+  success=(bool)getline(gradfile, line);
+  success=(bool)getline(gradfile, line);
 
   for (int i=0;i<natoms;i++)
   {
@@ -435,7 +442,7 @@ int QChem::scangradient(string file, double* grad, int natoms)
       grad[3*i+0] = grad[3*i+1] = grad[3*i+2] = 1.;
       break;
     }
-    success=getline(gradfile, line);
+    success=(bool)getline(gradfile, line);
     //cout << "RR " << line << endl;
     int length=StringTools::cleanstring(line);
     vector<string> tok_line = StringTools::tokenize(line, " \t");
