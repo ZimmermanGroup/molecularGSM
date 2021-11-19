@@ -1,6 +1,6 @@
 #include "grad.h"
+
 #include "mopac.h"
-#include "xtb.h"
 
 using namespace std;
 
@@ -284,6 +284,12 @@ int Gradient::external_grad(double* coords, double* grad)
   //printf(" grad ase \n"); fflush(stdout);
   energy = ase1.grads(coords,grad);
   //printf(" done grad ase \n"); fflush(stdout);
+#elif TURBOMOLE
+  //printf(" grad ase \n"); fflush(stdout);
+  //cout << "NOW turbomole energy calc" <<endl;
+  energy = turbo1.grads(coords,grad);
+  //cout << "after turbo1.grads" <<endl;
+  //printf(" done grad ase \n"); fflush(stdout);
 #else
   char* pbsPath;
   pbsPath = getenv ("PBSTMPDIR");
@@ -293,20 +299,6 @@ int Gradient::external_grad(double* coords, double* grad)
     string pstr(pbsPath);
     pdir = pstr + "/";
   }
-
-#if USE_XTB
-  XTB xtb1;
-  xtb1.alloc(natoms);
-  xtb1.reset(natoms,anumbers,anames,coords);
-  xtb1.set_charge(CHARGE);
-  //xtb1.sdir = "scratch/"+runends+"/";
-  xtb1.sdir = "scratch/"+runName0+"/";
-  energy = xtb1.grads("xtbfile")*627.5;
-  for (int i=0;i<N3;i++)
-    grad[i] = xtb1.grad[i]*ANGtoBOHR;
-//    grad[i] = xtb1.grad[i]*ANGtoBOHR/627.5;
-  xtb1.freemem();
-#else
   Mopac mop1; 
   mop1.alloc(natoms);
   mop1.reset(natoms,anumbers,anames,coords);
@@ -316,7 +308,6 @@ int Gradient::external_grad(double* coords, double* grad)
   for (int i=0;i<N3;i++)
     grad[i] = mop1.grad[i];
   mop1.freemem();
-#endif
 #endif
   gradcalls++;
 
@@ -434,7 +425,7 @@ int Gradient::read_molpro_init(string* &hf_lines)
   bool success=true;
   while (!infile.eof())
   {
-    success=getline(infile, line);
+    success=(bool)getline(infile, line);
     if (success)
       hf_lines0[nhf++] = line;
   }
@@ -471,7 +462,7 @@ void Gradient::read_molpro_settings(int& nstates0, int& nclosed, int& nocc, int&
   int nf = 0;
   while (!infile.eof())
   {
-    success=getline(infile, line);
+    success=(bool)getline(infile, line);
     vector<string> tok_line = StringTools::tokenize(line, " ");
     //cout << "RR0: " << line << endl; fflush(stdout);
 
@@ -606,6 +597,11 @@ void Gradient::init(string infilename, int natoms0, int* anumbers0, string* anam
   gaus1.CHARGE = CHARGE;
   gaus1.ncpu = ncpu;
 #endif
+#if TURBOMOLE
+  turbo1.init(infilename,natoms,anumbers,anames,run,rune);
+//  turbo1.CHARGE = CHARGE;
+      turbo1.ncpu = ncpu;
+#endif
 #if USE_ASE
   ase1.init(infilename,natoms,anumbers,anames,run,rune);
   ase1.CHARGE = CHARGE;
@@ -664,19 +660,10 @@ void Gradient::init(string infilename, int natoms0, int* anumbers0, string* anam
   printf("  grad initiated: ASE mode \n");
 #elif USE_MOLPRO
   printf("  grad initiated: MOLPRO mode \n");
-#elif USE_XTB
-  printf("  grad initiated: XTB mode \n");
+#elif TURBOMOLE
+  printf("  grad initiated: Turbomole mode \n");
 #else
   printf("  grad initiated: Mopac mode \n");
-#endif
-
-#if USE_XTB
-  string cmd = "mkdir scratch/";
-  system(cmd.c_str());
-  //cmd = "mkdir scratch/"+runends;
-  cmd = "mkdir scratch/"+runName0;
-  system(cmd.c_str());
-  //printf("  runName0: %s \n",runName0.c_str());
 #endif
 
   //printf(" grad init knnr_active: %i \n",knnr_active);
@@ -703,7 +690,7 @@ int Gradient::force_init(string ffile)
   int nf = 0;
   while (!infile.eof())
   {
-    success=getline(infile, line);
+    success=(bool)getline(infile, line);
     vector<string> tok_line = StringTools::tokenize(line, " ");
     if (tok_line.size()>3)
     {

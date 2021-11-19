@@ -138,7 +138,7 @@ double ORCA::get_energy_grad(string file, double* grad, int natoms)
   int done = 0;
   while (!gradfile.eof() && done<2)
   {
-    success=getline(gradfile, line);
+    success=(bool)getline(gradfile, line);
     if (line.find("Total Energy")!=string::npos)
     {
       //cout << " RRe: " << line << endl; fflush(stdout);
@@ -148,12 +148,12 @@ double ORCA::get_energy_grad(string file, double* grad, int natoms)
     }
     if (line.find("CARTESIAN GRADIENT")!=string::npos)
     {
-      success=getline(gradfile, line);
-      success=getline(gradfile, line);
+      success=(bool)getline(gradfile, line);
+      success=(bool)getline(gradfile, line);
       //cout << " RR0g: " << line << endl;
       for (int j=0;j<natoms;j++)
       {
-        success=getline(gradfile, line);
+        success=(bool)getline(gradfile, line);
         //cout << " RRg: " << line << endl;
         tok_line = StringTools::tokenize(line, " \t");
         for (int k=0;k<3;k++)

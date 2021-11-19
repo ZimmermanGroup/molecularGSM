@@ -2,16 +2,9 @@
 using namespace std;
 #include "constants.h"
 
-//#define MOPAC_LEVEL "PM6 NOSYM 1SCF GRADIENTS UHF AUX CHARGE="
-#define MOPAC_LEVEL "PM6 NOSYM 1SCF GRADIENTS AUX CHARGE="
-//#define MOPAC_LEVEL "PM6-D3 NOSYM 1SCF GRADIENTS AUX UHF TRIPLET CHARGE="
-//#define MOPAC_LEVEL "PM6 NOSYM 1SCF GRADIENTS AUX TRIPLET C.I.=2 CHARGE="
-
-void Mopac::set_charge(int c0)
-{
-  charge = c0;
-  return;
-}
+//#define MOPAC_LEVEL "PM6 NOSYM 1SCF GRADIENTS UHF TRIPLET CHARGE=1"
+#define MOPAC_LEVEL "PM6 NOSYM 1SCF GRADIENTS UHF AUX "
+//#define MOPAC_LEVEL "PM6 NOSYM 1SCF GRADIENTS UHF AUX CHARGE=1 "
 
 void Mopac::write_ic_input(ofstream& inpfile, int anum, ICoord ic){
 
@@ -100,7 +93,7 @@ double Mopac::opt() {
 
 void Mopac::opt_header(ofstream& inpfile) {
 
-  inpfile << MOPAC_LEVEL << charge << endl;
+  inpfile << MOPAC_LEVEL << endl;
   inpfile << "   MOPAC run " << endl;
   inpfile << "   ready to go? " << endl;
 
@@ -111,7 +104,7 @@ void Mopac::grad_header(ofstream& inpfile) {
 
 //printf(" WARNING: mopac set to anion \n");
 
-  inpfile << MOPAC_LEVEL << charge << endl;
+  inpfile << MOPAC_LEVEL << endl;
   inpfile << "   MOPAC run " << endl;
   inpfile << "   ready to go? " << endl;
 
@@ -164,7 +157,8 @@ double Mopac::opt(string filename, ICoord icoords) {
   }
 
   //string cmd = "/tmp/MOPAC2016.exe "+filename;
-  string cmd = "mopac"+filename;
+  //CRA 12/8/2016 why is this referencing /tmp/?
+  string cmd = "mopac "+filename;
   system(cmd.c_str());
 
   energy = read_output(filename);
@@ -229,7 +223,7 @@ double Mopac::opt(string filename) {
 //  xyzfile << " " << natoms << endl << endl;
 
   //string cmd = "/tmp/MOPAC2016.exe "+filename;
-  string cmd = "mopac"+filename;
+  string cmd = "mopac "+filename;
   system(cmd.c_str());
 
   energy = read_output(filename);
@@ -292,7 +286,7 @@ double Mopac::grads(string filename)
   }
 
   //string cmd = "/tmp/MOPAC2016.exe "+filename;
-  string cmd = "mopac"+filename;
+  string cmd = "mopac "+filename;
   system(cmd.c_str());
 
   //sleep(1);
@@ -444,8 +438,6 @@ void Mopac::init(int natoms_i, int* anumbers_i, string* anames_i, double* xyz_i)
   rnum = rand()%1000+1;
   id = StringTools::int2str(rnum,4,"0");
   //printf(" Mopac ID: %i \n",rnum);
-
-  charge = 0;
 
   return;
 }

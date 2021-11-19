@@ -340,21 +340,7 @@ int ICoord::union_ic(ICoord ic1, ICoord ic2)
   ntor =0;
 #endif
 
-  nxyzic = 0;
-  if (xyzic!=NULL) delete [] xyzic;
-  xyzic = new int[natoms]();
-  for (int i=0;i<ic1.natoms;i++) xyzic[i] = 0;
-
-  if (ic1.nxyzic>0)
-  for (int i=0;i<ic1.natoms;i++)
-  if (ic1.xyzic[i] || ic2.xyzic[i])
-  {  
-    xyzic[i] = 1;
-    nxyzic += 3;
-  }
-  if (nxyzic>0) use_xyz = 2;
-
-  printf(" total number of coordinates: %3i internal %3i XYZ \n",nbonds+nangles+ntor,nxyzic);
+  printf(" total number of coordinates: %3i \n",nbonds+nangles+ntor);
   printf("\n");
 
   update_ic();
@@ -395,16 +381,9 @@ int ICoord::copy_ic(ICoord ic1)
     torsions[i][2] = ic1.torsions[i][2];
     torsions[i][3] = ic1.torsions[i][3];
   }
-  if (xyzic!=NULL) delete [] xyzic;
-  xyzic = new int[natoms]();
-  if (ic1.nxyzic>0)
-  for (int i=0;i<ic1.natoms;i++)
-    xyzic[i] = ic1.xyzic[i];
   nbonds = ic1.nbonds;
   nangles = ic1.nangles;
   ntor = ic1.ntor;
-  nxyzic = ic1.nxyzic;
-  if (nxyzic>0) use_xyz = 2;
 
   return 0;
 }

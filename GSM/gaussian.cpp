@@ -141,7 +141,7 @@ double GAUSSIAN::get_energy_grad(string file, double* grad, int natoms)
   int done = 0;
   while (!gradfile.eof() && done<2)
   {
-    success=getline(gradfile, line);
+    success=(bool)getline(gradfile, line);
     if (line.find("SCF Energy")!=string::npos)
     {
       //cout << " RRe: " << line << endl;
@@ -155,7 +155,7 @@ double GAUSSIAN::get_energy_grad(string file, double* grad, int natoms)
       int ngf = 0;
       while (ngf<3*natoms)
       {
-        success=getline(gradfile, line);
+        success=(bool)getline(gradfile, line);
         tok_line = StringTools::tokenize(line, " \t");
         int lsize = tok_line.size();
         for (int j=0;j<lsize;j++)
