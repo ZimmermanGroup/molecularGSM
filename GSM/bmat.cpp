@@ -4683,7 +4683,7 @@ void ICoord::read_hessxyz(string filename, int write)
   int found = 0;
   while(!hessfile.eof())
   {
-    success = getline(hessfile,line);
+    success = (bool)getline(hessfile,line);
     if (line.find("Hessian of the SCF Energy")!=string::npos)
     {
       found = 1;
@@ -4698,7 +4698,7 @@ void ICoord::read_hessxyz(string filename, int write)
   while(!hessfile.eof() && found)
   {
     nf++;
-    success = getline(hessfile,line);
+    success = (bool)getline(hessfile,line);
     //cout << " RR0: " << line << endl;
     for (int j=0;j<N3;j++)
     {
