@@ -1337,8 +1337,8 @@ double KNNR::read_one_xyz(int n, string filename, double* coords)
     int done = 0;
     while(!infile.eof() && !done)
     {
-      success = getline(infile,line);
-      success = getline(infile,line);
+      success = (bool)getline(infile,line);
+      success = (bool)getline(infile,line);
 
       //cout << " RR: " << line << endl; fflush(stdout);
       int length=StringTools::cleanstring(line);
@@ -1432,9 +1432,9 @@ void KNNR::read_one_hess(int n, int nic, string filename)
     int done = 0;
     while(!infile.eof() && !done)
     {
-      success = getline(infile,line);
+      success = (bool)getline(infile,line);
       //cout << "RR0: " << line << endl;
-      success = getline(infile,line);
+      success = (bool)getline(infile,line);
       //cout << "RR0: " << line << endl;
       int length=StringTools::cleanstring(line);
       vector<string> tok_line = StringTools::tokenize(line, " \t");

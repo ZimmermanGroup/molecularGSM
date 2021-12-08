@@ -377,7 +377,7 @@ int Gradient::read_nstates()
 
   string line;
   int nstates0 = 0;
-  bool success = getline(infile, line);
+  bool success = (bool)getline(infile, line);
   nstates0 = atoi(line.c_str());
 
   infile.close();
