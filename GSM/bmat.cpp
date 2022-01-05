@@ -4683,7 +4683,7 @@ void ICoord::read_hessxyz(string filename, int write)
   int found = 0;
   while(!hessfile.eof())
   {
-    success = getline(hessfile,line);
+    success = (bool)getline(hessfile,line);
     if (line.find("Hessian of the SCF Energy")!=string::npos)
     {
       found = 1;
@@ -4698,7 +4698,7 @@ void ICoord::read_hessxyz(string filename, int write)
   while(!hessfile.eof() && found)
   {
     nf++;
-    success = getline(hessfile,line);
+    success = (bool)getline(hessfile,line);
     //cout << " RR0: " << line << endl;
     for (int j=0;j<N3;j++)
     {
@@ -4834,13 +4834,13 @@ void ICoord::read_hessp(string filename)
   string line;
   bool success=true;
 
-  success=getline(hesspfile, line);
+  success=(bool)getline(hesspfile, line);
   //cout << " RR: " << line << endl;
   int length=StringTools::cleanstring(line);  
   tok_line = StringTools::tokenize(line, " \t");
   natomsf = atoi(tok_line[1].c_str());
 
-  success=getline(hesspfile, line);
+  success=(bool)getline(hesspfile, line);
   //cout << " RR: " << line << endl;
   length=StringTools::cleanstring(line);  
   tok_line = StringTools::tokenize(line, " \t");
@@ -4855,7 +4855,7 @@ void ICoord::read_hessp(string filename)
 
   for (int i=0;i<len;i++)
   {
-    success=getline(hesspfile, line);
+    success=(bool)getline(hesspfile, line);
     length=StringTools::cleanstring(line);
     if (length<1) break;
     tok_line = StringTools::tokenize(line, " \t");

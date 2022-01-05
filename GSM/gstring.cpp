@@ -1284,14 +1284,14 @@ void GString::structure_init(string xyzfile)
 
   string line;
   bool success=true;
-  success=getline(infile, line);
+  success=(bool)getline(infile, line);
   if (success){
     int length=StringTools::cleanstring(line);
     natoms=atoi(line.c_str());
   }
   cout <<"  -The number of atoms is: " << natoms << endl;
 
-  success=getline(infile, line);
+  success=(bool)getline(infile, line);
   vector<string> tok_line0 = StringTools::tokenize(line, " \t");
   CHARGE = 0;
   if (tok_line0.size()>0)
@@ -1308,7 +1308,7 @@ void GString::structure_init(string xyzfile)
 
   cout <<"  -Reading the atomic names...";
   for (int i=0;i<natoms;i++){
-    success=getline(infile, line);
+    success=(bool)getline(infile, line);
     int length=StringTools::cleanstring(line);
     vector<string> tok_line = StringTools::tokenize(line, " \t");
     anames[i]=tok_line[0];
@@ -1345,8 +1345,8 @@ void GString::structure_init(string xyzfile)
   for (int i=0;i<2;i++)
   {
     if (isSSM && i==1) break;
-    success=getline(infile, line);
-    success=getline(infile, line);
+    success=(bool)getline(infile, line);
+    success=(bool)getline(infile, line);
     for (int j=0;j<natoms;j++)
     {
       if (infile.eof())
@@ -1354,7 +1354,7 @@ void GString::structure_init(string xyzfile)
         printf("   end of xyz file reached early, exiting \n");
         exit(1);
       }
-      success=getline(infile, line);
+      success=(bool)getline(infile, line);
       int length=StringTools::cleanstring(line);
       vector<string> tok_line = StringTools::tokenize(line, " \t");
 //      cout << " i: " << i << " string: " << line << endl;
@@ -5997,7 +5997,7 @@ int GString::read_string(string stringfile, double** coordsn, double* energies)
 
   string line;
   bool success=true;
-  success=getline(infile, line);
+  success=(bool)getline(infile, line);
   if (success)
   {
     int length=StringTools::cleanstring(line);
@@ -6013,8 +6013,8 @@ int GString::read_string(string stringfile, double** coordsn, double* energies)
   for (int i=0;i<nnmax;i++)
   {
     if (i>0)
-      success=getline(infile, line);
-    success=getline(infile, line);
+      success=(bool)getline(infile, line);
+    success=(bool)getline(infile, line);
     if (infile.eof())
     {
       printf("   end of restart.xyz reached \n");
@@ -6026,7 +6026,7 @@ int GString::read_string(string stringfile, double** coordsn, double* energies)
 
     for (int j=0;j<natoms;j++)
     {
-      success=getline(infile, line);
+      success=(bool)getline(infile, line);
       int length=StringTools::cleanstring(line);
       vector<string> tok_line = StringTools::tokenize(line, " \t");
 //      cout << " i: " << i << " string: " << line << endl;

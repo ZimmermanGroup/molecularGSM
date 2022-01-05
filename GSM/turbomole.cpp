@@ -458,9 +458,9 @@ int Turbomole::scangradient(string file, double* grad, int natoms)
   bool success = true;
   cout << "reading gradient from... " << file.c_str() << endl;
 
-  success=getline(gradfile, line);
-  success=getline(gradfile, line);
-  success=getline(gradfile, line);
+  success=(bool)getline(gradfile, line);
+  success=(bool)getline(gradfile, line);
+  success=(bool)getline(gradfile, line);
 
   //for (int i=0;i<natoms;i++)
   for (int i=0;i<natoms*2+1;i++)
@@ -471,7 +471,7 @@ int Turbomole::scangradient(string file, double* grad, int natoms)
       grad[3*i+0] = grad[3*i+1] = grad[3*i+2] = 1.;
       break;
     }
-    success=getline(gradfile, line);
+    success=(bool)getline(gradfile, line);
    // cout << "RR " << line << endl;
     int length=StringTools::cleanstring(line);
     vector<string> tok_line = StringTools::tokenize(line, " \t");

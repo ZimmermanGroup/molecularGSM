@@ -1118,7 +1118,7 @@ int KNNR::get_files(string fileprefix, string filesuffix, string* files)
   bool success=true;
   while (!infile.eof())
   {
-    success=getline(infile, line);
+    success=(bool)getline(infile, line);
     //cout << "RR: " << line << endl;
     int length=StringTools::cleanstring(line);
     vector<string> tok_line = StringTools::tokenize(line, " \t");
@@ -1148,10 +1148,10 @@ int KNNR::read_ics(int& nbonds, int** bonds, int& nangles, int** angles, int& nt
   string line;
   bool success=true;
   int type = 1;
-  success=getline(infile, line);
+  success=(bool)getline(infile, line);
   while (!infile.eof())
   {
-    success=getline(infile, line);
+    success=(bool)getline(infile, line);
     //cout << "RR0: " << line << endl;
     int length=StringTools::cleanstring(line);
     vector<string> tok_line = StringTools::tokenize(line, " \t");
@@ -1166,7 +1166,7 @@ int KNNR::read_ics(int& nbonds, int** bonds, int& nangles, int** angles, int& nt
 
         for (int i=0;i<nbonds;i++)
         {
-          success=getline(infile, line);
+          success=(bool)getline(infile, line);
           //cout << "RR: " << line << endl;
           length=StringTools::cleanstring(line);
           tok_line = StringTools::tokenize(line, " \t");
@@ -1186,7 +1186,7 @@ int KNNR::read_ics(int& nbonds, int** bonds, int& nangles, int** angles, int& nt
 
         for (int i=0;i<nangles;i++)
         {
-          success=getline(infile, line);
+          success=(bool)getline(infile, line);
           //cout << "RR: " << line << endl;
           length=StringTools::cleanstring(line);
           tok_line = StringTools::tokenize(line, " \t");
@@ -1207,7 +1207,7 @@ int KNNR::read_ics(int& nbonds, int** bonds, int& nangles, int** angles, int& nt
 
         for (int i=0;i<ntor;i++)
         {
-          success=getline(infile, line);
+          success=(bool)getline(infile, line);
           //cout << "RR: " << line << endl;
           length=StringTools::cleanstring(line);
           tok_line = StringTools::tokenize(line, " \t");
@@ -1253,18 +1253,18 @@ void KNNR::xyz_read(string* anames, double* coords, string xyzfile)
   
   string line;
   bool success=true;
-  success=getline(infile, line);
+  success=(bool)getline(infile, line);
   if (success){
     int length=StringTools::cleanstring(line);
     //natoms=atoi(line.c_str());
   }
   //printf(" natoms: %i \n",natoms);
   
-  success=getline(infile, line);
+  success=(bool)getline(infile, line);
   
   for (int i=0;i<natoms;i++)
   {
-    success=getline(infile, line);
+    success=(bool)getline(infile, line);
     int length=StringTools::cleanstring(line);
     vector<string> tok_line = StringTools::tokenize(line, " \t");
     anames[i]=tok_line[0];
@@ -1337,8 +1337,8 @@ double KNNR::read_one_xyz(int n, string filename, double* coords)
     int done = 0;
     while(!infile.eof() && !done)
     {
-      success = getline(infile,line);
-      success = getline(infile,line);
+      success = (bool)getline(infile,line);
+      success = (bool)getline(infile,line);
 
       //cout << " RR: " << line << endl; fflush(stdout);
       int length=StringTools::cleanstring(line);
@@ -1432,9 +1432,9 @@ void KNNR::read_one_hess(int n, int nic, string filename)
     int done = 0;
     while(!infile.eof() && !done)
     {
-      success = getline(infile,line);
+      success = (bool)getline(infile,line);
       //cout << "RR0: " << line << endl;
-      success = getline(infile,line);
+      success = (bool)getline(infile,line);
       //cout << "RR0: " << line << endl;
       int length=StringTools::cleanstring(line);
       vector<string> tok_line = StringTools::tokenize(line, " \t");
