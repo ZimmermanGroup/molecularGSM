@@ -7,7 +7,6 @@ example.tgz
 gstring.cpp_1
 BUILD/
 BUILD2/
-TriBITS/
 getOptEnergy
 makeXYZ
 *.qsh
