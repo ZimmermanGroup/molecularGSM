@@ -20,18 +20,13 @@ This code can be built using CMake. To do so:
 		$ git checkout tribits
 ```
 
-4. Clone TriBITS repository
-```bash
-	 $ git clone https://github.com/TriBITSPub/TriBITS.git
-```
-
-5. Create a BUILD directory at the same level as GSM
+4. Create a BUILD directory at the same level as GSM
 ```bash
     $ mkdir BUILD
     $ cd BUILD
 ```
 
-6. Configure using CMake
+5. Configure using CMake
 ```bash
     $ cmake -D GSM_ENABLE_QCHEM=1 ../
 ```
@@ -43,12 +38,12 @@ This code can be built using CMake. To do so:
         - GSM_ENABLE_ASE=1
     - If no option is specified, the code will use MOPAC as its energy calculator. Check mopac.cpp to make sure charge/multiplicity is correct, since that is hard-coded.
 
-7. After successful configuration. To compile:
+6. After successful configuration. To compile:
 ```bash
     $make -j8
 ```
 
-8. An executable named "gsm.${CALCULATOR}.exe" will be created in BUILD/GSM directory, where ${CALCULATOR} is the name of the QM package.
+7. An executable named "gsm.${CALCULATOR}.exe" will be created in BUILD/GSM directory, where ${CALCULATOR} is the name of the QM package.
 
 To run gsm, copy the executable to the working directory (where the input files are) or reference it using the full path. 
 
