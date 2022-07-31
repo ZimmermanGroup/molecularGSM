@@ -1,0 +1,146 @@
+<Project name="Trilinos">
+  <SubProject name="TrilinosFramework">
+    <Path>cmake</Path>
+    <EmailAddresses>
+      <Email address="trilinosframework-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Teuchos">
+    <Path>packages/teuchos</Path>
+    <EmailAddresses>
+      <Email address="teuchos-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="RTOp">
+    <Path>packages/rtop</Path>
+    <EmailAddresses>
+      <Email address="thyra-regression@software.sandia.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Epetra">
+    <Path>packages/epetra</Path>
+    <EmailAddresses>
+      <Email address="epetra-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Zoltan">
+    <Path>packages/zoltan</Path>
+    <EmailAddresses>
+      <Email address="zoltan-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Shards">
+    <Path>packages/shards</Path>
+    <EmailAddresses>
+      <Email address="shards-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Triutils">
+    <Path>packages/triutils</Path>
+    <EmailAddresses>
+      <Email address="triutils-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Tpetra">
+    <Path>packages/tpetra</Path>
+    <EmailAddresses>
+      <Email address="tpetra-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="EpetraExt">
+    <Path>packages/epetraext</Path>
+    <EmailAddresses>
+      <Email address="epetraext-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Stokhos">
+    <Path>packages/stokhos</Path>
+    <EmailAddresses>
+      <Email address="stokhos-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Sacado">
+    <Path>packages/sacado</Path>
+    <EmailAddresses>
+      <Email address="sacado-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Thyra">
+    <Path>packages/thyra</Path>
+    <EmailAddresses>
+      <Email address="thyra-boneheads@gmail.com"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Isorropia">
+    <Path>packages/isorropia</Path>
+    <EmailAddresses>
+      <Email address="isorropia-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="AztecOO">
+    <Path>packages/aztecoo</Path>
+    <EmailAddresses>
+      <Email address="aztecoo-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Galeri">
+    <Path>packages/galeri</Path>
+    <EmailAddresses>
+      <Email address="galeri-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Amesos">
+    <Path>packages/amesos</Path>
+    <EmailAddresses>
+      <Email address="amesos-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Intrepid">
+    <Path>packages/intrepid</Path>
+    <EmailAddresses>
+      <Email address="intrepid-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Ifpack">
+    <Path>packages/ifpack</Path>
+    <EmailAddresses>
+      <Email address="ifpack-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="ML">
+    <Path>packages/ml</Path>
+    <EmailAddresses>
+      <Email address="ml-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Belos">
+    <Path>packages/belos</Path>
+    <EmailAddresses>
+      <Email address="belos-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Stratimikos">
+    <Path>packages/stratimikos</Path>
+    <EmailAddresses>
+      <Email address="stratimikos-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="RBGen">
+    <Path>packages/rbgen</Path>
+    <EmailAddresses>
+      <Email address="rbgen-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Phalanx">
+    <Path>packages/phalanx</Path>
+    <EmailAddresses>
+      <Email address="phalanx-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+  <SubProject name="Panzer">
+    <Path>packages/panzer</Path>
+    <EmailAddresses>
+      <Email address="panzer-regression@repo.site.gov"/>
+    </EmailAddresses>
+  </SubProject>
+</Project>

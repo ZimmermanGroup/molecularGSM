@@ -1,0 +1,7 @@
+group, site, buildname
+Specialized, cee-rhel6, Trilinos-atdm-cee-rhel6-clang-opt-serial
+Specialized, cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial
+Specialized, cee-rhel6, Trilinos-atdm-cee-rhel6-intel-opt-serial
+Specialized, mutrino, Trilinos-atdm-mutrino-intel-opt-openmp-KNL
+Specialized, waterman, Trilinos-atdm-waterman-cuda-9.2-release-debug
+Specialized, waterman, Trilinos-atdm-waterman-gnu-release-debug-openmp

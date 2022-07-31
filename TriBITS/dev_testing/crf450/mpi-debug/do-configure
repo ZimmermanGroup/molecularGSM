@@ -1,0 +1,66 @@
+#!/bin/bash
+
+if [ -d CMakeFiles ] ; then
+  rm -r CMakeFiles
+fi
+if [ -e CMakeCache.txt ] ; then
+  rm CMakeCache.txt
+fi
+
+if [ "$TRIBITS_BASE_DIR" == "" ] ; then
+  _ABS_FILE_PATH=`readlink -f $0`
+  _SCRIPT_DIR=`dirname $_ABS_FILE_PATH`
+  TRIBITS_BASE_DIR=$_SCRIPT_DIR/../../..
+fi
+
+${TRIBITS_BASE_DIR}/dev_testing/generic/do-configure-mpi-debug \
+-DDART_TESTING_TIMEOUT=85 \
+-DCTEST_PARALLEL_LEVEL=16 \
+-DTriBITS_CTEST_DRIVER_COVERAGE_TESTS=TRUE \
+-DTriBITS_CTEST_DRIVER_MEMORY_TESTS=TRUE \
+-DTriBITS_ENABLE_CONFIGURE_TIMING=ON \
+-DTriBITS_ENABLE_PACKAGE_CONFIGURE_TIMING=ON \
+-DTribitsExProj_INSTALL_BASE_DIR=/tmp/tribits_install_tests \
+-DTribitsExProj_INSTALL_OWNING_GROUP=wg-sems-users-son \
+-DTriBITS_ENABLE_REAL_GIT_CLONE_TESTS=ON \
+-DTriBITS_SHOW_TEST_START_END_DATE_TIME=ON \
+"$@"
+
+#-DTriBITS_CTEST_DRIVER_COVERAGE_TESTS=TRUE \
+#-DTriBITS_CTEST_DRIVER_MEMORY_TESTS=TRUE \
+
+#-DTriBITS_ENABLE_DOC_GENERATION_TESTS=ON
+
+# To submit to testing.sandia.gov/cdash set:
+#
+#   -DTriBITS_CTEST_DRIVER_SUBMIT_TO=TESTING_SANDIA_CDASH
+
+# To submit to testing-dev.sandia.gov/cdash set:
+#
+#   -DTriBITS_CTEST_DRIVER_SUBMIT_TO=TESTING_DEV_SANDIA_CDASH
+
+# To submit to exp.cdash.org set:
+#
+#   -DTriBITS_CTEST_DRIVER_SUBMIT_TO=EXP_CDASH
+
+# To submit to arbitrary CDash site (e.g. testing-dev.sandia.gov/cdash) set:
+#
+#   -DTriBITS_CTEST_DRIVER_SUBMIT_TO=CUSTOM
+#   -DTriBITS_CTEST_DRIVER_SUBMIT_DROP_SITE=testing-dev.sandia.gov
+#   -DTriBITS_CTEST_DRIVER_SUBMIT_DROP_LOCATION="/cdash/submit.php?project=TribitsExProj"
+
+# NOTE: Add -DTriBITS_ENABLE_REAL_GIT_CLONE_TESTS=ON to test cloning TriBITS
+# Example repos and testing the clone features of the various tools.  To get
+# this to work on SNL machines, one may need to switch from
+# 'https://github.com/' to 'git@github.com:' using:
+#
+#  export TribitsExMetaProj_GIT_URL_REPO_BASE=git@github.com:tribits/
+#
+# before configuring.
+#
+# NOTE: The directory /tmp/tribits_install_tests above was created beforehand with:
+#
+# $ mkdir /tmp/tribits_install_tests
+#
+# One can allow another user to create the directory with a shared group for
+# more testing.

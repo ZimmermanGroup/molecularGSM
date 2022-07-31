@@ -1,0 +1,2 @@
+cmake/some_other_dir/something.cmake
+packages/mixed_lang/Anything.txt

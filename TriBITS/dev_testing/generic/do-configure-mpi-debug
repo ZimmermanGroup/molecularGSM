@@ -1,0 +1,34 @@
+#!/bin/bash
+
+#
+# Configure script for an MPI DEBUG build of the TriBITS project & package.
+#
+# This script will work in any platform where the MPI compiler wrappers are in
+# the default path.
+#
+# This script must be symbolically linked in for it to find the path back to
+# the local TriBITS repo.  However, on Mac OSX, one must manually set
+# TRIBITS_BASE_DIR in the env before calling this script.
+#
+
+if [ "$TRIBITS_BASE_DIR" == "" ] ; then
+  _ABS_FILE_PATH=`readlink -f $0` || \
+    echo "ERROR: Must set TRIBITS_BASE_DIR in env to TriBITS base dir!"
+  _SCRIPT_DIR=`dirname $_ABS_FILE_PATH`
+  TRIBITS_BASE_DIR=$_SCRIPT_DIR/../..
+fi
+
+if [ -e CMakeLists.txt ] ; then
+  rm CMakeLists.txt
+fi
+if [ -d CMakeFiles ] ; then
+  rm -r CMakeFiles/
+fi
+
+cmake \
+-D CMAKE_BUILD_TYPE:STRING="DEBUG" \
+-D TPL_ENABLE_MPI:BOOL=ON \
+-D TriBITS_ENABLE_Fortran:BOOL=ON \
+-D TriBITS_ENABLE_TESTS:BOOL=ON \
+"$@" \
+${TRIBITS_BASE_DIR}

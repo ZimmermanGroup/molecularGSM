@@ -1,0 +1,32 @@
+
+
+something 1
+
+other
+
+SOME_FUNC_NAME2()
+-----------------
+Better documentation
+
+Usage::
+
+  SOME_FUNC_NAME2(blah
+    goat
+    )
+
+
+In: simpleDocText1.cmake:23
+
+
+something 2
+
+some_macro_name1()
+++++++++++++++++++
+
+Good documentation
+
+
+In: simpleDocText1.cmake:7
+
+
+something else

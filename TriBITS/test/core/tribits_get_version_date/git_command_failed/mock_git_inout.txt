@@ -1,0 +1,3 @@
+MOCK_PROGRAM_INPUT: log --format=%cd --date=iso-local -1 HEAD
+MOCK_PROGRAM_RETURN: 15
+MOCK_PROGRAM_OUTPUT: Command failed for some reason

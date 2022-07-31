@@ -1,0 +1,20 @@
+{
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "local": [
+    {
+      "gpus": [
+        {
+          "id": "0",
+          "slots": 10
+        },
+        {
+          "id": "1",
+          "slots": 15
+        }
+      ]
+    }
+  ]
+}

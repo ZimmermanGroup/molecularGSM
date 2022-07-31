@@ -1,0 +1,10 @@
+site, buildName, testname, issue_tracker_url, issue_tracker
+cee-rhel6, Trilinos-atdm-cee-rhel6-clang-opt-serial, MueLu_UnitTestsBlockedEpetra_MPI_1, https://github.com/trilinos/Trilinos/issues/3640, #3640
+cee-rhel6, Trilinos-atdm-cee-rhel6-clang-opt-serial, PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2, https://github.com/trilinos/Trilinos/issues/3632, #3632
+cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2, https://github.com/trilinos/Trilinos/issues/3632, #3632
+cee-rhel6, Trilinos-atdm-cee-rhel6-intel-opt-serial, PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2, https://github.com/trilinos/Trilinos/issues/3632, #3632
+cee-rhel6, Trilinos-atdm-cee-rhel6-clang-opt-serial, PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3, https://github.com/trilinos/Trilinos/issues/3632, #3632
+cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3, https://github.com/trilinos/Trilinos/issues/3632, #3632
+cee-rhel6, Trilinos-atdm-cee-rhel6-intel-opt-serial, PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3, https://github.com/trilinos/Trilinos/issues/3632, #3632
+mutrino, Trilinos-atdm-mutrino-intel-opt-openmp-KNL, Stratimikos_test_single_belos_thyra_solver_driver_nos1_nrhs8_MPI_1, https://github.com/trilinos/Trilinos/issues/3632, #3632
+cee-rhel6, Trilinos-atdm-cee-rhel6-clang-opt-serial, Teko_ModALPreconditioner_MPI_1, https://github.com/trilinos/Trilinos/issues/3638, #3638

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [ -d CMakeFiles ] ; then
+  rm -r CMakeFiles
+fi
+if [ -e CMakeCache.txt ] ; then
+  rm CMakeCache.txt
+fi
+
+if [ "$TRIBITS_BASE_DIR" == "" ] ; then
+  _ABS_FILE_PATH=`readlink -f $0` || \
+    echo "ERROR: Must set TRIBITS_BASE_DIR in env to TriBITS base dir!"
+  _SCRIPT_DIR=`dirname $_ABS_FILE_PATH`
+  TRIBITS_BASE_DIR=$_SCRIPT_DIR/../..
+fi
+
+cmake \
+-D CMAKE_BUILD_TYPE=DEBUG \
+-D TPL_ENABLE_MPI=OFF \
+-D CMAKE_C_COMPILER=gcc \
+-D TriBITS_ENABLE_Fortran=ON \
+-D TriBITS_ENABLE_TESTS=ON \
+"$@" \
+${TRIBITS_BASE_DIR}
+
+# NOTE: Above we must set CMAKE_C_COMPILER=gcc or CMake will find cc by
+# default and then it will not find Fortran.

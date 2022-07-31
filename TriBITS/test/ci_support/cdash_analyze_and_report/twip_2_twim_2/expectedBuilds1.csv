@@ -1,0 +1,4 @@
+group, site, buildname
+Specialized, cee-rhel6, Trilinos-atdm-cee-rhel6-clang-opt-serial
+Specialized, cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial
+Specialized, cee-rhel6, Trilinos-atdm-cee-rhel6-intel-opt-serial
