@@ -21,20 +21,20 @@ This code can be built using CMake. To do so:
 3. Clone this repository and checkout tribits branch
 
 ```bash
-	$ git clone https://github.com/ZimmermanGroup/molecularGSM.git
-    $ cd molecularGSM
-	$ git checkout tribits
+$ git clone https://github.com/ZimmermanGroup/molecularGSM.git
+$ cd molecularGSM
+$ git checkout tribits
 ```
 
 4. Clone TriBITS repository
 ```bash
-	 $ git clone https://github.com/TriBITSPub/TriBITS.git
+$ git clone https://github.com/TriBITSPub/TriBITS.git
 ```
 
 5. Create a BUILD directory at the same level as GSM
 ```bash
-    $ mkdir BUILD
-    $ cd BUILD
+$ mkdir BUILD
+$ cd BUILD
 ```
 
 6. Configure using CMake
