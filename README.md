@@ -12,12 +12,11 @@ This code can be built using CMake. To do so:
 
 1. Load/install CMake
 2. Load MKL (On Athena use `intel/oneapi/mkl/2021.1.1` and `gcc/12.1.0`)
-3. Clone this repository and checkout tribits branch
+3. Clone this repository, use master branch
 
 ```bash
-		$ git clone https://github.com/ZimmermanGroup/molecularGSM.git
-        $ cd molecularGSM
-		$ git checkout tribits
+    $ git clone https://github.com/ZimmermanGroup/molecularGSM.git
+    $ cd molecularGSM
 ```
 
 4. Create a BUILD directory at the same level as GSM
