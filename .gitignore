@@ -5,6 +5,7 @@
 tags
 example.tgz
 gstring.cpp_1
+build*/
 BUILD/
 BUILD2/
 getOptEnergy
