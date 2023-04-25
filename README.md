@@ -1,5 +1,5 @@
 ## Questions?
-Contact Nicole Woodall: nsperkin@umich.edu
+Contact Liz Doty: lizdoty@umich.edu
 
 ## Overview
 The growing string method is a reaction path and transition state finding method developed in c++.
