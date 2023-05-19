@@ -42,7 +42,7 @@ This code can be built using CMake. To do so:
     $make -j8
 ```
 
-7. An executable named "gsm.${CALCULATOR}.exe" will be created in BUILD/GSM directory, where ${CALCULATOR} is the name of the QM package.
+7. An executable named `gsm` will be created in `BUILD/GSM` directory.
 
 To run gsm, copy the executable to the working directory (where the input files are) or reference it using the full path. 
 
