@@ -1,9 +1,0 @@
-*** Base Git Repo: TribitsExMetaProj
-863461e [Tue Sep 14 15:05:31 2021 -0600] <rabartl@sandia.gov>
-Merge branch 'tribits-github-snapshot' (TriBITSPub/TriBITS#299)
-*** Git Repo: TribitsExampleProject
-94c2b12 [Tue Sep 14 15:18:55 2021 -0600] <rabartl@sandia.gov>
-Merge branch 'tribits-github-snapshot' (TriBITSPub/TriBITS#299)
-*** Git Repo: TribitsExampleProjectAddons
-d846ae1 [Tue Sep 14 15:23:39 2021 -0600] <rabartl@sandia.gov>
-Merge branch 'tribits-github-snapshot' (TriBITSPub/TriBITS#299)

@@ -1,2 +1,0 @@
-PackagesList.cmake
-packages/with_subpackages/c/Anything.txt

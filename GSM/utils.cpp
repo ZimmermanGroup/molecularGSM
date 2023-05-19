@@ -1,40 +1,43 @@
 #include "icoord.h"
 #include "utils.h"
 #include "omp.h"
-#include <mkl_types.h>
 //#include <Accelerate/Accelerate.h>
 //#include <vecLib/clapack.h>
 #include <mkl.h>
-#include <mkl_types.h>
 //#include "/export/apps/Intel/Compiler/11.1/075/mkl/include/mkl.h"
 //#include "/export/apps/Intel/Compiler/11.1/075/mkl/include/mkl_lapack.h"
 //#include "/opt/acml5.3.1/gfortran64/include/acml.h"
 
 #define USE_ACML 0
 
+// extern "C" void dgesvd_(char*,char*,int*,int*,double*,int*,double*,double*,int*,double*,int*,double*,int*,int*);
+// extern "C" void dgetrf_(int*,int*,double*,int*,int*,int*);
+// extern "C" void dgetri_(int*,double*,int*,int*,double*,int*,int*);
+// extern "C" void dsyevx_(char*,char*,char*,int*,double*,int*,double*,double*,int*,int*,double*,int*,double*,double*,int*,double*,int*,int*,int*,int*);
+
 using namespace std;
 
-void trans(double* Bt, double* B, MKL_INT m, MKL_INT n) {
+void trans(double* Bt, double* B, int m, int n) {
 
-  for (MKL_INT i=0;i<m;i++)
-  for (MKL_INT j=0;j<n;j++)
+  for (int i=0;i<m;i++)
+  for (int j=0;j<n;j++)
     Bt[i*n+j] = B[j*m+i];
 
   return;
 }
 
-MKL_INT close_val(double x1, double	x2, double diff)
+int close_val(double x1, double	x2, double diff)
 {
-  MKL_INT close = 0;
+  int close = 0;
   if (fabs(x1-x2)<diff)
     close = 1;  
   return close;
 }
 
-MKL_INT check_array(MKL_INT size, double* A)
+int check_array(int size, double* A)
 {
-  MKL_INT bad = 0;
-  for (MKL_INT i=0;i<size;i++)
+  int bad = 0;
+  for (int i=0;i<size;i++)
   if (A[i]!=A[i])
   {
     bad = 1;
@@ -45,20 +48,20 @@ MKL_INT check_array(MKL_INT size, double* A)
 }
 
 
-MKL_INT mat_times_mat(double* C, double* A, double* B, MKL_INT M, MKL_INT N, MKL_INT K)
+int mat_times_mat(double* C, double* A, double* B, int M, int N, int K)
 {
   //printf(" in mat_times_mat M/N/K: %i %i %i  \n",M,N,K);
   char TA = 'N';
   char TB = 'N';
 
 #if 1
-  MKL_INT LDA = K; //rules in LAPACK documentation opposite due to RowMajor (CBlas only)
-  MKL_INT LDB = N;
-  MKL_INT LDC = N;
+  int LDA = K; //rules in LAPACK documentation opposite due to RowMajor (CBlas only)
+  int LDB = N;
+  int LDC = N;
 #else
-  MKL_INT LDA = M; 
-  MKL_INT LDB = N;
-  MKL_INT LDC = M;
+  int LDA = M; 
+  int LDB = N;
+  int LDC = M;
 #endif
 
   double ALPHA = 1.0;
@@ -71,10 +74,10 @@ MKL_INT mat_times_mat(double* C, double* A, double* B, MKL_INT M, MKL_INT N, MKL
   //dgemm(&TA,&TB,&M,&N,&K,&ALPHA,A,&LDA,B,&LDB,&BETA,C,&LDC);
 
 #if 0
-  printf(" prMKL_INTing C \n");
-  for (MKL_INT i=0;i<N;i++)
+  printf(" printing C \n");
+  for (int i=0;i<N;i++)
   {
-    for (MKL_INT j=0;j<M;j++)
+    for (int j=0;j<M;j++)
       printf(" %6.3f",C[i*M+j]);
     printf("\n");
   }
@@ -83,7 +86,7 @@ MKL_INT mat_times_mat(double* C, double* A, double* B, MKL_INT M, MKL_INT N, MKL
   return 0;
 }
 
-MKL_INT mat_times_mat_bt(double* C, double* A, double* B, MKL_INT M, MKL_INT N, MKL_INT K)
+int mat_times_mat_bt(double* C, double* A, double* B, int M, int N, int K)
 {
   //printf(" in mat_times_mat_bt M/N/K: %i %i %i  \n",M,N,K);
   char TA = 'N';
@@ -91,13 +94,13 @@ MKL_INT mat_times_mat_bt(double* C, double* A, double* B, MKL_INT M, MKL_INT N, 
 
 #if 1
 //rules in LAPACK documentation opposite due to RowMajor (only CBlas)
-  MKL_INT LDA = K; 
-  MKL_INT LDB = K;
-  MKL_INT LDC = N;
+  int LDA = K; 
+  int LDB = K;
+  int LDC = N;
 #else
-  MKL_INT LDA = M; 
-  MKL_INT LDB = N;
-  MKL_INT LDC = M;
+  int LDA = M; 
+  int LDB = N;
+  int LDC = M;
 #endif
 
   double ALPHA = 1.0;
@@ -110,10 +113,10 @@ MKL_INT mat_times_mat_bt(double* C, double* A, double* B, MKL_INT M, MKL_INT N, 
  // dgemm(&TA,&TB,&M,&N,&K,&ALPHA,A,&LDA,B,&LDB,&BETA,C,&LDC);
 
 #if 0
-  printf(" prMKL_INTing C \n");
-  for (MKL_INT i=0;i<N;i++)
+  printf(" printing C \n");
+  for (int i=0;i<N;i++)
   {
-    for (MKL_INT j=0;j<M;j++)
+    for (int j=0;j<M;j++)
       printf(" %6.3f",C[i*M+j]);
     printf("\n");
   }
@@ -122,18 +125,18 @@ MKL_INT mat_times_mat_bt(double* C, double* A, double* B, MKL_INT M, MKL_INT N, 
   return 0;
 }
 
-MKL_INT mat_times_mat(double* C, double* A, double* B, MKL_INT size)
+int mat_times_mat(double* C, double* A, double* B, int size)
 {
   char TA = 'N';
   char TB = 'N';
 
-  MKL_INT M = size;
-  MKL_INT N = size;
-  MKL_INT K = size;
+  int M = size;
+  int N = size;
+  int K = size;
 
-  MKL_INT LDA = size;
-  MKL_INT LDB = size;
-  MKL_INT LDC = size;
+  int LDA = size;
+  int LDB = size;
+  int LDC = size;
 
   double ALPHA = 1.0;
   double BETA = 0.0;
@@ -145,10 +148,10 @@ MKL_INT mat_times_mat(double* C, double* A, double* B, MKL_INT size)
  // dgemm(&TA,&TB,&M,&N,&K,&ALPHA,A,&LDA,B,&LDB,&BETA,C,&LDC);
 
 #if 0
-  printf(" prMKL_INTing C \n");
-  for (MKL_INT i=0;i<size;i++)
+  printf(" printing C \n");
+  for (int i=0;i<size;i++)
   {
-    for (MKL_INT j=0;j<size;j++)
+    for (int j=0;j<size;j++)
       printf(" %6.3f",C[i*size+j]);
     printf("\n");
   }
@@ -157,18 +160,18 @@ MKL_INT mat_times_mat(double* C, double* A, double* B, MKL_INT size)
   return 0;
 }
 
-MKL_INT mat_times_mat_bt(double* C, double* A, double* B, MKL_INT size)
+int mat_times_mat_bt(double* C, double* A, double* B, int size)
 {
   char TA = 'N';
   char TB = 'Y';
 
-  MKL_INT M = size;
-  MKL_INT N = size;
-  MKL_INT K = size;
+  int M = size;
+  int N = size;
+  int K = size;
 
-  MKL_INT LDA = size;
-  MKL_INT LDB = size;
-  MKL_INT LDC = size;
+  int LDA = size;
+  int LDB = size;
+  int LDC = size;
 
   double ALPHA = 1.0;
   double BETA = 0.0;
@@ -180,10 +183,10 @@ MKL_INT mat_times_mat_bt(double* C, double* A, double* B, MKL_INT size)
  // dgemm(&TA,&TB,&M,&N,&K,&ALPHA,A,&LDA,B,&LDB,&BETA,C,&LDC);
 
 #if 0
-  printf(" prMKL_INTing C \n");
-  for (MKL_INT i=0;i<size;i++)
+  printf(" printing C \n");
+  for (int i=0;i<size;i++)
   {
-    for (MKL_INT j=0;j<size;j++)
+    for (int j=0;j<size;j++)
       printf(" %6.3f",C[i*size+j]);
     printf("\n");
   }
@@ -192,18 +195,18 @@ MKL_INT mat_times_mat_bt(double* C, double* A, double* B, MKL_INT size)
   return 0;
 }
 
-MKL_INT mat_times_mat_at_bt(double* C, double* A, double* B, MKL_INT size)
+int mat_times_mat_at_bt(double* C, double* A, double* B, int size)
 {
   char TA = 'Y';
   char TB = 'Y';
 
-  MKL_INT M = size;
-  MKL_INT N = size;
-  MKL_INT K = size;
+  int M = size;
+  int N = size;
+  int K = size;
 
-  MKL_INT LDA = size;
-  MKL_INT LDB = size;
-  MKL_INT LDC = size;
+  int LDA = size;
+  int LDB = size;
+  int LDC = size;
 
   double ALPHA = 1.0;
   double BETA = 0.0;
@@ -215,10 +218,10 @@ MKL_INT mat_times_mat_at_bt(double* C, double* A, double* B, MKL_INT size)
  // dgemm(&TA,&TB,&M,&N,&K,&ALPHA,A,&LDA,B,&LDB,&BETA,C,&LDC);
 
 #if 0
-  printf(" prMKL_INTing C \n");
-  for (MKL_INT i=0;i<size;i++)
+  printf(" printing C \n");
+  for (int i=0;i<size;i++)
   {
-    for (MKL_INT j=0;j<size;j++)
+    for (int j=0;j<size;j++)
       printf(" %6.3f",C[i*size+j]);
     printf("\n");
   }
@@ -227,52 +230,52 @@ MKL_INT mat_times_mat_at_bt(double* C, double* A, double* B, MKL_INT size)
   return 0;
 }
 
-MKL_INT mat_root(double* A, MKL_INT size) {
+int mat_root(double* A, int size) {
 
   //printf(" in mat_root with size: %i \n",size); fflush(stdout);
 
 #if 0
-  printf(" prMKL_INTing A \n");
-  for (MKL_INT i=0;i<size;i++)
+  printf(" printing A \n");
+  for (int i=0;i<size;i++)
   {
-    for (MKL_INT j=0;j<size;j++)
+    for (int j=0;j<size;j++)
       printf(" %6.5f",A[i*size+j]);
     printf("\n");
   }
 #endif
 
   double* B = new double[size*size];
-  for (MKL_INT i=0;i<size*size;i++) B[i] = A[i]; 
+  for (int i=0;i<size*size;i++) B[i] = A[i]; 
   double* Beigen = new double[size];
-  for (MKL_INT i=0;i<size;i++) Beigen[i] = 0.;
+  for (int i=0;i<size;i++) Beigen[i] = 0.;
 
   Diagonalize(B,Beigen,size);
 
 #if 0
-  printf(" prMKL_INTing eigenvectors of A \n");
-  for (MKL_INT i=0;i<size;i++)
+  printf(" printing eigenvectors of A \n");
+  for (int i=0;i<size;i++)
   {
-    for (MKL_INT j=0;j<size;j++)
+    for (int j=0;j<size;j++)
       printf(" %1.1f",B[i*size+j]);
     printf("\n");
   }
   printf(" eigenvalues: ");
-  for (MKL_INT i=0;i<size;i++)
+  for (int i=0;i<size;i++)
     printf(" %1.1f",Beigen[i]);
   printf("\n");
   fflush(stdout);
 #endif
 
   double* Bi = new double[size*size];
-  //for (MKL_INT i=0;i<size*size;i++) Bi[i] = B[i];
+  //for (int i=0;i<size*size;i++) Bi[i] = B[i];
 
   trans(Bi,B,size,size);
  // Invert(Bi,size);
 #if 0
-  printf(" prMKL_INTing inverse of eigenvectors \n");
-  for (MKL_INT i=0;i<size;i++)
+  printf(" printing inverse of eigenvectors \n");
+  for (int i=0;i<size;i++)
   {
-    for (MKL_INT j=0;j<size;j++)
+    for (int j=0;j<size;j++)
       printf(" %1.1f",Bi[i*size+j]);
     printf("\n");
   }
@@ -281,16 +284,16 @@ MKL_INT mat_root(double* A, MKL_INT size) {
 #if 0
 //checking inversion
   double* bbi = new double[size*size];
-  for (MKL_INT i=0;i<size*size;i++) bbi[i] = 0.;
-  for (MKL_INT i=0;i<size;i++)
-  for (MKL_INT j=0;j<size;j++)
-  for (MKL_INT k=0;k<size;k++)
+  for (int i=0;i<size*size;i++) bbi[i] = 0.;
+  for (int i=0;i<size;i++)
+  for (int j=0;j<size;j++)
+  for (int k=0;k<size;k++)
     bbi[i*size+j] += B[i*size+k] * Bi[k*size+j];
 
   printf(" B*Bi \n");
-  for (MKL_INT i=0;i<size;i++)
+  for (int i=0;i<size;i++)
   {
-    for (MKL_INT j=0;j<size;j++)
+    for (int j=0;j<size;j++)
       printf(" %6.3f",bbi[i*size+j]);
     printf("\n");
   }
@@ -298,15 +301,15 @@ MKL_INT mat_root(double* A, MKL_INT size) {
 #endif
 
   double* tmp = new double[size*size];
-  for (MKL_INT i=0;i<size*size;i++) tmp[i] = 0.;
-  for (MKL_INT i=0;i<size*size;i++) A[i] = 0.; 
+  for (int i=0;i<size*size;i++) tmp[i] = 0.;
+  for (int i=0;i<size*size;i++) A[i] = 0.; 
 
-  for (MKL_INT i=0;i<size;i++)
-  for (MKL_INT j=0;j<size;j++)
+  for (int i=0;i<size;i++)
+  for (int j=0;j<size;j++)
     tmp[i*size+j] += Bi[i*size+j] * sqrt(Beigen[j]);
-  for (MKL_INT i=0;i<size;i++)
-  for (MKL_INT j=0;j<size;j++)
-  for (MKL_INT k=0;k<size;k++)
+  for (int i=0;i<size;i++)
+  for (int j=0;j<size;j++)
+  for (int k=0;k<size;k++)
     A[i*size+j] += tmp[i*size+k] * B[k*size+j];
 
 
@@ -318,51 +321,51 @@ MKL_INT mat_root(double* A, MKL_INT size) {
   return 0;
 }
 
-MKL_INT mat_root_inv(double* A, MKL_INT size) {
+int mat_root_inv(double* A, int size) {
 
   //printf(" in mat_root_inv with size: %i \n",size); fflush(stdout);
 
 #if 0
-  printf(" prMKL_INTing A \n");
-  for (MKL_INT i=0;i<size;i++)
+  printf(" printing A \n");
+  for (int i=0;i<size;i++)
   {
-    for (MKL_INT j=0;j<size;j++)
+    for (int j=0;j<size;j++)
       printf(" %1.1f",A[i*size+j]);
     printf("\n");
   }
 #endif
 
   double* B = new double[size*size];
-  for (MKL_INT i=0;i<size*size;i++) B[i] = A[i]; 
+  for (int i=0;i<size*size;i++) B[i] = A[i]; 
   double* Beigen = new double[size];
-  for (MKL_INT i=0;i<size;i++) Beigen[i] = 0.;
+  for (int i=0;i<size;i++) Beigen[i] = 0.;
 
   Diagonalize(B,Beigen,size);
 
 #if 0
-  printf(" prMKL_INTing eigenvectors of A \n");
-  for (MKL_INT i=0;i<size;i++)
+  printf(" printing eigenvectors of A \n");
+  for (int i=0;i<size;i++)
   {
-    for (MKL_INT j=0;j<size;j++)
+    for (int j=0;j<size;j++)
       printf(" %1.1f",B[i*size+j]);
     printf("\n");
   }
   printf(" eigenvalues: ");
-  for (MKL_INT i=0;i<size;i++)
+  for (int i=0;i<size;i++)
     printf(" %1.1f",Beigen[i]);
   printf("\n");
 #endif
 
   double* Bi = new double[size*size];
-  //for (MKL_INT i=0;i<size*size;i++) Bi[i] = B[i];
+  //for (int i=0;i<size*size;i++) Bi[i] = B[i];
 
   trans(Bi,B,size,size);
   //Invert(Bi,size);
 #if 0
-  printf(" prMKL_INTing inverse of eigenvectors \n");
-  for (MKL_INT i=0;i<size;i++)
+  printf(" printing inverse of eigenvectors \n");
+  for (int i=0;i<size;i++)
   {
-    for (MKL_INT j=0;j<size;j++)
+    for (int j=0;j<size;j++)
       printf(" %1.1f",Bi[i*size+j]);
     printf("\n");
   }
@@ -371,16 +374,16 @@ MKL_INT mat_root_inv(double* A, MKL_INT size) {
 #if 0
 //checking inversion
   double* bbi = new double[size*size];
-  for (MKL_INT i=0;i<size*size;i++) bbi[i] = 0.;
-  for (MKL_INT i=0;i<size;i++)
-  for (MKL_INT j=0;j<size;j++)
-  for (MKL_INT k=0;k<size;k++)
+  for (int i=0;i<size*size;i++) bbi[i] = 0.;
+  for (int i=0;i<size;i++)
+  for (int j=0;j<size;j++)
+  for (int k=0;k<size;k++)
     bbi[i*size+j] += B[i*size+k] * Bi[k*size+j];
 
   printf(" B*Bi \n");
-  for (MKL_INT i=0;i<size;i++)
+  for (int i=0;i<size;i++)
   {
-    for (MKL_INT j=0;j<size;j++)
+    for (int j=0;j<size;j++)
       printf(" %4.3f",bbi[i*size+j]);
     printf("\n");
   }
@@ -388,15 +391,15 @@ MKL_INT mat_root_inv(double* A, MKL_INT size) {
 #endif
 
   double* tmp = new double[size*size];
-  for (MKL_INT i=0;i<size*size;i++) tmp[i] = 0.;
-  for (MKL_INT i=0;i<size*size;i++) A[i] = 0.; 
+  for (int i=0;i<size*size;i++) tmp[i] = 0.;
+  for (int i=0;i<size*size;i++) A[i] = 0.; 
 
-  for (MKL_INT i=0;i<size;i++)
-  for (MKL_INT j=0;j<size;j++)
+  for (int i=0;i<size;i++)
+  for (int j=0;j<size;j++)
     tmp[i*size+j] += Bi[i*size+j] / sqrt(Beigen[j]);
-  for (MKL_INT i=0;i<size;i++)
-  for (MKL_INT j=0;j<size;j++)
-  for (MKL_INT k=0;k<size;k++)
+  for (int i=0;i<size;i++)
+  for (int j=0;j<size;j++)
+  for (int k=0;k<size;k++)
     A[i*size+j] += tmp[i*size+k] * B[k*size+j];
 
 
@@ -408,9 +411,12 @@ MKL_INT mat_root_inv(double* A, MKL_INT size) {
   return 0;
 }
 
-MKL_INT SVD(double* A, double* V, double* eigen, MKL_INT m, MKL_INT n){
+int SVD(double* A, double* V, double* eigen, int m, int n){
 
   //printf(" in SVD call, m,n: %i %i \n",m,n);
+  
+  MKL_INT mkl_m = (MKL_INT) m;
+  MKL_INT mkl_n = (MKL_INT) n;
 
 #if USE_ACML
  //disabled this function
@@ -419,8 +425,8 @@ MKL_INT SVD(double* A, double* V, double* eigen, MKL_INT m, MKL_INT n){
 #endif
 
 #if 0
-  for (MKL_INT i=0;i<m;i++)
-  for (MKL_INT j=0;j<n;j++)
+  for (int i=0;i<m;i++)
+  for (int j=0;j<n;j++)
     printf(" %1.3f",A[n*i+j]);
   printf("\n");
 #endif
@@ -428,7 +434,7 @@ MKL_INT SVD(double* A, double* V, double* eigen, MKL_INT m, MKL_INT n){
   double* B=new double[m*n];
   trans(B,A,n,m);
 
-  MKL_INT NSV,LV; // # singular values
+  int NSV,LV; // # singular values
   MKL_INT LDA = m;
   if (m>n){
     NSV = n;
@@ -442,7 +448,7 @@ MKL_INT SVD(double* A, double* V, double* eigen, MKL_INT m, MKL_INT n){
   double* Vt = new double[n*n];
   double* U = new double[m*m];
   double* S = new double[LV];
-  MKL_INT* IWork = new MKL_INT[8*NSV];
+  int* IWork = new int[8*NSV];
 
   MKL_INT Info = 0;
 
@@ -456,7 +462,7 @@ MKL_INT SVD(double* A, double* V, double* eigen, MKL_INT m, MKL_INT n){
   char JOBVT='A';
 
 #if !USE_ACML
-  dgesvd_(&JOBU, &JOBVT, &m, &n, B, &LDA, S, U, &m, Vt, &n, Work, &LenWork, &Info);
+  dgesvd_(&JOBU, &JOBVT, &mkl_m, &mkl_n, B, &LDA, S, U, &mkl_m, Vt, &mkl_n, Work, &LenWork, &Info);
 
 //vs dgesdd (divide and conquer version)
 //  dgesdd_((char*)"A", &m, &n, A, &LDA, S, U, &m, Vt, &n, Work0, &LenWork, IWork, &Info);
@@ -467,8 +473,8 @@ MKL_INT SVD(double* A, double* V, double* eigen, MKL_INT m, MKL_INT n){
 
   trans(V,Vt,n,n);
 
-  MKL_INT n_nonzero = 0;
-  for (MKL_INT i=0;i<LV;i++)
+  int n_nonzero = 0;
+  for (int i=0;i<LV;i++)
   {
     //printf(" eigenvalue %i: %1.5f \n",i,S[i]);
     eigen[i]=S[i];
@@ -488,19 +494,21 @@ MKL_INT SVD(double* A, double* V, double* eigen, MKL_INT m, MKL_INT n){
 
 }
 
-MKL_INT Invert(double* A, MKL_INT m){
+int Invert(double* A, int m){
 
   if (m<1)
   {
     printf("  WARNING: cannot invert, size: %i \n",m);
     return 1;
   }
+  
+  MKL_INT mkl_m = (MKL_INT) m;
 
 #if 0
   printf(" in Invert call, m: %i \n",m);
-  for (MKL_INT i=0;i<m;i++)
+  for (int i=0;i<m;i++)
   {
-    for (MKL_INT j=0;j<m;j++)
+    for (int j=0;j<m;j++)
       printf(" %1.3f",A[m*i+j]);
     printf("\n");
   }
@@ -518,28 +526,28 @@ MKL_INT Invert(double* A, MKL_INT m){
 //printf("\n");
 //  dgesdd_((char*)"A", &m, &n, A, &LDA, S, U, &m, Vt, &n, Work, &LenWork, IWork, &Info);
 
-  dgetrf_(&m,&m,A,&m,IPiv,&Info);
+  dgetrf_(&mkl_m,&mkl_m,A,&mkl_m,IPiv,&Info);
   if (Info!=0)
   {
     printf(" after dgetrf, Info error is: %i \n",Info);
     delete [] IPiv;
     delete [] Work;
 
-    for (MKL_INT i=0;i<m*m;i++) A[i] = 0.;
-    for (MKL_INT i=0;i<m;i++)
+    for (int i=0;i<m*m;i++) A[i] = 0.;
+    for (int i=0;i<m;i++)
        A[i*m+i] = 1.;
  
     return 1;
   }
 
-  dgetri_(&m,A,&m,IPiv,Work,&LenWork,&Info);
+  dgetri_(&mkl_m,A,&mkl_m,IPiv,Work,&LenWork,&Info);
   if (Info!=0)
   {
     printf(" after invert, Info error is: %i \n",Info);
     printf(" A-1: \n");
-    for (MKL_INT i=0;i<m;i++)
+    for (int i=0;i<m;i++)
     {
-      for (MKL_INT j=0;j<m;j++)
+      for (int j=0;j<m;j++)
         printf(" %4.3f",A[i*m+j]);
       printf("\n");
     }
@@ -553,7 +561,7 @@ MKL_INT Invert(double* A, MKL_INT m){
 }
 
 
-MKL_INT Diagonalize(double* A, double* eigen, MKL_INT size){
+int Diagonalize(double* A, double* eigen, int size){
 
   if (size<1)
   {
@@ -563,7 +571,7 @@ MKL_INT Diagonalize(double* A, double* eigen, MKL_INT size){
 
 #ifdef _OPENMP
 //  mkl_set_num_threads(1);
-//  MKL_INT nthreads = omp_get_num_threads();
+//  int nthreads = omp_get_num_threads();
 //  omp_set_num_threads(1);
 #endif
 
@@ -589,14 +597,14 @@ MKL_INT Diagonalize(double* A, double* eigen, MKL_INT size){
 #if DSYEVX
     MKL_INT LenWork = 32*N; //8*N min for dsyevx (was 32)
 #else
-    MKL_INT LenWork = 1+6*N+2*N*N; //1+6*N+2*N*N min for dsyevd
+    int LenWork = 1+6*N+2*N*N; //1+6*N+2*N*N min for dsyevd
 #endif
     double* Work = new double[LenWork];
 
 #if DSYEVX
     MKL_INT LenIWork = 5*N; //5*N for dsyevx (was 5)
 #else
-    MKL_INT LenIWork = 10*N; //3+5*N min for dsyevd
+    int LenIWork = 10*N; //3+5*N min for dsyevd
 #endif
     MKL_INT* IWork = new MKL_INT[LenIWork];
     MKL_INT* IFail = new MKL_INT[N];
@@ -623,8 +631,8 @@ MKL_INT Diagonalize(double* A, double* eigen, MKL_INT size){
     }
 #endif
 
-  MKL_INT n_nonzero = 0;
-  for (MKL_INT i=0;i<size;i++)
+  int n_nonzero = 0;
+  for (int i=0;i<size;i++)
   {
     //printf(" eigenvalue %i: %1.5f \n",i,eigen[i]);
     if (abs(eigen[i])>0.0001) n_nonzero++;
@@ -632,8 +640,8 @@ MKL_INT Diagonalize(double* A, double* eigen, MKL_INT size){
   //printf(" found %i independent vectors \n",n_nonzero);
 
 #if DSYEVX
-  for (MKL_INT i=0;i<size;i++)
-  for (MKL_INT j=0;j<size;j++)
+  for (int i=0;i<size;i++)
+  for (int j=0;j<size;j++)
     A[i*size+j] = EVec[i*size+j];
 #endif
 
@@ -650,7 +658,7 @@ MKL_INT Diagonalize(double* A, double* eigen, MKL_INT size){
 
 }
 
-MKL_INT Diagonalize(double* A, double* eigenvecs, double* eigen, MKL_INT size){
+int Diagonalize(double* A, double* eigenvecs, double* eigen, int size){
 
   printf(" in diagonalize call, size: %i \n",size);
   
@@ -695,8 +703,8 @@ MKL_INT Diagonalize(double* A, double* eigenvecs, double* eigen, MKL_INT size){
     }
 #endif
 
-  for (MKL_INT i=0;i<size;i++)
-  for (MKL_INT j=0;j<size;j++)
+  for (int i=0;i<size;i++)
+  for (int j=0;j<size;j++)
     eigenvecs[i*size+j] = EVec[i*size+j];
 
     delete [] EVec;
@@ -708,7 +716,7 @@ MKL_INT Diagonalize(double* A, double* eigenvecs, double* eigen, MKL_INT size){
 }
 
 
-MKL_INT sign(double x){
+int sign(double x){
     
   if (x>0) return 1;
   else if (x<=0) return -1;
@@ -726,12 +734,12 @@ void cross(double* m, double* r1, double* r2){
 }
 
 
-void Utils::matrix_times_matrix(double** A, double** B, double** C, MKL_INT LEN){
+void Utils::matrix_times_matrix(double** A, double** B, double** C, int LEN){
 
-  for (MKL_INT i=0;i<LEN;i++){
-    for (MKL_INT j=0;j<LEN;j++){
+  for (int i=0;i<LEN;i++){
+    for (int j=0;j<LEN;j++){
       C[i][j] = 0;
-      for (MKL_INT k=0;k<LEN;k++){
+      for (int k=0;k<LEN;k++){
 	C[i][j] += A[i][k]*B[k][j];
       }
     }
@@ -740,18 +748,18 @@ void Utils::matrix_times_matrix(double** A, double** B, double** C, MKL_INT LEN)
 }
 
 
-void Utils::display_structure(double* a, MKL_INT natoms, string* anames){
+void Utils::display_structure(double* a, int natoms, string* anames){
 
   cout.setf(ios::left);
   cout.setf(ios::fixed);
 
-  for (MKL_INT i=0;i<natoms;i++){
+  for (int i=0;i<natoms;i++){
 
     cout << setw(2) << anames[i];
     cout.unsetf(ios::left);
 
     cout.setf(ios::right);
-    for (MKL_INT j=0;j<3;j++){
+    for (int j=0;j<3;j++){
       cout << setw(15) << setprecision(10) << a[3*i+j];
     }
     cout.unsetf(ios::right);
@@ -762,17 +770,17 @@ void Utils::display_structure(double* a, MKL_INT natoms, string* anames){
   cout.unsetf(ios::left);
 }
 
-void Utils::display_structure_nonames(double* a, MKL_INT natoms){
+void Utils::display_structure_nonames(double* a, int natoms){
  
   cout.setf(ios::left);
   cout.setf(ios::fixed);
 
-  for (MKL_INT i=0;i<natoms;i++){
+  for (int i=0;i<natoms;i++){
 
     cout.unsetf(ios::left);
 
     cout.setf(ios::right);
-    for (MKL_INT j=0;j<3;j++){
+    for (int j=0;j<3;j++){
       cout << setw(15) << setprecision(10) << a[3*i+j];
     }
     cout.unsetf(ios::right);
@@ -784,12 +792,12 @@ void Utils::display_structure_nonames(double* a, MKL_INT natoms){
 }
 
 
-void Utils::S_straight_line_in_angs(double** string_angs, double* S, MKL_INT nstring, MKL_INT natoms){
+void Utils::S_straight_line_in_angs(double** string_angs, double* S, int nstring, int natoms){
 
   S[1] = 0;
   double* diff = new double[1+natoms*3];
-  for (MKL_INT i=1;i<nstring;i++){
-    for (MKL_INT j=0;j<natoms*3;j++){
+  for (int i=1;i<nstring;i++){
+    for (int j=0;j<natoms*3;j++){
       diff[j] = string_angs[i][j] - string_angs[i-1][j];
     }
     S[i] = S[i-1]+ Utils::vecMag(diff, natoms*3);
@@ -799,31 +807,31 @@ void Utils::S_straight_line_in_angs(double** string_angs, double* S, MKL_INT nst
 }
 
 
-void Utils::subtract_arrays(double* a, double* b, double* diff, MKL_INT LEN){
-  for (MKL_INT i=0;i<LEN;i++){
+void Utils::subtract_arrays(double* a, double* b, double* diff, int LEN){
+  for (int i=0;i<LEN;i++){
     diff[i] = a[i]-b[i];
   }
 }
 
 
-void Utils::vector_outer_prod(double* vec1, double* vec2, MKL_INT LEN, double** output){
-  for (MKL_INT i=0;i<LEN;i++){
-    for (MKL_INT j=0;j<LEN;j++){
+void Utils::vector_outer_prod(double* vec1, double* vec2, int LEN, double** output){
+  for (int i=0;i<LEN;i++){
+    for (int j=0;j<LEN;j++){
       output[i][j] = vec1[i]*vec2[j];
     }
   }
 }
 
-void Utils::copy_structure(double* structure1, double* structure2, MKL_INT natoms){
-  for (MKL_INT i=0;i<natoms*3;i++){
+void Utils::copy_structure(double* structure1, double* structure2, int natoms){
+  for (int i=0;i<natoms*3;i++){
     structure2[i] = structure1[i];
   }
 }
 
-void Utils::copy_2D_array(double** poMKL_INTer1, double** poMKL_INTer2, MKL_INT LEN1, MKL_INT LEN2){
-  for (MKL_INT i=0;i<LEN1;i++){
-    for (MKL_INT j=0;j<LEN2;j++){
-      poMKL_INTer2[i][j] = poMKL_INTer1[i][j];
+void Utils::copy_2D_array(double** pointer1, double** pointer2, int LEN1, int LEN2){
+  for (int i=0;i<LEN1;i++){
+    for (int j=0;j<LEN2;j++){
+      pointer2[i][j] = pointer1[i][j];
     }
   }
 }
@@ -842,22 +850,22 @@ void Utils::get_rotation_matrix(double** rotMat, double* thetas){
   rotMat[2][2] = cos(x)*cos(y);
 }
 
-void Utils::Rotate_structure(double** RotMat, double* structure, MKL_INT natoms){
+void Utils::Rotate_structure(double** RotMat, double* structure, int natoms){
 
   double* temp = new double[1+natoms*3];
-  for (MKL_INT i=0;i<natoms*3;i++){
+  for (int i=0;i<natoms*3;i++){
     temp[i]=0.0;
   }
 
-  for (MKL_INT i=0;i<natoms;i++){
-    for (MKL_INT j=0;j<3;j++){
-      for (MKL_INT k=0;k<3;k++){
+  for (int i=0;i<natoms;i++){
+    for (int j=0;j<3;j++){
+      for (int k=0;k<3;k++){
         temp[3*i+j] += RotMat[j][k]*structure[3*i+k];
       }
     }
   }
 
-  for (MKL_INT i=0;i<natoms*3;i++){
+  for (int i=0;i<natoms*3;i++){
     structure[i]=temp[i];
   }
   delete [] temp;
@@ -865,10 +873,10 @@ void Utils::Rotate_structure(double** RotMat, double* structure, MKL_INT natoms)
 
 
 
-void Utils::Rot_around_vec(double* vec, double* structure, MKL_INT natoms) {
+void Utils::Rot_around_vec(double* vec, double* structure, int natoms) {
 
   double** RotMat = new double*[1+3];
-  for (MKL_INT i=0;i<3;i++){
+  for (int i=0;i<3;i++){
     RotMat[i] = new double[1+3];
   }
 
@@ -884,7 +892,7 @@ void Utils::Rot_around_vec(double* vec, double* structure, MKL_INT natoms) {
 
   Utils::Rotate_structure(RotMat, structure, natoms);
 
-  for (MKL_INT i=0;i<3;i++){
+  for (int i=0;i<3;i++){
     delete [] RotMat[i];
   }
   delete [] RotMat;
@@ -892,42 +900,42 @@ void Utils::Rot_around_vec(double* vec, double* structure, MKL_INT natoms) {
 }
 
 
-void Utils::mwc_to_ang(double** angs, double** mwc, MKL_INT nstring, MKL_INT natoms, double* amasses){
+void Utils::mwc_to_ang(double** angs, double** mwc, int nstring, int natoms, double* amasses){
 
-  for (MKL_INT i=0;i<nstring;i++){
-    for (MKL_INT j=1;j<=natoms;j++){
-      for (MKL_INT k=1;k<=3;k++){
+  for (int i=0;i<nstring;i++){
+    for (int j=1;j<=natoms;j++){
+      for (int k=1;k<=3;k++){
 	angs[i][3*(j-1)+k]=mwc[i][3*(j-1)+k]*(1/ANGtoBOHR)*(1/sqrt(amasses[j]));
       }
     }
   }
 }
 
-void Utils::mwc_to_ang(double* angs, double* mwc, MKL_INT natoms, double* amasses){
+void Utils::mwc_to_ang(double* angs, double* mwc, int natoms, double* amasses){
 
-  for (MKL_INT j=0;j<natoms;j++){
-    for (MKL_INT k=0;k<3;k++){
+  for (int j=0;j<natoms;j++){
+    for (int k=0;k<3;k++){
       angs[3*j+k]=mwc[3*j+k]*(1/ANGtoBOHR)*(1/sqrt(amasses[j]));
     }
   }
 }
 
 
-void Utils::ang_to_mwc(double** mwc, double** ang, MKL_INT nstring, MKL_INT natoms, double* amasses){
+void Utils::ang_to_mwc(double** mwc, double** ang, int nstring, int natoms, double* amasses){
 
-  for (MKL_INT i=0;i<nstring;i++){
-    for (MKL_INT j=0;j<natoms;j++){
-      for (MKL_INT k=0;k<3;k++){
+  for (int i=0;i<nstring;i++){
+    for (int j=0;j<natoms;j++){
+      for (int k=0;k<3;k++){
         mwc[i][3*j+k]=ang[i][3*j+k]*(ANGtoBOHR)*(sqrt(amasses[j]));
       }
     }
   }
 }
 
-void Utils::ang_to_mwc(double* mwc, double* ang, MKL_INT natoms, double* amasses){
+void Utils::ang_to_mwc(double* mwc, double* ang, int natoms, double* amasses){
 
-  for (MKL_INT j=0;j<natoms;j++){
-    for (MKL_INT k=0;k<3;k++){
+  for (int j=0;j<natoms;j++){
+    for (int k=0;k<3;k++){
       mwc[3*j+k]=ang[3*j+k]*(ANGtoBOHR)*(sqrt(amasses[j]));
     }
   }
@@ -936,21 +944,21 @@ void Utils::ang_to_mwc(double* mwc, double* ang, MKL_INT natoms, double* amasses
 
 
 
-void Utils::mwcgrad_to_anggrad(double** ang_grad, double** mwc_grad, MKL_INT nstring, MKL_INT natoms, double* amasses){
+void Utils::mwcgrad_to_anggrad(double** ang_grad, double** mwc_grad, int nstring, int natoms, double* amasses){
 
-  for (MKL_INT i=0;i<nstring;i++){
-    for (MKL_INT j=0;j<natoms;j++){
-      for (MKL_INT k=0;k<3;k++){
+  for (int i=0;i<nstring;i++){
+    for (int j=0;j<natoms;j++){
+      for (int k=0;k<3;k++){
         ang_grad[i][3*j+k]=mwc_grad[i][3*j+k]*(ANGtoBOHR)*(sqrt(amasses[j]));
       }
     }
   }
 }
 
-void Utils::mwcgrad_to_anggrad(double* ang_grad, double* mwc_grad, MKL_INT natoms, double* amasses){
+void Utils::mwcgrad_to_anggrad(double* ang_grad, double* mwc_grad, int natoms, double* amasses){
 
-  for (MKL_INT j=0;j<natoms;j++){
-    for (MKL_INT k=0;k<3;k++){
+  for (int j=0;j<natoms;j++){
+    for (int k=0;k<3;k++){
       ang_grad[3*j+k]=mwc_grad[3*j+k]*(ANGtoBOHR)*(sqrt(amasses[j]));
     }
   }
@@ -958,21 +966,21 @@ void Utils::mwcgrad_to_anggrad(double* ang_grad, double* mwc_grad, MKL_INT natom
 }
 
 
-void Utils::anggrad_to_mwcgrad(double** mwc_grad, double** ang_grad, MKL_INT nstring, MKL_INT natoms, double* amasses){
+void Utils::anggrad_to_mwcgrad(double** mwc_grad, double** ang_grad, int nstring, int natoms, double* amasses){
 
-  for (MKL_INT i=0;i<nstring;i++){
-    for (MKL_INT j=0;j<natoms;j++){
-      for (MKL_INT k=0;k<3;k++){
+  for (int i=0;i<nstring;i++){
+    for (int j=0;j<natoms;j++){
+      for (int k=0;k<3;k++){
         mwc_grad[i][3*j+k]=ang_grad[i][3*j+k]*(1/ANGtoBOHR)*(1/sqrt(amasses[j]));
       }
     }
   }
 }
 
-void Utils::anggrad_to_mwcgrad(double* mwc_grad, double* ang_grad, MKL_INT natoms, double* amasses){
+void Utils::anggrad_to_mwcgrad(double* mwc_grad, double* ang_grad, int natoms, double* amasses){
 
-  for (MKL_INT j=0;j<natoms;j++){
-    for (MKL_INT k=0;k<3;k++){
+  for (int j=0;j<natoms;j++){
+    for (int k=0;k<3;k++){
       mwc_grad[3*j+k]=ang_grad[3*j+k]*(1/ANGtoBOHR)*(1/sqrt(amasses[j]));
     }
   }
@@ -980,34 +988,34 @@ void Utils::anggrad_to_mwcgrad(double* mwc_grad, double* ang_grad, MKL_INT natom
 
 
 void Utils::diagonalize3x3(double** hmwc, double** smwc,
-			   double* w2, MKL_INT ndiag){
+			   double* w2, int ndiag){
 			   
-  MKL_INT test;
+  int test;
   double temp;
   double diff, tolerance, relerror, evalue;
 
 #if 0
   double** x = new double*[3];
-  for (MKL_INT i=0;i<3;i++)
+  for (int i=0;i<3;i++)
     x[i] = new double[1+3];
 #else
   double x[3][1+3];
 #endif
 
   double** K= new double*[1+3];
-  for (MKL_INT i=0;i<3;i++){
+  for (int i=0;i<3;i++){
     K[i] = new double[1+3];
   } 
 
-  for(MKL_INT j=0;j<3;j++){
-    for(MKL_INT k=0;k<3;k++){
+  for(int j=0;j<3;j++){
+    for(int k=0;k<3;k++){
       K[j][k] = hmwc[j][k];
     }
   }
   tolerance = .000001;
 
-  for(MKL_INT i=0;i<3;i++){
-    for(MKL_INT j=0;j<3;j++){
+  for(int i=0;i<3;i++){
+    for(int j=0;j<3;j++){
 //      x[0][j]=randomf(-1.0,1.0);
       x[0][j] = 0.5; //hard coded to prevent irreproducibility 
       x[1][j] = 0.0;
@@ -1017,26 +1025,26 @@ void Utils::diagonalize3x3(double** hmwc, double** smwc,
        
     test = 0;
  //CPMZ warning, check below...?
-    for(MKL_INT k=1;test == 0;k++){  
-      for(MKL_INT j=0;j<3;j++){ 
+    for(int k=1;test == 0;k++){  
+      for(int j=0;j<3;j++){ 
 	x[k%3][j]=Utils::dotProd(K[j],x[(k-1)%3],3);                 
       }
       Utils::normalize(x[k%3],3);  
 
       relerror = 0.0;
-      for(MKL_INT j=0;j<3;j++){
+      for(int j=0;j<3;j++){
 	diff = x[k%3][j]-x[(k-2)%3][j];      
 	relerror = relerror + fabs(diff);          
       }
       
       if((relerror < tolerance && k > 100) || (k == ndiag)){
 
-	for(MKL_INT j=0;j<3;j++){
+	for(int j=0;j<3;j++){
 	  x[(k+1)%3][j] = Utils::dotProd(K[j],x[k%3],3);
 	}
 
 	w2[i] = Utils::dotProd(x[k%3],x[(k+1)%3],3);
-	for(MKL_INT j=0;j<3;j++){           
+	for(int j=0;j<3;j++){           
 	  smwc[i][j] = x[k%3][j];  
 	}
 
@@ -1046,13 +1054,13 @@ void Utils::diagonalize3x3(double** hmwc, double** smwc,
     }
   }   
 
-  for (MKL_INT i=0;i<3;i++){
+  for (int i=0;i<3;i++){
     delete [] K[i];
   }
   delete [] K;
 #if 0
 //CPMZ some weird memory bug
-  for (MKL_INT i=0;i<3;i++){
+  for (int i=0;i<3;i++){
     delete [] x[i];
   }
   delete [] x;
@@ -1072,10 +1080,10 @@ double Utils::randomf(double a, double b){
 }
 
 /// normalize vector
-void Utils::normalize(double* u, MKL_INT LEN){
+void Utils::normalize(double* u, int LEN){
   double dp=Utils::dotProd(u,u,LEN); // dot product
   double vm=sqrt(dp); // magnitude
-  for (MKL_INT i=0; i<LEN; i++){
+  for (int i=0; i<LEN; i++){
     u[i]=u[i]/vm;
   }   
 }
@@ -1085,13 +1093,13 @@ void Utils::projectfrommatrix3x3(double* vector, double** hmwc){
 
   double** p = new double*[1+3];
   double** K = new double*[1+3];
-  for (MKL_INT i=0;i<3;i++){
+  for (int i=0;i<3;i++){
     p[i] = new double[1+3];
     K[i] = new double[1+3];
   }
  
-  for(MKL_INT i=0;i<3;i++){
-    for(MKL_INT j=0;j<3;j++){
+  for(int i=0;i<3;i++){
+    for(int j=0;j<3;j++){
       if(i == j){
 	p[i][j] = 1.0 - vector[i]*vector[j];
       }
@@ -1100,24 +1108,24 @@ void Utils::projectfrommatrix3x3(double* vector, double** hmwc){
       }
     }
   }
-  for(MKL_INT i=0;i<3;i++){
-    for(MKL_INT j=0;j<3;j++){
+  for(int i=0;i<3;i++){
+    for(int j=0;j<3;j++){
       K[i][j] = 0.0;
-      for(MKL_INT k=0;k<3;k++){
+      for(int k=0;k<3;k++){
 	K[i][j] = K[i][j] + hmwc[i][k]*p[k][j];
       }
     }
   }
-  for(MKL_INT i=0;i<3;i++){
-    for(MKL_INT j=0;j<3;j++){
+  for(int i=0;i<3;i++){
+    for(int j=0;j<3;j++){
       hmwc[i][j] = 0.0;
-      for(MKL_INT k=0;k<3;k++){
+      for(int k=0;k<3;k++){
 	hmwc[i][j] = hmwc[i][j] + p[i][k]*K[k][j];
       }
     }
   }
 
-  for (MKL_INT i=0;i<3;i++){
+  for (int i=0;i<3;i++){
     delete [] p[i];
     delete [] K[i];
   }
@@ -1127,10 +1135,10 @@ void Utils::projectfrommatrix3x3(double* vector, double** hmwc){
 }
 
 
-void Utils::Mat_times_vec(double** d2S_1, double* dS, double* prod, MKL_INT LEN){
-  for (MKL_INT i=0;i<LEN;i++){
+void Utils::Mat_times_vec(double** d2S_1, double* dS, double* prod, int LEN){
+  for (int i=0;i<LEN;i++){
     prod[i]=0;
-    for (MKL_INT j=0;j<LEN;j++){
+    for (int j=0;j<LEN;j++){
       prod[i] += d2S_1[i][j]*dS[j];
     }
   }
@@ -1138,38 +1146,38 @@ void Utils::Mat_times_vec(double** d2S_1, double* dS, double* prod, MKL_INT LEN)
 }
 
 
-void Utils::invertNxN(double** Mat, double** Inverse, MKL_INT n) {
+void Utils::invertNxN(double** Mat, double** Inverse, int n) {
 
-  for (MKL_INT i=0;i<n;i++){
-    for (MKL_INT j=0;j<n;j++){
+  for (int i=0;i<n;i++){
+    for (int j=0;j<n;j++){
       Inverse[i][j]=0.0;
     }
   }
   
   double** a = new double*[1+n];
-  for (MKL_INT i=0;i<n;i++) a[i]=new double[1+n];
+  for (int i=0;i<n;i++) a[i]=new double[1+n];
  
-  for (MKL_INT i=0;i<n;i++){
-    for (MKL_INT j=0;j<n;j++){
+  for (int i=0;i<n;i++){
+    for (int j=0;j<n;j++){
       a[i][j]=Mat[i][j];
     }
   }
 
-  MKL_INT* indx = new MKL_INT[1+n];
+  int* indx = new int[1+n];
   double d;
 
   Utils::ludcmp(a,n,indx,&d);
   
   double *col = new double[1+n];
   
-  for (MKL_INT j=0;j<n;j++){
-    for (MKL_INT i=0;i<n;i++) col[i]=0.0;
+  for (int j=0;j<n;j++){
+    for (int i=0;i<n;i++) col[i]=0.0;
     col[j]=1.0;
     Utils::lubksb(a,n,indx,col);
-    for(MKL_INT i=0;i<n;i++) Inverse[i][j]=col[i];
+    for(int i=0;i<n;i++) Inverse[i][j]=col[i];
   }
 
-  for (MKL_INT i=0;i<n;i++){
+  for (int i=0;i<n;i++){
     delete [] a[i];
   }
   delete [] a;
@@ -1180,9 +1188,9 @@ void Utils::invertNxN(double** Mat, double** Inverse, MKL_INT n) {
   
 
 
-void Utils::ludcmp(double **a, MKL_INT n, MKL_INT *indx, double *d){
+void Utils::ludcmp(double **a, int n, int *indx, double *d){
 
-  MKL_INT i,imax,j,k;
+  int i,imax,j,k;
   double big,dum,sum,temp;
   double *vv;
 
@@ -1234,8 +1242,8 @@ void Utils::ludcmp(double **a, MKL_INT n, MKL_INT *indx, double *d){
   delete [] vv;
 }
 
-void Utils::lubksb(double **a, MKL_INT n, MKL_INT *indx, double b[]){
-  MKL_INT i,ii=0,ip,j;
+void Utils::lubksb(double **a, int n, int *indx, double b[]){
+  int i,ii=0,ip,j;
   double sum;
 
   for (i=0;i<n;i++){
@@ -1259,10 +1267,10 @@ double Utils::det3x3(double A[1+3][1+3]){
   double temp, m;
   
   temp = 0.0;
-  for(MKL_INT i=0;i<3;i++){
+  for(int i=0;i<3;i++){
     m = ((double)(2*(i%2)-1));
-    for(MKL_INT k=0;k<3;k++){
-      for(MKL_INT j=1;j<3;j++){
+    for(int k=0;k<3;k++){
+      for(int j=1;j<3;j++){
 	if(k < i){
 	  a[j-1][k] = A[j][k];
 	}
@@ -1277,15 +1285,15 @@ double Utils::det3x3(double A[1+3][1+3]){
 }
 
 
-void Utils::adjoMKL_INT3x3(double A[4][4], double Aadj[4][4]){
+void Utils::adjoint3x3(double A[4][4], double Aadj[4][4]){
   double a[1+2][1+2];
   double m, temp;
   
-  for(MKL_INT i=0;i<3;i++){
-    for(MKL_INT l=0;l<3;l++){
+  for(int i=0;i<3;i++){
+    for(int l=0;l<3;l++){
       m = ((double)(2*((i+l+1)%2) - 1));
-      for(MKL_INT j=0;j<3;j++){
-	for(MKL_INT k=0;k<3;k++){
+      for(int j=0;j<3;j++){
+	for(int k=0;k<3;k++){
 	  if(j < i){
 	    if(k < l){
 	      a[j][k] = A[j][k];
@@ -1318,19 +1326,19 @@ double Utils::det2x2(double A[3][3]){
 
 
 // vout = v -[(v.u)] *( u / |u.u|)
-void Utils::gramschmidt(MKL_INT LEN, double* v_out, double* u_in, double* v_in){
+void Utils::gramschmidt(int LEN, double* v_out, double* u_in, double* v_in){
   double udotv = Utils::dotProd(v_in, u_in, LEN);
   double udotu = Utils::dotProd(u_in, u_in, LEN);
-  for(MKL_INT i=0;i<LEN;i++){
+  for(int i=0;i<LEN;i++){
     v_out[i] = v_in[i]-udotv*u_in[i]/udotu;
   }
 }
 
 
 // find tanget copy to y1
-void Utils::splineTangents(MKL_INT LEN, double* x, double* y, double* y2, double* y1){
+void Utils::splineTangents(int LEN, double* x, double* y, double* y2, double* y1){
   double sig, dx;
-  for(MKL_INT i=0;i<LEN-1;i++){
+  for(int i=0;i<LEN-1;i++){
     sig = (y[i+1]-y[i])/(x[i+1]-x[i]);
     dx = x[i+1]-x[i];
     y1[i] = sig - dx*y2[i]/3.0 - dx*y2[i+1]/6.0;
@@ -1338,16 +1346,16 @@ void Utils::splineTangents(MKL_INT LEN, double* x, double* y, double* y2, double
   y1[LEN] = sig + dx*y2[LEN-1]/6.0 + dx*y2[LEN]/3.0;
 }
 
-void Utils::S_from_angs(double** angs, double* S, double* masses, MKL_INT LEN, MKL_INT natoms){
+void Utils::S_from_angs(double** angs, double* S, double* masses, int LEN, int natoms){
 
   //create mass-weighted array in atomic units, and then calculate S
   double** temparray = new double*[1+LEN];
-  for (MKL_INT i=0;i<LEN;i++){
+  for (int i=0;i<LEN;i++){
     temparray[i]=new double[1+natoms*3];
   }
 
-  for (MKL_INT i=0;i<LEN;i++){
-    for (MKL_INT j=0;j<natoms*3;j++){
+  for (int i=0;i<LEN;i++){
+    for (int j=0;j<natoms*3;j++){
       temparray[i][j]=angs[i][j];
     }
   }
@@ -1356,15 +1364,15 @@ void Utils::S_from_angs(double** angs, double* S, double* masses, MKL_INT LEN, M
 
   S[1]=0;
   double* dvec = new double[1+natoms*3];
-  for (MKL_INT i=1;i<LEN;i++){
-    for (MKL_INT j=0;j<natoms*3;j++){
+  for (int i=1;i<LEN;i++){
+    for (int j=0;j<natoms*3;j++){
       dvec[j]=temparray[i][j]-temparray[i-1][j];
     }
     
     S[i] = S[i-1] + Utils::vecMag(dvec, natoms*3);
   }
 
-  for (MKL_INT i=0;i<LEN;i++){
+  for (int i=0;i<LEN;i++){
     delete [] temparray[i];
   }
   delete [] temparray;
@@ -1373,22 +1381,22 @@ void Utils::S_from_angs(double** angs, double* S, double* masses, MKL_INT LEN, M
 }
 
 
-void Utils::angs_to_mwcs(double** temparray, MKL_INT nn, MKL_INT natoms, double* amasses){
+void Utils::angs_to_mwcs(double** temparray, int nn, int natoms, double* amasses){
  
-  for (MKL_INT i=0;i<nn;i++){
-    for (MKL_INT j=0;j<natoms;j++){
-      for (MKL_INT k=0;k<3;k++){
+  for (int i=0;i<nn;i++){
+    for (int j=0;j<natoms;j++){
+      for (int k=0;k<3;k++){
 	temparray[i][3*j+k]*=(ANGtoBOHR*sqrt((double)amasses[j]));
       }
     }
   }
 }
 
-void Utils::anggrads_to_mwcgrads(double** temparray, MKL_INT nn, MKL_INT natoms, double* amasses){
+void Utils::anggrads_to_mwcgrads(double** temparray, int nn, int natoms, double* amasses){
 
-  for (MKL_INT i=0;i<nn;i++){
-    for (MKL_INT j=0;j<natoms;j++){
-      for (MKL_INT k=0;k<3;k++){
+  for (int i=0;i<nn;i++){
+    for (int j=0;j<natoms;j++){
+      for (int k=0;k<3;k++){
         temparray[i][3*j+k]/=ANGtoBOHR*sqrt((double)amasses[j]);
       }
     }
@@ -1397,16 +1405,16 @@ void Utils::anggrads_to_mwcgrads(double** temparray, MKL_INT nn, MKL_INT natoms,
 
 
 
-double Utils::dotProd(double* v, double* u, MKL_INT LEN){
+double Utils::dotProd(double* v, double* u, int LEN){
   double dp=0.0;
-  for(MKL_INT j=0;j<LEN;j++){
+  for(int j=0;j<LEN;j++){
     dp = dp + v[j]*u[j];
   }
   return dp;
 }
 
 
-double Utils::vecMag(double* u, MKL_INT LEN){
+double Utils::vecMag(double* u, int LEN){
   double dp=Utils::dotProd(u,u,LEN);
   double vm=sqrt(dp);
   return vm;
