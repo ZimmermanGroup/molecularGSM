@@ -1,4 +1,0 @@
-tribits_package_decl(MixedSharedStaticLibs)
-tribits_process_subpackages()
-tribits_package_def()
-tribits_package_postprocess()
