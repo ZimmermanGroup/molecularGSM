@@ -1,0 +1,55 @@
+#!/bin/bash
+# The path to Gaussian should be added to PATH
+# If using another version of Gaussian, change g09 to your version
+
+if [ -z $2 ]
+then
+  echo " need two arguments! "
+  exit
+fi
+
+#echo " in ggrad: $1 $2 "
+
+# Remove check files if starting a new calculation
+chkfile=scratch/gfs$1.chk
+fchkfile=scratch/gfs$1.fchk
+gfile=scratch/gin$1.gjf
+molfile=scratch/structure$1
+ncpu=$2
+
+chkexists=0
+if [ -e $chkfile ]
+then
+  chkexists=1
+fi
+
+#echo " chkfile: $chkfile gfile: $gfile molfile: $molfile ncpu: $ncpu"
+
+echo "%nprocshared=$ncpu " > $gfile
+echo "%chk=$chkfile " >> $gfile
+if [ $chkexists -eq 1 ]
+then
+  echo "# guess=(read)" >> $gfile
+fi
+cat gstart >> $gfile
+cat $molfile >> $gfile
+echo " " >> $gfile
+echo " " >> $gfile
+echo " " >> $gfile
+echo " " >> $gfile
+echo " " >> $gfile
+echo " " >> $gfile
+
+#echo "running: g09 < $gfile >& $gfile.log"
+g09 < $gfile >& $gfile.log
+
+#check for SCF failure here
+gfail=`grep -c "Convergence failure" $gfile.log`
+if [ $gfail -ge 1 ]
+then
+  echo " SCF failure in Gaussian "
+ #present fix: use previous gradient
+else
+  #echo "running: formchk $chkfile $fchkfile"
+  formchk $chkfile $fchkfile > scratch/fchkout
+fi

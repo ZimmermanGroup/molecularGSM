@@ -501,7 +501,6 @@ int Invert(double* A, int m){
     printf("  WARNING: cannot invert, size: %i \n",m);
     return 1;
   }
-  
   MKL_INT mkl_m = (MKL_INT) m;
 
 #if 0

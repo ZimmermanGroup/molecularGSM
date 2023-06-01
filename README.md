@@ -1,3 +1,6 @@
+## Questions?
+Contact Liz Doty: lizdoty@umich.edu
+
 ## Overview
 The growing string method is a reaction path and transition state finding method developed in c++.
 
@@ -6,6 +9,9 @@ https://github.com/ZimmermanGroup/molecularGSM/wiki
 
 Sample tutorial files can be found under the tutorial folder:
 https://github.com/ZimmermanGroup/molecularGSM/tree/master/tutorial
+
+Running GSM with the XTB package (from the Grimme lab):
+https://github.com/grimme-lab/xtb_docs/blob/master/source/gsm.rst
 
 ## Installation
 This code can be built using CMake. To do so:
@@ -49,3 +55,4 @@ To run gsm, copy the executable to the working directory (where the input files 
 ##CTest
 
 There are five test examples: alanine dipeptide isomerization, ammonia borane reactions, diels alder reaction, ethylene rotation, and methanol formaldehyde reaction. After building the executable you can use type $ ctest to run the tests. When each test is complete, the output will be compared with the standard output in each test directory. If the difference in coordinates of a each atom is more than 0.001, the test will fail.
+

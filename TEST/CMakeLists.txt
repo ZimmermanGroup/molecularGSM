@@ -10,6 +10,7 @@ ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME})
     TEST_0
         MESSAGE "-- Working directory is
         ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}"
+
         # the execution command
         EXEC gsm.${CALCULATOR} NOEXEPREFIX 
 				DIRECTORY ${PROJECT_BINARY_DIR}/${PROJECT_NAME}

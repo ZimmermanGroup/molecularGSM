@@ -1,11 +1,13 @@
 # setting different energy calculators that GSM will use
 file(GLOB GSM_SRC "*.h" "*.cpp")
 add_executable(gsm ${GSM_SRC})
+
 if(NOT DEFINED GSM_ENABLE_QCHEM)
 	SET(GSM_ENABLE_QCHEM 0)
 else()
     set(CALCULATOR "qchem" CACHE STRING "Calculator")
     set(CALCULATOR_FLAG "-DGSM_ENABLE_QCHEM=1 -DQCHEM=1")
+
 endif()
 
 if(NOT DEFINED GSM_ENABLE_QCHEM_SF)
@@ -84,6 +86,4 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}
 endif()
 
 MESSAGE("-- Calculator is ${CALCULATOR}")
-
 target_link_libraries(gsm PUBLIC ${BLAS_LIBRARIES})
-

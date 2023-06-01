@@ -10,7 +10,6 @@ fi
 
 #echo " in ograd: $1 $2 "
 
-#ofile=scratch/orcain$1.in
 ofile=$SLURM_LOCAL_SCRATCH/orcain$1.in
 ofileout=scratch/orcain$1.out
 molfile=scratch/structure$1
@@ -32,5 +31,4 @@ cat $molfile >> $ofile
 echo '*' >> $ofile
 
 #echo "running: orca $ofile > $ofileout"
-#orca $ofile > $ofileout
-/export/zimmerman/khyungju/orca_4_0_0_2_linux_x86-64/orca $ofile > $ofileout
+orca $ofile > $ofileout
