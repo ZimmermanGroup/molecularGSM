@@ -175,7 +175,6 @@ void GString::String_Method_Optimization()
   printf(" END NOTICES \n\n");
 
   //#include "savefile.cpp"
-  printf("Version: %s \n\n",g_GIT_SHA1);
 
   for (int i=0;i<nnmax;i++)
     active[i] = -1;
@@ -892,7 +891,6 @@ int GString::isomer_init(string isofilename)
 
   nfound = 0;
 
-  nbond = 0;
   nadd = 0;
   nbrk = 0;
   nangle = 0;
@@ -1053,7 +1051,7 @@ void GString::init(string infilename, int run, int nprocs){
   else
     isomerfile = "scratch/ISOMERS"+nstr;
   int nfound = isomer_init(isomerfile);
-  if (isSSM>0)
+  if (isSSM)
   {
     if (nfound!=1)
     {

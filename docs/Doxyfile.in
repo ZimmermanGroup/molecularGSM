@@ -38,7 +38,7 @@ PROJECT_NUMBER         = "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@"
 # If a relative path is entered, it will be relative to the location
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = @CMAKE_CURRENT_BINARY_DIR@/../../
+OUTPUT_DIRECTORY       = @CMAKE_CURRENT_BINARY_DIR@/doc
 
 # Project logo that appears on front page
 PROJECT_LOGO	=		@CMAKE_CURRENT_SOURCE_DIR@/assets/project_logo.png

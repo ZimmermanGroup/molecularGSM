@@ -3,11 +3,11 @@
 *.exe
 *.log
 tags
-grad.py
 example.tgz
 gstring.cpp_1
+build*/
 BUILD/
-TriBITS/
+BUILD2/
 getOptEnergy
 makeXYZ
 *.qsh
@@ -26,4 +26,3 @@ test_output
 gsmdone1
 stringfile.xyz0001*
 compare_output
-html/

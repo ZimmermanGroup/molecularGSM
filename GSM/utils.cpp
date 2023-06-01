@@ -10,6 +10,11 @@
 
 #define USE_ACML 0
 
+// extern "C" void dgesvd_(char*,char*,int*,int*,double*,int*,double*,double*,int*,double*,int*,double*,int*,int*);
+// extern "C" void dgetrf_(int*,int*,double*,int*,int*,int*);
+// extern "C" void dgetri_(int*,double*,int*,int*,double*,int*,int*);
+// extern "C" void dsyevx_(char*,char*,char*,int*,double*,int*,double*,double*,int*,int*,double*,int*,double*,double*,int*,double*,int*,int*,int*,int*);
+
 using namespace std;
 
 void trans(double* Bt, double* B, int m, int n) {
@@ -409,6 +414,9 @@ int mat_root_inv(double* A, int size) {
 int SVD(double* A, double* V, double* eigen, int m, int n){
 
   //printf(" in SVD call, m,n: %i %i \n",m,n);
+  
+  MKL_INT mkl_m = (MKL_INT) m;
+  MKL_INT mkl_n = (MKL_INT) n;
 
 #if USE_ACML
  //disabled this function
@@ -427,7 +435,7 @@ int SVD(double* A, double* V, double* eigen, int m, int n){
   trans(B,A,n,m);
 
   int NSV,LV; // # singular values
-  int LDA = m;
+  MKL_INT LDA = m;
   if (m>n){
     NSV = n;
     LV=m;
@@ -442,19 +450,19 @@ int SVD(double* A, double* V, double* eigen, int m, int n){
   double* S = new double[LV];
   int* IWork = new int[8*NSV];
 
-  int Info = 0;
+  MKL_INT Info = 0;
 
   //printf(" LenWork: %i \n",LenWork);
 
 // "A" refers to full SVD, returning all vectors
 
-  int LenWork = 320*NSV;
+  MKL_INT LenWork = 320*NSV;
   double* Work = new double[LenWork]();
   char JOBU='A';
   char JOBVT='A';
 
 #if !USE_ACML
-  dgesvd_(&JOBU, &JOBVT, &m, &n, B, &LDA, S, U, &m, Vt, &n, Work, &LenWork, &Info);
+  dgesvd_(&JOBU, &JOBVT, &mkl_m, &mkl_n, B, &LDA, S, U, &mkl_m, Vt, &mkl_n, Work, &LenWork, &Info);
 
 //vs dgesdd (divide and conquer version)
 //  dgesdd_((char*)"A", &m, &n, A, &LDA, S, U, &m, Vt, &n, Work0, &LenWork, IWork, &Info);
@@ -493,6 +501,7 @@ int Invert(double* A, int m){
     printf("  WARNING: cannot invert, size: %i \n",m);
     return 1;
   }
+  MKL_INT mkl_m = (MKL_INT) m;
 
 #if 0
   printf(" in Invert call, m: %i \n",m);
@@ -504,19 +513,19 @@ int Invert(double* A, int m){
   }
 #endif
 
-  int LenWork = 4*m;
+  MKL_INT LenWork = 4*m;
   double* Work = new double[LenWork];
 
-  int Info = 0;
+  MKL_INT Info = 0;
 
   //printf(" LenWork: %i \n",LenWork);
 
-  int* IPiv = new int[m];
+  MKL_INT* IPiv = new MKL_INT[m];
 
 //printf("\n");
 //  dgesdd_((char*)"A", &m, &n, A, &LDA, S, U, &m, Vt, &n, Work, &LenWork, IWork, &Info);
 
-  dgetrf_(&m,&m,A,&m,IPiv,&Info);
+  dgetrf_(&mkl_m,&mkl_m,A,&mkl_m,IPiv,&Info);
   if (Info!=0)
   {
     printf(" after dgetrf, Info error is: %i \n",Info);
@@ -530,7 +539,7 @@ int Invert(double* A, int m){
     return 1;
   }
 
-  dgetri_(&m,A,&m,IPiv,Work,&LenWork,&Info);
+  dgetri_(&mkl_m,A,&mkl_m,IPiv,Work,&LenWork,&Info);
   if (Info!=0)
   {
     printf(" after invert, Info error is: %i \n",Info);
@@ -569,37 +578,37 @@ int Diagonalize(double* A, double* eigen, int size){
  // printf(" in diagonalize call, size: %i \n",size);
  // printf(" in diagonalize: mkl_threads: %i \n",mkl_get_max_threads());
 
-  int N = size;
-  int LDA = size;
+  MKL_INT N = size;
+  MKL_INT LDA = size;
   double* EVal = eigen;
 
 //borrowed from qchem liblas/diagon.C
 
 
     char JobZ = 'V', Range = 'A', UpLo = 'U';
-    int IL = 1, IU = N;
+    MKL_INT IL = 1, IU = N;
     double AbsTol = 0.0, VL = 1.0, VU = -1.0;
-    int NEValFound;
+    MKL_INT NEValFound;
 
     double* EVec = new double[LDA*N];
 
     // Give dsyevx more work space than the minimum 8*N to improve performance
 #if DSYEVX
-    int LenWork = 32*N; //8*N min for dsyevx (was 32)
+    MKL_INT LenWork = 32*N; //8*N min for dsyevx (was 32)
 #else
     int LenWork = 1+6*N+2*N*N; //1+6*N+2*N*N min for dsyevd
 #endif
     double* Work = new double[LenWork];
 
 #if DSYEVX
-    int LenIWork = 5*N; //5*N for dsyevx (was 5)
+    MKL_INT LenIWork = 5*N; //5*N for dsyevx (was 5)
 #else
     int LenIWork = 10*N; //3+5*N min for dsyevd
 #endif
-    int* IWork = new int[LenIWork];
-    int* IFail = new int[N];
+    MKL_INT* IWork = new MKL_INT[LenIWork];
+    MKL_INT* IFail = new MKL_INT[N];
 
-    int Info = 0;
+    MKL_INT Info = 0;
 
 #if USE_ACML
    dsyevx(JobZ, Range, UpLo, N, A, LDA, VL,
@@ -653,29 +662,29 @@ int Diagonalize(double* A, double* eigenvecs, double* eigen, int size){
   printf(" in diagonalize call, size: %i \n",size);
   
 
-  int N = size;
-  int LDA = size;
+  MKL_INT N = size;
+  MKL_INT LDA = size;
   double* EVal = eigen;
 
 //borrowed from qchem liblas/diagon.C
 
 
     char JobZ = 'V', Range = 'A', UpLo = 'U';
-    int IL = 1, IU = N;
+    MKL_INT IL = 1, IU = N;
     double AbsTol = 0.0, VL = 1.0, VU = -1.0;
-    int NEValFound;
+    MKL_INT NEValFound;
 
     double* EVec = new double[LDA*N];
 
     // Give dsyevx more work space than the minimum 8*N to improve performance
-    int LenWork = 32*N;
+    MKL_INT LenWork = 32*N;
     double* Work = new double[LenWork];
 
-    int LenIWork = 5*N;
-    int* IWork = new int[LenIWork];
-    int* IFail = new int[N];
+    MKL_INT LenIWork = 5*N;
+    MKL_INT* IWork = new MKL_INT[LenIWork];
+    MKL_INT* IFail = new MKL_INT[N];
 
-    int Info = 0;
+    MKL_INT Info = 0;
 
 #if USE_ACML
    dsyevx(JobZ, Range, UpLo, N, A, LDA, VL,

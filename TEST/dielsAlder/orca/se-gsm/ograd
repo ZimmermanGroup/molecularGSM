@@ -10,7 +10,7 @@ fi
 
 #echo " in ograd: $1 $2 "
 
-ofile=$SLURM_LOCAL_SCRATCH/orcain$1.in
+ofile=scratch/orcain$1.in
 ofileout=scratch/orcain$1.out
 molfile=scratch/structure$1
 ncpu=$2
@@ -19,7 +19,7 @@ ncpu=$2
 
 ########## DFT settings: #################
 #echo '! DFT BP86 ECP{LANL2} ENGRAD' > $ofile
-echo '! DFT B3LYP ENGRAD 6-31G*' > $ofile
+echo '! DFT B3LYP ENGRAD' > $ofile
 #echo '! veryslowconv SCFCONV6' >> $ofile
 echo '! nomoprint' >> $ofile
 echo '%scf' >> $ofile
