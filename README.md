@@ -52,7 +52,7 @@ This code can be built using CMake. To do so:
 
 To run gsm, copy the executable to the working directory (where the input files are) or reference it using the full path. 
 
-##CTest
+## CTest
 
 There are five test examples: alanine dipeptide isomerization, ammonia borane reactions, diels alder reaction, ethylene rotation, and methanol formaldehyde reaction. After building the executable you can use type $ ctest to run the tests. When each test is complete, the output will be compared with the standard output in each test directory. If the difference in coordinates of a each atom is more than 0.001, the test will fail.
 
