@@ -4,6 +4,15 @@ using namespace std;
 
 #define MAX_FRAG_DIST 12.0
 
+ICoord::ICoord()
+{
+  use_xyz = 0;
+  isOpt = 0;
+  nxyzic = 0;
+  xyzic = NULL;
+  nwater = 0;
+}
+
 int ICoord::init(string xyzfile){
 
 
@@ -175,21 +184,30 @@ void ICoord::create_xyz()
   return;
 }
 
-
+///creates the internal coordinates
 int ICoord::ic_create()
 {
   make_bonds();
 
+  if (use_xyz==2)
+    setup_water();
+
   if (isOpt)
   {
-    printf(" isOpt: %i \n",isOpt);
+    printf(" isOpt: %i use_xyz: %i \n",isOpt,use_xyz);
     if (isOpt==2)
       hbond_frags();
+
     make_frags();
-    bond_frags();
+    if (use_xyz==2)
+      bond_frags_xyz();
+    else
+      bond_frags();
   }
 
   coord_num(); // counts # surrounding species
+  if (use_xyz) get_xyzic();
+
   make_angles();
   make_torsions();
   make_imptor();
@@ -204,7 +222,7 @@ int ICoord::ic_create()
     ntor++;
   }
 
-  if (isOpt==1)
+  if (isOpt==1 && !use_xyz)
     linear_ties();
   if (isOpt==2)
     h2o_torsions();
@@ -221,8 +239,12 @@ int ICoord::ic_create_nobonds()
     printf(" isOpt: %i \n",isOpt);
     if (isOpt==2)
       hbond_frags();
+
     make_frags();
-    bond_frags();
+    if (use_xyz==2)
+      bond_frags_xyz();
+    else
+      bond_frags();
   }
 
   coord_num(); // counts # surrounding species
@@ -240,7 +262,7 @@ int ICoord::ic_create_nobonds()
     ntor++;
   }
 
-  if (isOpt==1)
+  if (isOpt==1 && !use_xyz)
     linear_ties();
   if (isOpt==2)
     h2o_torsions();
@@ -784,9 +806,22 @@ void ICoord::make_frags()
   {
     if ( frags[bonds[i][0]] == -1 && frags[bonds[i][1]] == -1 )
     {
-      frags[bonds[i][0]] = nfrags;
-      frags[bonds[i][1]] = nfrags;
-      nfrags++;
+      int isW = 0;
+      if (nwater>0)
+      {
+        for (int j=0;j<nwater;j++)
+        {
+          if (bonds[i][0]==water[3*j+0] || bonds[i][1]==water[3*j+0]) isW++;
+          if (bonds[i][0]==water[3*j+1] || bonds[i][1]==water[3*j+1]) isW++;
+          if (bonds[i][0]==water[3*j+2] || bonds[i][1]==water[3*j+2]) isW++;
+        }
+      }
+      if (isW<2)
+      {
+        frags[bonds[i][0]] = nfrags;
+        frags[bonds[i][1]] = nfrags;
+        nfrags++;
+      }
     }
     else if ( frags[bonds[i][0]] == -1 && frags[bonds[i][1]] > -1 )
     {
@@ -843,9 +878,26 @@ void ICoord::make_frags()
     } //loop n over nfrags
   } //if merged
 
-  for (int i=0;i<natoms;i++)
-  if (frags[i]==-1)
-    frags[i] = nfrags++;
+  if (use_xyz==2)
+  {
+    int water_frag_exists = 0;
+    for (int i=0;i<natoms;i++)
+    if (frags[i]==-1)
+      water_frag_exists++;
+
+    for (int i=0;i<natoms;i++)
+    if (frags[i]==-1)
+      frags[i] = nfrags;
+
+    if (water_frag_exists)
+      nfrags++;
+  }
+  else
+  {
+    for (int i=0;i<natoms;i++)
+    if (frags[i]==-1)
+      frags[i] = nfrags++;
+  }
 
   for (int i=0;i<natoms;i++)
     printf(" atom[%i] frag: %i \n",i,frags[i]);
@@ -1095,6 +1147,269 @@ void ICoord::bond_frags()
   }//loop n over nfrags
 
 
+
+  return;
+}
+
+
+void ICoord::bond_frags_xyz()
+{
+  printf(" in bond_frags_xyz() \n");
+  if (nfrags<2) return;
+
+  int found = 0;
+  int found2 = 0;
+ 
+  int a1,a2;
+  int b1,b2;
+  double mclose;
+  double mclose2;
+  for (int n1=0;n1<nfrags;n1++)
+  for (int n2=0;n2<n1;n2++)
+  {
+    if (natoms<150)
+      printf(" connecting frag %i to frag %i: ",n1+1,n2+1);
+
+    found = 0;
+    found2 = 0;
+    double close = 0.;
+    mclose = 1000.;
+    for (int i=0;i<natoms;i++)
+    for (int j=0;j<natoms;j++)
+    if (frags[i]==n1 && frags[j]==n2)
+    if (isTM(i)==0 && isTM(j)==0)
+    {
+      close = distance(i,j);
+      if (close<mclose)
+      {
+        mclose = close;
+        a1 = i;
+        a2 = j;
+        found = 1;
+      }
+    }
+
+   //now connect a1 to next nearest
+    mclose2 = 1000.;
+    for (int i=0;i<natoms;i++)
+    if (frags[i]==n1 && i!=a1 && i!=a2)
+    if (isTM(i)==0)
+    {
+      close = distance(i,a1);
+      if (close<mclose2)
+      {
+        mclose2 = close;
+        b1 = a1;
+        b2 = i;
+        found2 = 1;
+      }
+    } 
+
+    if (found && !bond_exists(a1,a2))
+    {
+      printf(" bond pair1 added : %i %i ",a1+1,a2+1);
+      bonds[nbonds][0] = a1;
+      bonds[nbonds][1] = a2;
+      bondd[nbonds] = mclose;
+      nbonds++;
+    } // if found
+
+    if (found2 && !bond_exists(b1,b2))
+    {
+      printf(" bond pair2 added : %i %i ",b1+1,b2+1);
+      bonds[nbonds][0] = b1;
+      bonds[nbonds][1] = b2;
+      bondd[nbonds] = mclose2;
+      nbonds++;
+    } // if found2
+
+  } //loop n2<n1 over nfrags
+
+  return;
+}
+
+void ICoord::setup_water()
+{
+  int maxsize = 1;
+  for (int i=0;i<natoms;i++)
+  if (anumbers[i]==8)
+    maxsize++;
+
+  nwater = 0;
+  water = new int[3*maxsize]();
+
+  if (use_xyz>1)
+  for (int i=0;i<natoms;i++)
+  if (anumbers[i]==8)
+  {
+    int a1 = i;
+    int a2 = -1;
+    int a3 = -1;
+    for (int j=0;j<nbonds;j++)
+    {
+      int b1 = bonds[j][0];
+      int b2 = bonds[j][1];
+      if (a2==-1 && distance(b1,b2)<1.2)
+      {
+        if (b1==a1 && anumbers[b2]==1)
+          a2 = b2;
+        if (b2==a1 && anumbers[b1]==1)
+          a2 = b1;
+      }
+      else if (a2>-1)
+      {
+        if (b1==a1 && anumbers[b2]==1)
+          a3 = b2;
+        if (b2==a1 && anumbers[b1]==1)
+          a3 = b1;
+        if (a3>-1)
+        {
+          water[3*nwater+0] = a1;
+          water[3*nwater+1] = a2;
+          water[3*nwater+2] = a3;
+          nwater++; 
+          break;
+        }
+      } 
+    } //loop j over nbonds
+
+  } //loop i over oxygen atoms
+
+  return;
+}
+
+void ICoord::get_xyzic()
+{
+  //printf("  in get_xyzic() use_xyz: %i \n",use_xyz);
+
+
+  if (use_xyz==2)
+  for (int i=0;i<nbonds;i++)
+  {
+    int a1 = bonds[i][0];
+    int a2 = bonds[i][1];
+    int frzpair = 0;
+    if (frozen!=NULL)
+    if (frozen[a1] && frozen[a2])
+      frzpair = 1;
+
+    //check for water;
+    int isWater = 0;
+    if (anumbers[a1]==8 || anumbers[a2]==8)
+    for (int j=0;j<nwater;j++)
+    {
+      int b1 = water[3*j+0];
+      int b2 = water[3*j+1];
+      int b3 = water[3*j+2];
+
+      int a1h = a1; int a2h = a2;
+      if (anumbers[a1]!=8) { a1h = a2; a2h = a1; }
+
+      if (a1h==b1)
+      {
+        if (a2h==b2 || a2h==b3)
+        { isWater = 1; break; }
+      }
+    }
+
+    if ((isTM(a1) && isTM(a2)) || frzpair || isWater)
+    {
+      //printf(" high coordn: %i/%i for atoms %i/%i \n",coordn[a1],coordn[a2],a1+1,a2+1);
+      //printf(" metal-metal bond: %i-%i \n",a1+1,a2+1);
+      for (int j=i;j<nbonds-1;j++)
+      {
+        bonds[j][0] = bonds[j+1][0];
+        bonds[j][1] = bonds[j+1][1];
+        bondd[j] = bondd[j+1];
+      }
+      nbonds--;
+      i--;
+    }
+  }
+
+#if 0
+ //borrowed from xyzse. not ready
+  int* oxel = new int[natoms];
+  int nox = get_ox(oxel);
+
+  nxyzic = 0;
+  for (int i=0;i<natoms;i++)
+    xyzic[i] = 0;
+
+  for (int i=0;i<nbonds;i++)
+  {
+    int a1 = bonds[i][0];
+    int a2 = bonds[i][1];
+    int frzpair = 0;
+    if (frozen!=NULL)
+    if (frozen[a1] && frozen[a2])
+      frzpair = 1;
+
+    //if ((isTM(a1) && isTM(a2)) || frzpair || oxel[a1] || oxel[a2])
+    if (frzpair || oxel[a1] || oxel[a2])
+    {
+      //printf(" high coordn: %i/%i for atoms %i/%i \n",coordn[a1],coordn[a2],a1+1,a2+1);
+      //printf(" metal-metal bond: %i-%i \n",a1+1,a2+1);
+      for (int j=i;j<nbonds-1;j++)
+      {
+        bonds[j][0] = bonds[j+1][0];
+        bonds[j][1] = bonds[j+1][1];
+        bondd[j] = bondd[j+1];
+      }
+      nbonds--;
+      i--;
+    }
+  }
+
+  coord_num();
+
+  for (int i=0;i<natoms;i++)
+  if ((coordn[i]<2 && isTM(i)) || coordn[i]<1)
+//  if (coordn[i]<1)
+  {
+    //printf(" low coordn (%i), setting xyz: %i \n",coordn[i],i);
+    xyzic[i] = 1;
+    nxyzic += 3;
+  }
+
+#if 0
+  if (nxyzic && isOpt)
+  {
+    connect_1_coord_mg(); //fix for oxides
+    make_frags();
+    bond_frags_xyz();
+  }
+#endif
+
+  delete [] oxel;
+#endif
+
+ //do the waters in XYZ coordinates
+  nxyzic = 0;
+  if (xyzic!=NULL) delete [] xyzic;
+  xyzic = new int[natoms]();
+  for (int i=0;i<nwater;i++)
+  {
+    xyzic[water[3*i+0]] = 1;
+    xyzic[water[3*i+1]] = 1;
+    xyzic[water[3*i+2]] = 1;
+    nxyzic += 3;
+  }
+
+#if 1
+  if (isOpt)
+  {
+    printf("\n XYZ vs. IC geometry \n");
+    printf(" %i \n\n",natoms);
+    for (int i=0;i<natoms;i++)
+    if (xyzic[i])
+      printf(" X %7.5f %7.5f %7.5f \n",coords[3*i+0],coords[3*i+1],coords[3*i+2]);
+    else
+      printf(" %s %7.5f %7.5f %7.5f \n",anames[i].c_str(),coords[3*i+0],coords[3*i+1],coords[3*i+2]);
+    printf("\n");
+  }
+  printf(" nxyzic: %3i \n",nxyzic);
+#endif
 
   return;
 }
