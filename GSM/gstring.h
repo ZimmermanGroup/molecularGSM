@@ -159,11 +159,13 @@ class GString {
   void ic_reparam_cut(int min, double** dqa, double* dqmaga, int type);
   int check_for_reaction_g(int type);
   int check_for_reaction(int& wts, int& wint);
+  void optimize_ts(int wn, int max_iters, double& gradrms, double& gradmax, int& ngrad, int& overlapn, double& overlap, double& ETSf, double** dqa, double* dqmaga, double** ictan);
 
   double* V_profile;
   double V0; // zero reference E
 
   int* active;
+  int* frozen;
 
   int nn;
   int nnR;
@@ -184,6 +186,10 @@ class GString {
   int STEP_OPT_ITERS;
   int MAX_OPT_ITERS;
   double CONV_TOL;
+  double GRAD_MAX_TOL;
+  double TS_CONV_TOL;
+  double TS_GRAD_MAX_TOL;
+  int do_post_ts;
   double ADD_NODE_TOL;
   double HESS_INIT;
   int CHARGE;                   //charge of the molecular complex
@@ -199,6 +205,7 @@ class GString {
   double prodelim;
   int lastOpt;
   int initialOpt;
+  int ts_opt_steps;
 
   //*** Places to keep some simulation data ***
   int gradJobCount;		//keeps track of the total number of gradient jobs performed
