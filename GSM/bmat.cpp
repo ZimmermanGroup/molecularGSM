@@ -129,7 +129,7 @@ int ICoord::bmat_free() {
   return 0;
 }
 
-
+///forms the original B matrix
 int ICoord::bmatp_create() {
 
  // printf(" in bmatp_create \n");
@@ -294,7 +294,7 @@ int ICoord::bmatp_create() {
   return 0;
 }
 
-
+///Diagonalizes G to form U
 int ICoord::bmatp_to_U()
 {
   //printf(" in bmatp_to_U. \n");
@@ -467,6 +467,7 @@ int ICoord::bmatp_to_U()
 }
 
 
+///Determines q the components of the molecular geometry in the DI space. Also forms the active B matrix.
 
 int ICoord::bmat_create() 
 {
@@ -2032,7 +2033,7 @@ double ICoord::opt_a(int nnewb, int* newb, int nnewt, int* newt, string xyzfile_
 
   return energy;
 }
-
+/// optimizes the node to the minimum without a constraint
 double ICoord::opt_b(string xyzfile_string, int nsteps){
 
   printout = "";
@@ -2239,7 +2240,7 @@ double ICoord::opt_b(string xyzfile_string, int nsteps){
 
 
 
-
+///Optimizes the node subject to a constraint, nsteps times.
 double ICoord::opt_c(string xyzfile_string, int nsteps, double* C, double* C0)
 {
   //printf(" oc"); fflush(stdout);
@@ -3223,7 +3224,7 @@ void ICoord::save_hess()
 
   return;
 }
-
+///Transforms the gradient in Cartesian representation to delocalized internal coordinate representation
 int ICoord::grad_to_q() {
 
 #if USE_NOTBONDS
@@ -4288,7 +4289,7 @@ void ICoord::print_q(){
   return;
 }
 
-
+///back transforms from delocalized IC representation to Cartesian represention
 int ICoord::ic_to_xyz() {
 
   int MAX_STEPS = 10; //was 6
@@ -4758,7 +4759,7 @@ void ICoord::read_hessxyz(string filename, int write)
   int found = 0;
   while(!hessfile.eof())
   {
-    success = getline(hessfile,line);
+    success = (bool)getline(hessfile,line);
     if (line.find("Hessian of the SCF Energy")!=string::npos)
     {
       found = 1;
@@ -4773,7 +4774,7 @@ void ICoord::read_hessxyz(string filename, int write)
   while(!hessfile.eof() && found)
   {
     nf++;
-    success = getline(hessfile,line);
+    success = (bool)getline(hessfile,line);
     //cout << " RR0: " << line << endl;
     for (int j=0;j<N3;j++)
     {
@@ -4910,13 +4911,13 @@ void ICoord::read_hessp(string filename)
   string line;
   bool success=true;
 
-  success=getline(hesspfile, line);
+  success=(bool)getline(hesspfile, line);
   //cout << " RR: " << line << endl;
   int length=StringTools::cleanstring(line);  
   tok_line = StringTools::tokenize(line, " \t");
   natomsf = atoi(tok_line[1].c_str());
 
-  success=getline(hesspfile, line);
+  success=(bool)getline(hesspfile, line);
   //cout << " RR: " << line << endl;
   length=StringTools::cleanstring(line);  
   tok_line = StringTools::tokenize(line, " \t");
@@ -4931,7 +4932,7 @@ void ICoord::read_hessp(string filename)
 
   for (int i=0;i<len;i++)
   {
-    success=getline(hesspfile, line);
+    success=(bool)getline(hesspfile, line);
     length=StringTools::cleanstring(line);
     if (length<1) break;
     tok_line = StringTools::tokenize(line, " \t");

@@ -1955,14 +1955,30 @@ double ICoord::getR(int i){
   else if (anumbers[i]==28) value = 3.0;
   else if (anumbers[i]==29) value = 3.0;
   else if (anumbers[i]==30) value = 3.0;
+	else if (anumbers[i]==31) value = 2.8;  //CRA guess
+	else if (anumbers[i]==32) value = 2.8;  //CRA guess
+	else if (anumbers[i]==33) value = 2.7;  //CRA scale based on 3rd row
+	else if (anumbers[i]==34) value = 2.55; //CRA scale based on 3rd row
   else if (anumbers[i]==35) value = 2.7;
+	else if (anumbers[i]==37) value = 4.0; //CRA same as  4th row
+	else if (anumbers[i]==38) value = 3.5; //CRA same as  4th row
+	else if (anumbers[i]==39) value = 4.5; //CRA same as  4th row
   else if (anumbers[i]==40) value = 3.35;
+	else if (anumbers[i]==41) value = 3.3; //CRA guess
+	else if (anumbers[i]==42) value = 3.3; //CRA guess
+	else if (anumbers[i]==43) value = 3.3; //CRA guess; radioactive
   else if (anumbers[i]==44) value = 3.2;
   else if (anumbers[i]==45) value = 3.15;
   else if (anumbers[i]==46) value = 3.15;
   else if (anumbers[i]==47) value = 3.25;
+	else if (anumbers[i]==48) value = 3.27; //CRA scale same as Zn
+	else if (anumbers[i]==49) value = 3.0;  //CRA guess
+	else if (anumbers[i]==50) value = 3.0;  //CRA guess
+	else if (anumbers[i]==51) value = 2.9;  //CRA guess
+	else if (anumbers[i]==52) value = 2.9;  //CRA guess
   else if (anumbers[i]==53) value = 2.8; //iodine
   else if (anumbers[i]==55) value = 4.2;
+	else if (anumbers[i]==72) value = 3.3; //CRA guess 
   else if (anumbers[i]==73) value = 3.3;
   else if (anumbers[i]==74) value = 3.3;
   else if (anumbers[i]==75) value = 3.3;
@@ -1970,6 +1986,12 @@ double ICoord::getR(int i){
   else if (anumbers[i]==77) value = 3.35;
   else if (anumbers[i]==78) value = 3.35;
   else if (anumbers[i]==79) value = 3.45;
+  else if (anumbers[i]==80) value = 3.25; //CRA guess
+  else if (anumbers[i]==81) value = 3.25; //CRA guess
+  else if (anumbers[i]==82) value = 3.25; //CRA guess
+  else if (anumbers[i]==83) value = 3.25; //CRA guess
+  else if (anumbers[i]==84) value = 3.25; //CRA guess
+  else if (anumbers[i]==85) value = 3.25; //CRA guess
   else 
   {
     printf(" Need to add atomic number %i (of atom %i) to getR! \n",anumbers[i],i+1);
@@ -2159,14 +2181,14 @@ void ICoord::structure_read(string xyzfile){
   
   string line;
   bool success=true;
-  success=getline(infile, line);
+  success=(bool)getline(infile, line);
   if (success){
     int length=StringTools::cleanstring(line);
     natoms=atoi(line.c_str());
   }
   cout <<"  natoms: " << natoms << endl;
   
-  success=getline(infile, line);
+  success=(bool)getline(infile, line);
 //  if (success){  
 //    comment=line;
 //  }
@@ -2178,7 +2200,7 @@ void ICoord::structure_read(string xyzfile){
     
   //cout <<"  -Reading the atomic names...";
   for (int i=0;i<natoms;i++){
-    success=getline(infile, line);
+    success=(bool)getline(infile, line);
     int length=StringTools::cleanstring(line);
     vector<string> tok_line = StringTools::tokenize(line, " \t");
     anames[i]=tok_line[0];
@@ -2204,10 +2226,10 @@ void ICoord::structure_read(string xyzfile){
   
   
 //  for (int i=1;i<=2;i++){
-    success=getline(infile, line);
-    success=getline(infile, line);
+    success=(bool)getline(infile, line);
+    success=(bool)getline(infile, line);
     for (int j=0;j<natoms;j++){
-      success=getline(infile, line);
+      success=(bool)getline(infile, line);
       int length=StringTools::cleanstring(line);
       vector<string> tok_line = StringTools::tokenize(line, " \t");
       coords[3*j+0]=atof(tok_line[1].c_str());
@@ -2266,10 +2288,10 @@ int ICoord::read_ics(string filename)
   string line;
   bool success=true;
   int type = 1;
-  success=getline(infile, line);
+  success=(bool)getline(infile, line);
   while (!infile.eof())
   {
-    success=getline(infile, line);
+    success=(bool)getline(infile, line);
     //cout << "RR0: " << line << endl;
     int length=StringTools::cleanstring(line);
     vector<string> tok_line = StringTools::tokenize(line, " \t");
@@ -2286,7 +2308,7 @@ int ICoord::read_ics(string filename)
 
         for (int i=0;i<nbonds;i++)
         {
-          success=getline(infile, line);
+          success=(bool)getline(infile, line);
           //cout << "RR: " << line << endl;
           length=StringTools::cleanstring(line);
           tok_line = StringTools::tokenize(line, " \t");
@@ -2308,7 +2330,7 @@ int ICoord::read_ics(string filename)
 
         for (int i=0;i<nangles;i++)
         {
-          success=getline(infile, line);
+          success=(bool)getline(infile, line);
           //cout << "RR: " << line << endl;
           length=StringTools::cleanstring(line);
           tok_line = StringTools::tokenize(line, " \t");
@@ -2331,7 +2353,7 @@ int ICoord::read_ics(string filename)
 
         for (int i=0;i<ntor;i++)
         {
-          success=getline(infile, line);
+          success=(bool)getline(infile, line);
           //cout << "RR: " << line << endl;
           length=StringTools::cleanstring(line);
           tok_line = StringTools::tokenize(line, " \t");
