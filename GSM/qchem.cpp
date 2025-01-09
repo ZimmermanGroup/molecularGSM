@@ -64,7 +64,7 @@ void QChem::init(string infilename, int natoms0, int* anumbers0, string* anames0
 
   // parse the input section here
 
-  getline(infile, line);
+  (bool)getline(infile, line);
   templine=StringTools::newCleanString(line);
   scrBaseDir=StringTools::trimRight(templine);
   if (scrBaseDir.find("$")!=string::npos)
@@ -87,7 +87,7 @@ void QChem::init(string infilename, int natoms0, int* anumbers0, string* anames0
   }
   //cout <<"  -scratch base directory set to: " << scrBaseDir << endl;
 
-  getline(infile, line);
+  (bool)getline(infile, line);
   templine=StringTools::newCleanString(line);
   runName=StringTools::trimRight(templine);
   runName+=nstr;
@@ -124,8 +124,13 @@ void QChem::init(string infilename, int natoms0, int* anumbers0, string* anames0
   fileloc = qcPaths+"/";
 //  fileloc = "scratch/";
   nstr=StringTools::int2str(run,4,"0");
+#if USE_SRUN
+  qcinfile="qcin"+nstr+runends;
+  qcoutfile="scratch/qcout"+nstr+runends;
+#else
   qcinfile=fileloc+"qcin"+nstr+runends;
   qcoutfile=fileloc+"qcout"+nstr+runends;
+#endif
   qcoutfileh="scratch/hess"+nstr+".xyz";
 //  cout << " qcinfile: " << qcinfile << endl;
 //  cout << " qcoutfile: " << qcoutfile << endl;
@@ -164,7 +169,7 @@ int QChem::read_hess(double* hess)
     printf(" failed to open qcout file \n");
     return 0;
   }
-  while (getline(qcfile, line) && cont)
+  while ((bool)getline(qcfile, line) && cont)
   {
     if (line.find("Hessian of the SCF Energy")!=string::npos)
     {
@@ -177,10 +182,10 @@ int QChem::read_hess(double* hess)
   while (!qcfile.eof())
   {
     n++;
-    getline(qcfile,line);
+    (bool)getline(qcfile,line);
     for (int j=0;j<N3;j++)
     {
-      getline(qcfile,line);
+      (bool)getline(qcfile,line);
     // cout << " RR: " << line << endl;
       int length=StringTools::cleanstring(line);
       vector<string> tok_line = StringTools::tokenize(line, " \t");
@@ -276,7 +281,16 @@ double QChem::grads(double* coords, double* grad)
   int length2=StringTools::cleanstring(calc_command);
   
   //cout << calc_command.c_str() << endl;
+#if USE_SRUN
+  nstr = StringTools::int2str(runNum,4,"0");
+  string qcinfile2 = "qcin"+nstr+runends;
+  string qcoutfile2 = "qcout"+nstr+runends;
+  string calc_cmd2 = "./srunqc "+qcinfile2+" "+qcoutfile2+" "+nstrc+" "+nstr+runends;
+  //cout << " using calc_cmd2: " << calc_cmd2<< endl;
+  system(calc_cmd2.c_str());
+#else
   system(calc_command.c_str());
+#endif
   //fflush(stdout);
 
 
@@ -296,6 +310,8 @@ double QChem::grads(double* coords, double* grad)
   int length=StringTools::cleanstring(gradcopy_command);
   system(gradcopy_command.c_str());
   fflush(stdout);
+#elif USE_SRUN
+  gradfile="scratch/GRAD"+nstr+runends;
 #else
   gradfile=scrdir+"/GRAD";
 #endif
@@ -317,7 +333,7 @@ double QChem::grads(double* coords, double* grad)
     printf(" failed to open qcout file \n");
     getgrad = 0;
   }
-  while (getline(qcfile, line) && getgrad)
+  while ((bool)getline(qcfile, line) && getgrad)
   {
     if (StringTools::contains(line, test))
     {
@@ -380,27 +396,36 @@ double QChem::get_energy(string filename) {
   string line;
   vector<string> tok_line;
   energy = 0;
-  while(!output.eof()) 
-  { 
-    getline(output,line);
+  int nfound = 0;
+  while(!output.eof())
+  {
+    (bool)getline(output,line);
 //    cout << " RR " << line << endl;
     if (line.find("Total energy in the final basis set")!=string::npos)
     {
       //cout << "  DFT out: " << line << endl;
       tok_line = StringTools::tokenize(line, " \t");
       energy=atof(tok_line[8].c_str());
-      break;
+      nfound++;
+      //break;
     }
-		else if (line.find("SCF   energy in the final basis set")!=string::npos)
-		{
+    if (line.find("energy in the final basis set")!=string::npos)
+    {
       //cout << "  DFT out: " << line << endl;
       tok_line = StringTools::tokenize(line, " \t");
       energy=atof(tok_line[8].c_str());
-      break;
-		}
+      nfound++;
+      //break;
+    }
+    if (line.find("SCF   energy")!=string::npos)
+    {
+      tok_line = StringTools::tokenize(line, " \t");
+      energy=atof(tok_line[3].c_str());
+      nfound++;
+    }
   }
- 
-  //printf(" DFT energy: %1.4f \n",energy); 
+
+//  printf(" DFT energy: %1.4f \n",energy);
 
   if (abs(energy)<0.00001 || (energy != energy))
   {
