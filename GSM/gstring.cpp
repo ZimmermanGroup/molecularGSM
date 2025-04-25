@@ -7139,11 +7139,6 @@ void GString::opt_iters(int max_iter, double& totalgrad, double& gradrms, double
     if (find) printf("x");
     printf(" opt_iter: %2i totalgrad: %1.3f gradrms: %1.4f tgrads: %i",oi+1,totalgrad,gradrms,gradJobCount);
     printf(" ol(%i): %1.2f max E: %1.1f",overlapn,overlap,emax-emin);
-
-    string opt_iter_name = StringTools::int2str(oi,3,"0");
-    printf(" saving copy of current string to %s \n",opt_iter_name.c_str());
-    print_string(nnmax,allcoords,opt_iter_name);
-
     if (nsplit) printf(" s");
     printf(" \n");
     if (emax > endenergy && emax!=111.1) //don't end due to scf failure
