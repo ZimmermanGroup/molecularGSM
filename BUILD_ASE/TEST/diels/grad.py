@@ -25,7 +25,7 @@ calc = QChem(
     jobtype='FORCE',
     method='B3LYP',
     basis='6-31G*',
-    nt=4,
+    nt=8,
 )
 
 atoms.calc = calc
@@ -35,7 +35,7 @@ inputfile = 'qchem'+argv1+'.inp'
 outputfile = 'qchem'+argv1+'.out'
 ##atoms.calc.command = 'cd scratch; mpirun -np '+argv2+' nwchem '+inputfile+' > '+outputfile
 # atoms.calc.command = 'cd scratch; mpirun --mca btl ^openib -np '+argv2+' nwchem '+inputfile+' > '+outputfile
-atoms.calc.command = f'cd scratch; qchem -nt 4 '+inputfile+' > '+outputfile
+atoms.calc.command = f'cd scratch; qchem -nt 8 '+inputfile+' > '+outputfile
 print('QChem command: ',atoms.calc.command)
 # os.system('ln -s $PBSTMPDIR '+atoms.calc.label+'.scrdir')
 
