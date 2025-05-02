@@ -1,3 +1,6 @@
+# Use this script to compare generated test stringfiles (stringfile.xyz000*) 
+# with standard stringfiles (stringfile.standard)
+
 # for reading csv format files
 import csv
 
