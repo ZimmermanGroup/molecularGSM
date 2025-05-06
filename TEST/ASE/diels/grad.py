@@ -14,7 +14,6 @@ import os
 nargs = len(sys.argv)
 argv1 = sys.argv[1]
 argv2 = sys.argv[2]
-#print 'argv1: ',argv1
 os.system("cp scratch/structure"+argv1+" scratch/structure"+argv1+".xyz")
 fname = 'scratch/structure'+argv1+'.xyz'
 atoms = read(fname)
@@ -33,15 +32,9 @@ atoms.calc = calc
 atoms.calc.label = 'scratch/qchem'+argv1
 inputfile = 'qchem'+argv1+'.inp'
 outputfile = 'qchem'+argv1+'.out'
-##atoms.calc.command = 'cd scratch; mpirun -np '+argv2+' nwchem '+inputfile+' > '+outputfile
-# atoms.calc.command = 'cd scratch; mpirun --mca btl ^openib -np '+argv2+' nwchem '+inputfile+' > '+outputfile
 atoms.calc.command = f'cd scratch; qchem -nt 8 '+inputfile+' > '+outputfile
 print('QChem command: ',atoms.calc.command)
-# os.system('ln -s $PBSTMPDIR '+atoms.calc.label+'.scrdir')
 
-# atoms.calc.parameters.xc = 'B3LYP'
-#atoms.calc.parameters.basis = 'LANL2DZ ECP'
-#atoms.calc.parameters.ecp = 'LANL2DZ ECP'
 atoms.calc.reset()
 
 cwd = os.getcwd()
@@ -63,6 +56,7 @@ f.close()
 shutil.copy2('scratch/GRAD'+argv1, cwd+'/scratch')
 os.chdir(cwd)
 
+# comment out the following lines for debugging to be able to see the qchem output
 os.system('rm -rf '+folder)
 os.system('rm -f scratch/structure'+argv1)
 os.system('rm -f '+fname)
