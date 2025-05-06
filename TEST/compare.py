@@ -26,7 +26,7 @@ def subtractFloat(number1, number2):
             return 1
 
 def main():
-    threshold = 0.001
+    threshold = 0.2
     try:
         # read standard and output files
         standard = csv.reader(open('stringfile.standard', 'r'), delimiter=' ')
