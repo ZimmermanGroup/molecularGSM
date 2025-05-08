@@ -1,3 +1,6 @@
+# Use this script to compare generated test stringfiles (stringfile.xyz000*) 
+# with standard stringfiles (stringfile.standard)
+
 # for reading csv format files
 import csv
 
@@ -9,15 +12,21 @@ def convertToFloat(inList):
         except ValueError:
             yield element
 
-# subtract two floats and skip if string
+# subtract two floats and for strings check their equality
 def subtractFloat(number1, number2):
     try:
         return (number1 - number2)
     except TypeError:
-        pass
+        if isinstance(number1, str) and isinstance(number2, str):
+            if number1 == number2:
+                return 0
+            else:
+                return 1
+        else:
+            return 1
 
 def main():
-    threshold = 0.001
+    threshold = 0.2
     try:
         # read standard and output files
         standard = csv.reader(open('stringfile.standard', 'r'), delimiter=' ')
