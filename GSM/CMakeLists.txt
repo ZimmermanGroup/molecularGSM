@@ -87,3 +87,5 @@ endif()
 
 MESSAGE("-- Calculator is ${CALCULATOR}")
 target_link_libraries(gsm PUBLIC ${BLAS_LIBRARIES})
+
+install(TARGETS gsm DESTINATION bin)
