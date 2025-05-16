@@ -27,3 +27,6 @@ gsmdone1
 stringfile.xyz0001*
 compare_output
 TEST/**/scratch/*
+# pixi environments
+.pixi
+*.egg-info

@@ -1,0 +1,17 @@
+[workspace]
+authors = ["Andreas Copan <avcopan@gmail.com>"]
+channels = ["conda-forge"]
+name = "molecularGSM"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+cmake = "*"
+make = "*"
+cxx-compiler = "*"
+libstdcxx-ng = "*"
+mkl = "*"
+mopac = "*"
+mkl-include = ">=2025.1.0,<2026"
