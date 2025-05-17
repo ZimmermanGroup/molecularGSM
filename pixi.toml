@@ -1,0 +1,19 @@
+[workspace]
+authors = ["Zimmerman Group, Andreas Copan (pixi environment)"]
+channels = ["conda-forge"]
+name = "molecularGSM"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+build = "pixi-build.sh"
+test = { cmd = "gsm", cwd = "TEST/dielsAlder/mopac/de-gsm" }
+
+[dependencies]
+cmake = "*"
+make = "*"
+cxx-compiler = "*"
+libstdcxx-ng = "*"
+mkl = "*"
+mkl-include = "*"
+mopac = "*"
