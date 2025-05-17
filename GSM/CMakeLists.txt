@@ -88,4 +88,5 @@ endif()
 MESSAGE("-- Calculator is ${CALCULATOR}")
 target_link_libraries(gsm PUBLIC ${BLAS_LIBRARIES})
 
+# Install the gsm executable to the bin directory when `make install` is run
 install(TARGETS gsm DESTINATION bin)
