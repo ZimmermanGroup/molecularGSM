@@ -1,5 +1,5 @@
 [workspace]
-authors = ["Andreas Copan <avcopan@gmail.com>"]
+authors = ["Zimmerman Group, Andreas Copan (pixi environment)"]
 channels = ["conda-forge"]
 name = "molecularGSM"
 platforms = ["linux-64"]
